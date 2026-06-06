@@ -1,0 +1,18 @@
+Directori: Domain.Exceptions
+
+Aquest directori conte les excepcions personalitzades de l'aplicacio.
+
+Fitxers:
+- AdminJaExisteix.java: Excepcio que es llanca quan es tenta crear un administrador que ja existeix.
+- AdminJaTeEnquesta.java: Excepcio que es llanca quan un administrador ja te una enquesta assignada.
+- AdminNoExisteix.java: Excepcio que es llanca quan es tenta accedir a un administrador que no existeix.
+- AdminNoTeEnquesta.java: Excepcio que es llanca quan un administrador no te una enquesta assignada.
+- ContrasenyaIncorrecta.java: Excepcio que es llanca quan la contrasenya d'un administrador es incorrecta.
+- EnquestaJaExisteix.java: Excepcio que es llanca quan es tenta crear una enquesta que ja existeix.
+- EnquestaNoConteResposta.java: Excepcio que es llanca quan una enquesta no conte una resposta especifica.
+- EnquestaNoExisteix.java: Excepcio que es llanca quan es tenta accedir a una enquesta que no existeix.
+- OpcioNoExisteix.java: Excepcio que es llanca quan es tenta accedir a una opcio que no existeix.
+- OrdreIncorrecte.java: Excepcio que es llanca quan s'utilitza un ordre incorrecte.
+- PreguntaNoExisteix.java: Excepcio que es llanca quan es tenta accedir a una pregunta que no existeix.
+- RespostaNoValida.java: Excepcio que es llanca quan una resposta no es valida.
+

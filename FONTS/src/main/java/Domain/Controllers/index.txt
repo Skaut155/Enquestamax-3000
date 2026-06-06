@@ -1,0 +1,4 @@
+Directori: src/main/java/Domain/Controllers
+
+Aquest directori conte els controladors de domini de l'aplicacio.
+

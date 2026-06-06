@@ -1,0 +1,9 @@
+Contingut del directori: ./build/jacocoHtml/Data.Persistance
+  Fitxer: AdminPersistance.html
+  Fitxer: AdminPersistance.java.html
+  Fitxer: EnquestaPersistance.html
+  Fitxer: EnquestaPersistance.java.html
+  Fitxer: index.html
+  Fitxer: index.source.html
+  Fitxer: RespostesIO.html
+  Fitxer: RespostesIO.java.html

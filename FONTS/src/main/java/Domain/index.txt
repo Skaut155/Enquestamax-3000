@@ -1,0 +1,4 @@
+Directori: src/main/java/Domain
+
+Aquest directori conte les classes del domini de l'aplicacio.
+

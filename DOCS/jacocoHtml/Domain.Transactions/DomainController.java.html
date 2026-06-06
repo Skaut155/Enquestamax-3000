@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DomainController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Transactions</a> &gt; <span class="el_source">DomainController.java</span></div><h1>DomainController.java</h1><pre class="source lang-java linenums">package Domain.Transactions;
+
+/**
+ * DomainController acts as a facade for domain operations
+ */
+<span class="fc" id="L6">public class DomainController {</span>
+
+    /**
+     * Creates a new enquesta.
+     *
+     * @param nomEnquesta Name of the enquesta.
+     * @return The ID of the created enquesta.
+     */
+    public int crearEnquesta(String nomEnquesta) {
+<span class="fc" id="L15">        TxCrearEnquesta t = new TxCrearEnquesta(nomEnquesta);</span>
+<span class="fc" id="L16">        t.execute();</span>
+
+<span class="fc" id="L18">        return t.result;</span>
+    }
+
+    /**
+     * Deletes an enquesta by its ID.
+     *
+     * @param idEnquesta ID of the enquesta to delete.
+     */
+    public void eiminarEnquesta(String nomAdmin, int idEnquesta) {
+<span class="nc" id="L27">        Transaction t = new TxEliminarEnquesta(nomAdmin, idEnquesta);</span>
+<span class="nc" id="L28">        t.execute();</span>
+<span class="nc" id="L29">    }</span>
+
+    /**
+     * Registers a new administrator.
+     *
+     * @param nomAdmin    Name of the administrator.
+     * @param contrasenya Password of the administrator.
+     */
+    public void registrarAdmin(String nomAdmin, String contrasenya) {
+<span class="fc" id="L38">        Transaction t = new TxRegistrarAdmin(nomAdmin, contrasenya);</span>
+<span class="fc" id="L39">        t.execute();</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * Retrieves the IDs of responses for a given enquesta.
+     *
+     * @param idEnquesta ID of the enquesta.
+     * @return Array of response IDs.
+     */
+    public int[] getIdsRespostes(int idEnquesta) {
+<span class="nc" id="L49">        TxGetRespostesEnquesta t = new TxGetRespostesEnquesta(idEnquesta);</span>
+<span class="nc" id="L50">        t.execute();</span>
+        // Convert ArrayList&lt;Integer&gt; to int[]
+<span class="nc" id="L52">        return t.result.stream().mapToInt(Integer::valueOf).toArray();</span>
+    }
+
+    /**
+     * Adds a new question to an enquesta.
+     *
+     * @param idEnquesta ID of the enquesta.
+     */
+    public void afegirPregunta(int idEnquesta) {
+<span class="fc" id="L61">        Transaction t = new TxAfegirPregunta(idEnquesta);</span>
+<span class="fc" id="L62">        t.execute();</span>
+<span class="fc" id="L63">    }</span>
+
+    /**
+     * Deletes a question from an enquesta.
+     *
+     * @param idEnquesta ID of the enquesta.
+     * @param ordre      Order of the question to delete.
+     */
+    public void eliminarPregunta(int idEnquesta, int ordre) {
+<span class="nc" id="L72">        Transaction t = new TxEliminarPregunta(idEnquesta, ordre);</span>
+<span class="nc" id="L73">        t.execute();</span>
+<span class="nc" id="L74">    }</span>
+
+    /**
+     * Changes the type of a question in an enquesta.
+     *
+     * @param idEnquesta ID of the enquesta.
+     * @param ordre      Order of the question.
+     * @param nouTipus   New type for the question.
+     */
+    public void canviarTipusPregunta(int idEnquesta, int ordre, String nouTipus) {
+<span class="fc" id="L84">        Transaction t = new TxCanviarTipusPregunta(idEnquesta, ordre, nouTipus);</span>
+<span class="fc" id="L85">        t.execute();</span>
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * Modifies the text of a question in an enquesta.
+     *
+     * @param idEnquesta ID of the enquesta.
+     * @param ordre      Order of the question.
+     * @param nouText    New text for the question.
+     */
+    public void modificarPregunta(int idEnquesta, int ordre, String nouText) {
+<span class="fc" id="L96">        Transaction t = new TxModificarPregunta(idEnquesta, ordre, nouText);</span>
+<span class="fc" id="L97">        t.execute();</span>
+<span class="fc" id="L98">    }</span>
+
+    /**
+     * Adds a response option to a question in an enquesta.
+     *
+     * @param idEnquesta ID of the enquesta.
+     * @param ordre      Order of the question.
+     * @param textOpcio  Text of the new response option.
+     */
+    public void afegirOpcioResposta(int idEnquesta, int ordre, String textOpcio) {
+<span class="nc" id="L108">        Transaction t = new TxAfegirOpcioResposta(idEnquesta, ordre, textOpcio);</span>
+<span class="nc" id="L109">        t.execute();</span>
+<span class="nc" id="L110">    }</span>
+
+    /**
+     * Modifies a response option of a question in an enquesta.
+     *
+     * @param idEnquesta    ID of the enquesta.
+     * @param ordrePregunta Order of the question.
+     * @param ordreOpcio    Order of the response option.
+     * @param textOpcio     New text for the response option.
+     */
+    public void modificarOpcioResposta(int idEnquesta, int ordrePregunta, int ordreOpcio, String textOpcio) {
+<span class="nc" id="L121">        Transaction t = new TxModificarOpcioResposta(idEnquesta, ordrePregunta, ordreOpcio, textOpcio);</span>
+<span class="nc" id="L122">        t.execute();</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Deletes a response option from a question in an enquesta.
+     *
+     * @param idEnquesta   ID of the enquesta.
+     * @param odrePregunta Order of the question.
+     * @param ordreOpcio   Order of the response option to delete.
+     */
+    public void eliminarOpcioResposta(int idEnquesta, int odrePregunta, int ordreOpcio) {
+<span class="nc" id="L133">        Transaction t = new TxEliminarOpcioResposta(idEnquesta, odrePregunta, ordreOpcio);</span>
+<span class="nc" id="L134">        t.execute();</span>
+<span class="nc" id="L135">    }</span>
+
+    /**
+     * Changes the mandatory status of a question in an enquesta.
+     *
+     * @param idEnquesta    ID of the enquesta.
+     * @param ordrePregunta Order of the question.
+     * @param obligatoria   Whether the question is mandatory.
+     */
+    public void canviarObligatorietatPregunta(int idEnquesta, int ordrePregunta, boolean obligatoria) {
+<span class="nc" id="L145">        Transaction t = new TxObligatorietatPregunta(idEnquesta, ordrePregunta, obligatoria);</span>
+<span class="nc" id="L146">        t.execute();</span>
+<span class="nc" id="L147">    }</span>
+
+    /**
+     * Clones an enquesta.
+     *
+     * @param idEnquesta ID of the enquesta to clone.
+     */
+    public void clonarEnquesta(int idEnquesta, String nomAdmin) {
+<span class="fc" id="L155">        Transaction t = new TxClonarEnquesta(idEnquesta, nomAdmin);</span>
+<span class="fc" id="L156">        t.execute();</span>
+<span class="fc" id="L157">    }</span>
+
+    /**
+     * Inicia sessió amb un administrador existent.
+     *
+     * @param nomAdmin    Nom de l'administrador.
+     * @param contrasenya Contrasenya de l'administrador.
+     * @return true si l'inici de sessió és correcte, false altrament.
+     */
+    public boolean iniciarSessio(String nomAdmin, String contrasenya) {
+<span class="nc" id="L167">        Transaction t = new TxIniciarSessio(nomAdmin, contrasenya);</span>
+        try {
+<span class="nc" id="L169">            t.execute();</span>
+<span class="nc" id="L170">            return true;</span>
+<span class="nc" id="L171">        } catch (Exception ex) {</span>
+<span class="nc" id="L172">            return false;</span>
+        }
+    }
+
+    /**
+     * Retorna una representació textual de l'enquesta amb el seu estat actual.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     * @return String amb la informació de l'enquesta.
+     */
+    public String mostrarEnquesta(int idEnquesta) {
+<span class="nc" id="L183">        Transaction t = new TxMostrarEnquesta(idEnquesta);</span>
+<span class="nc" id="L184">        t.execute();</span>
+<span class="nc" id="L185">        return ((TxMostrarEnquesta) t).result;</span>
+    }
+
+    /**
+     * Retorna un llistat de totes les enquestes disponibles.
+     *
+     * @param nomAdmin Nom de l'administrador.
+     * @return String amb el llistat d'enquestes.
+     */
+    public String getLlistatEnquestes(String nomAdmin) {
+<span class="nc" id="L195">        TxGetLlistatEnquestes t = new TxGetLlistatEnquestes(nomAdmin);</span>
+<span class="nc" id="L196">        t.execute();</span>
+<span class="nc" id="L197">        return t.result;</span>
+    }
+
+    public String[] getPreguntesEnquesta(int idEnquesta) {
+<span class="nc" id="L201">        Transaction t = new TxGetPreguntesEnquesta(idEnquesta);</span>
+<span class="nc" id="L202">        t.execute();</span>
+
+<span class="nc" id="L204">        return ((TxGetPreguntesEnquesta) t).result;</span>
+    }
+
+
+    /**
+     * Guarda totes les respostes d'una enquesta.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     * @param respostes  Array de respostes en format String.
+     */
+    public void guardarRespostes(int idEnquesta, String[] respostes) {
+<span class="nc" id="L215">        Transaction t = new TxNovaRespostaEnquesta(idEnquesta, respostes);</span>
+<span class="nc" id="L216">        t.execute();</span>
+<span class="nc" id="L217">    }</span>
+
+    /**
+     * Consulta una resposta específica d'una enquesta.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     * @param idResposta ID de la resposta.
+     * @return String amb la informació de la resposta.
+     */
+    public String consultarResposta(int idEnquesta, int idResposta) {
+<span class="nc" id="L227">        TxConsultaRespostaAEnquesta t = new TxConsultaRespostaAEnquesta(idEnquesta, idResposta);</span>
+<span class="nc" id="L228">        t.execute();</span>
+<span class="nc" id="L229">        return t.result;</span>
+    }
+
+    /**
+     * Calcula els clústers per una enquesta utilitzant un algoritme específic i un nombre de clústers donat.
+     *
+     * @param idEnquesta    ID de l'enquesta.
+     * @param algorithmName Nom de l'algoritme de clustering.
+     * @param k             Nombre de clústers.
+     * @return Matriu amb els resultats del clustering.
+     */
+    public int[][] computeClusterAlgorithm(int idEnquesta, String algorithmName, int k) {
+<span class="nc" id="L241">        TxComputeClusterAlgorithm t = new TxComputeClusterAlgorithm(idEnquesta, algorithmName, k);</span>
+<span class="nc" id="L242">        t.execute();</span>
+<span class="nc" id="L243">        return t.result;</span>
+    }
+
+    /**
+     * Calcula el nombre òptim de clústers per una enquesta utilitzant un algoritme específic i un llindar de ràtio.
+     *
+     * @param idEnquesta    ID de l'enquesta.
+     * @param algorithmName Nom de l'algoritme de clustering.
+     * @param thresholdRatio Ràtio de llindar per determinar el nombre òptim de clústers.
+     * @return Matriu amb els resultats del clustering amb el nombre òptim de clústers.
+     */
+    public int[][] computeClusterAlgorithmOptimalK(int idEnquesta, String algorithmName, double thresholdRatio) {
+<span class="nc" id="L255">        TxComputeClusterAlgorithmOptimalK t = new TxComputeClusterAlgorithmOptimalK(idEnquesta, algorithmName, thresholdRatio);</span>
+<span class="nc" id="L256">        t.execute();</span>
+<span class="nc" id="L257">        return t.result;</span>
+    }
+
+    /**
+     * Cancela l'edició d'una enquesta, revertint els canvis no guardats.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     */
+    public void cancelarEdicioEnquesta(int idEnquesta) {
+<span class="nc" id="L266">        Transaction t = new TxCancelarEdicioEnquesta(idEnquesta);</span>
+<span class="nc" id="L267">        t.execute();</span>
+<span class="nc" id="L268">    }</span>
+
+    /**
+     * Guarda els canvis realitzats en una enquesta.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     */
+    public void guardarEdicioEnquesta(int idEnquesta, String nomAdmin) {
+<span class="nc" id="L276">        Transaction t = new TxGuardarEnquesta(idEnquesta, nomAdmin);</span>
+<span class="nc" id="L277">        t.execute();</span>
+<span class="nc" id="L278">    }</span>
+
+    /**
+     * Elimina un administrador del sistema.
+     *
+     * @param nomAdmin Nom de l'administrador a eliminar.
+     */
+    public void eliminarAdmin(String nomAdmin) {
+<span class="fc" id="L286">        Transaction t = new TxEliminarAdmin(nomAdmin);</span>
+<span class="fc" id="L287">        t.execute();</span>
+<span class="fc" id="L288">    }</span>
+
+    /**
+     * Modifica el nom d'una enquesta.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     * @param nouNom     Nou nom per a l'enquesta.
+     */
+    public void setEnquestaNom(int idEnquesta, String nouNom) {
+<span class="nc" id="L297">        Transaction t = new TxModificarNomEnquesta(idEnquesta, nouNom);</span>
+<span class="nc" id="L298">        t.execute();</span>
+<span class="nc" id="L299">    }</span>
+
+    /**
+     * Retorna el codi del tipus de pregunta per a una pregunta específica d'una enquesta.
+     *
+     * @param idEnquesta     ID de l'enquesta.
+     * @param ordrePregunta  Ordre de la pregunta dins de l'enquesta.
+     * @return Codi del tipus de pregunta.
+     */
+    public String getCodiTipusPregunta(int idEnquesta, int ordrePregunta) {
+<span class="nc" id="L309">        TxGetCodiTipusPregunta t = new TxGetCodiTipusPregunta(idEnquesta, ordrePregunta);</span>
+<span class="nc" id="L310">        t.execute();</span>
+<span class="nc" id="L311">        return t.result;</span>
+    }
+
+    /**
+     * Retorna el títol d'una pregunta específica d'una enquesta.
+     *
+     * @param idEnquesta     ID de l'enquesta.
+     * @param ordrePregunta  Ordre de la pregunta dins de l'enquesta.
+     * @return Títol de la pregunta.
+     */
+    public String getTitolPregunta(int idEnquesta, int ordrePregunta) {
+<span class="nc" id="L322">        TxGetTitolPregunta t = new TxGetTitolPregunta(idEnquesta, ordrePregunta);</span>
+<span class="nc" id="L323">        t.execute();</span>
+<span class="nc" id="L324">        return t.result;</span>
+    }
+
+    /**
+     * Retorna si una pregunta específica d'una enquesta és obligatòria.
+     *
+     * @param idEnquesta     ID de l'enquesta.
+     * @param ordrePregunta  Ordre de la pregunta dins de l'enquesta.
+     * @return true si la pregunta és obligatòria, false altrament.
+     */
+    public boolean getObligatorietatPregunta(int idEnquesta, int ordrePregunta) {
+<span class="nc" id="L335">        TxGetObligatorietatPregunta t = new TxGetObligatorietatPregunta(idEnquesta, ordrePregunta);</span>
+<span class="nc" id="L336">        t.execute();</span>
+<span class="nc" id="L337">        return t.result;</span>
+    }
+
+    /**
+     * Retorna el nom d'una enquesta donat el seu ID.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     * @return Nom de l'enquesta.
+     */
+    public String getNomEnquesta(int idEnquesta) {
+<span class="nc" id="L347">        TxGetNomEnquesta t = new TxGetNomEnquesta(idEnquesta);</span>
+<span class="nc" id="L348">        t.execute();</span>
+<span class="nc" id="L349">        return t.result;</span>
+    }
+
+    /**
+     * Retorna les opcions de resposta d'una pregunta específica d'una enquesta.
+     *
+     * @param idEnquesta     ID de l'enquesta.
+     * @param ordrePregunta  Ordre de la pregunta dins de l'enquesta.
+     * @return Array de textos de les opcions de resposta.
+     */
+    public String[] getTextOpcionsPregunta(int idEnquesta, int ordrePregunta) {
+<span class="nc" id="L360">        TxGetTextOpcionsPregunta t = new TxGetTextOpcionsPregunta(idEnquesta, ordrePregunta);</span>
+<span class="nc" id="L361">        t.execute();</span>
+<span class="nc" id="L362">        return t.result;</span>
+    }
+
+    /**
+     * Retorna el nombre de preguntes d'una enquesta donat el seu ID.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     * @return Nombre de preguntes de l'enquesta.
+     */
+    public int getNumPreguntesEnquesta(int idEnquesta) {
+<span class="nc" id="L372">        TxGetNumPreguntesEnquesta t = new TxGetNumPreguntesEnquesta(idEnquesta);</span>
+<span class="nc" id="L373">        t.execute();</span>
+<span class="nc" id="L374">        return t.result;</span>
+    }
+
+    /**
+     * Exporta la resposta d'una enquesta a un fitxer en una ruta especificada.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     * @param idResposta ID de la resposta.
+     * @param path       Ruta on s'exportarà la resposta.
+     */
+    public void exportarRespostaEnquesta(int idEnquesta, int idResposta, String path) {
+<span class="nc" id="L385">        Transaction t = new TxExportarResposta(idEnquesta, path, idResposta);</span>
+<span class="nc" id="L386">        t.execute();</span>
+<span class="nc" id="L387">    }</span>
+
+    /**
+     * Importa una resposta d'una enquesta des d'un fitxer en una ruta especificada.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     * @param path       Ruta d'on s'importaran les respostes.
+     */
+    public void importarRespostaEnquesta(int idEnquesta, String path) {
+<span class="nc" id="L396">        Transaction t = new TxImportarResposta(idEnquesta, path);</span>
+<span class="nc" id="L397">        t.execute();</span>
+<span class="nc" id="L398">    }</span>
+
+    /**
+     * Importa una enquesta des d'un fitxer en una ruta especificada.
+     *
+     * @param path      Ruta d'on s'importarà l'enquesta.
+     * @param nomAdmin  Nom de l'administrador que importa l'enquesta.
+     */
+    public void importarEnquesta(String path, String nomAdmin) {
+<span class="nc" id="L407">        Transaction t = new TxImportarEnquesta(path, nomAdmin);</span>
+<span class="nc" id="L408">        t.execute();</span>
+<span class="nc" id="L409">    }</span>
+
+    /**
+     * Exporta una enquesta a un fitxer en una ruta especificada.
+     *
+     * @param idEnquesta ID de l'enquesta.
+     * @param finalPath  Ruta on s'exportarà l'enquesta.
+     */
+    public void exportarEnquesta(int idEnquesta, String finalPath) {
+<span class="nc" id="L418">        Transaction t = new TxExportarEnquesta(idEnquesta, finalPath);</span>
+<span class="nc" id="L419">        t.execute();</span>
+<span class="nc" id="L420">    }</span>
+
+<span class="fc" id="L422">    TxPlot2D txplot = null;</span>
+    /*
+        * Calcula el plot 2D per una enquesta donada, un algoritme específic i un nombre de clústers donat.
+        * @param idEnquesta    ID de l'enquesta.
+        * @param algorithmName Nom de l'algoritme de clustering.
+        * @param k             Nombre de clústers.
+     */
+    public void calcPlot2DGivenK(int idEnquesta, String algorithmName, int k, String distanceStrategyName, String coefficientStrategyName) {
+<span class="nc" id="L430">        txplot = new TxPlot2D(idEnquesta, algorithmName, k, distanceStrategyName, coefficientStrategyName);</span>
+<span class="nc" id="L431">        txplot.execute();</span>
+<span class="nc" id="L432">    }</span>
+
+    /*
+     * Calcula el plot 2D per una enquesta donada, un algoritme específic i un llindar de ràtio.
+     * @param idEnquesta    ID de l'enquesta.
+     * @param algorithmName Nom de l'algoritme de clustering.
+     * @param thresholdRatio Ràtio de llindar per determinar el nombre òptim de clústers.
+     */
+    public void calcPlot2DOptimalK(int idEnquesta, String algorithmName, double thresholdRatio, String distanceStrategyName, String coefficientStrategyName) {
+<span class="nc" id="L441">        txplot = new TxPlot2D(idEnquesta, algorithmName, thresholdRatio, distanceStrategyName, coefficientStrategyName);</span>
+<span class="nc" id="L442">        txplot.execute();</span>
+<span class="nc" id="L443">    }</span>
+
+    /*
+     * Retorna el coeficient del plot calculat.
+     * @return Coeficient del plot.
+     */
+    public double getPlotCoefficient() {
+<span class="nc bnc" id="L450" title="All 2 branches missed.">        if (txplot == null) {</span>
+<span class="nc" id="L451">            throw new IllegalStateException(&quot;Cal calcular el plot abans d'obtenir el coeficient.&quot;);</span>
+        }
+<span class="nc" id="L453">        return txplot.getCoefficient();</span>
+    }
+
+    /*
+     * Retorna els punts del plot calculat.
+     * @return Matriu de punts del plot.
+     */
+    public double[][] getPlotPoints(){
+<span class="nc bnc" id="L461" title="All 2 branches missed.">        if (txplot == null) {</span>
+<span class="nc" id="L462">            throw new IllegalStateException(&quot;Cal calcular el plot abans d'obtenir els punts.&quot;);</span>
+        }
+<span class="nc" id="L464">        return txplot.getPlot2D();</span>
+    }
+
+    public int getKOptimal() {
+<span class="nc bnc" id="L468" title="All 2 branches missed.">        if (txplot == null) {</span>
+<span class="nc" id="L469">            throw new IllegalStateException(&quot;Cal calcular el plot abans d'obtenir el k òptim.&quot;);</span>
+        }
+<span class="nc" id="L471">        return txplot.getK();</span>
+    }
+
+    public String[] getCentroidsPlot2D() {
+<span class="nc bnc" id="L475" title="All 2 branches missed.">        if (txplot == null) {</span>
+<span class="nc" id="L476">            throw new IllegalStateException(&quot;Cal calcular el plot abans d'obtenir els centroids.&quot;);</span>
+        }
+<span class="nc" id="L478">        return txplot.getCentroidsStrings();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

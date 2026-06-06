@@ -1,0 +1,38 @@
+Aquest document descriu el funcionament del joc de proves `joc_proves_gestio_enquestes.txt`.
+
+L'objectiu és provar la gestió d'enquestes per part de múltiples administradors, incloent la creació, llistat i eliminació, per verificar que cada administrador només pot gestionar les seves pròpies enquestes.
+
+Seqüència d'accions:
+
+**Part 1: Administrador `admin1`**
+1.  **Registre i Inici de Sessió**:
+    *   `1, admin1, contrasenya1`: Es registra un nou administrador anomenat `admin1` i s'inicia sessió.
+
+2.  **Creació d'Enquestes**:
+    *   `1, enquesta personalitat, 0`: Crea l'enquesta "enquesta personalitat" i surt de l'edició.
+    *   `1, enquesta satisfaccio clients, 0`: Crea l'enquesta "enquesta satisfaccio clients" i surt de l'edició.
+    *   `1, enquesta idiomes, 0`: Crea l'enquesta "enquesta idiomes" i surt de l'edició.
+
+3.  **Gestió d'Enquestes**:
+    *   `3`: Llista les enquestes. **Comportament esperat**: Haurien d'aparèixer les 3 enquestes creades per `admin1`.
+    *   `2, 1`: Intenta eliminar l'enquesta amb ID `1` ("enquesta satisfaccio clients").
+    *   `3`: Torna a llistar les enquestes. **Comportament esperat**: Només haurien d'aparèixer les enquestes amb ID `0` i `2`.
+
+4.  **Tancament de Sessió**:
+    *   `11`: Tanca la sessió de `admin1`.
+
+**Part 2: Administrador `admin2`**
+1.  **Registre i Inici de Sessió**:
+    *   `1, admin2, contrasenya2`: Es registra un nou administrador anomenat `admin2` i s'inicia sessió.
+
+2.  **Gestió d'Enquestes (Creuament)**:
+    *   `3`: Llista les enquestes. **Comportament esperat**: No hauria d'aparèixer cap enquesta, ja que `admin2` no n'ha creat cap.
+    *   `2, 0`: Intenta eliminar l'enquesta amb ID `0`, que pertany a `admin1`. **Comportament esperat**: El sistema hauria de mostrar un error indicant que no té permisos.
+
+3.  **Creació i Gestió Pròpia**:
+    *   `1, enquesta alimentacio, 0`: `admin2` crea la seva pròpia enquesta.
+    *   `3`: Llista les enquestes. **Comportament esperat**: Només hauria d'aparèixer "enquesta alimentacio".
+
+4.  **Finalització**:
+    *   `0`: Surt del programa.
+

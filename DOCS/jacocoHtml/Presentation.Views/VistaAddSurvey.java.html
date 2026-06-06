@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VistaAddSurvey.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">VistaAddSurvey.java</span></div><h1>VistaAddSurvey.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import Presentation.Controllers.CtrlPresentation;
+
+import javax.swing.*;
+import java.awt.*;
+
+/**
+ * Vista per crear una nova enquesta.
+ * Permet introduir el nom de l'enquesta i redirigeix
+ * a la vista d'edició després de crear-la.
+ */
+public class VistaAddSurvey extends VistaBase {
+    private final VistaPrincipal vistaPrincipal;
+
+    /**
+     * Constructor de la vista de creació d'enquesta.
+     *
+     * @param ctrl Controlador de presentació
+     * @param vistaPrincipal Vista principal per redirigir després de crear
+     */
+    public VistaAddSurvey(CtrlPresentation ctrl, VistaPrincipal vistaPrincipal) {
+<span class="nc" id="L23">        super(&quot;Crear enquesta&quot;, ctrl);</span>
+<span class="nc" id="L24">        this.vistaPrincipal = vistaPrincipal;</span>
+<span class="nc" id="L25">        configurarVista();</span>
+<span class="nc" id="L26">    }</span>
+
+    /**
+     * Configura els components de la vista. Es crida automàticament en el constructor.
+     */
+    private void configurarVista() {
+<span class="nc" id="L32">        JPanel mainPanel = VistaHelpers.createMainPanel();</span>
+<span class="nc" id="L33">        mainPanel.add(VistaHelpers.createTitlePanel(&quot;Crear Nova Enquesta&quot;), BorderLayout.NORTH);</span>
+
+<span class="nc" id="L35">        JPanel inputPanel = VistaHelpers.createFormPanel();</span>
+<span class="nc" id="L36">        GridBagConstraints gbc = new GridBagConstraints();</span>
+<span class="nc" id="L37">        gbc.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="nc" id="L38">        gbc.insets = new Insets(5, 5, 5, 5);</span>
+
+<span class="nc" id="L40">        JTextField surveyNameField = VistaHelpers.createTextField();</span>
+<span class="nc" id="L41">        surveyNameField.addActionListener(e -&gt; handleConfirmar(surveyNameField.getText()));</span>
+<span class="nc" id="L42">        VistaHelpers.addFormField(inputPanel, new JLabel(&quot;Nom de l'enquesta:&quot;), surveyNameField, gbc, 0);</span>
+
+<span class="nc" id="L44">        mainPanel.add(inputPanel, BorderLayout.CENTER);</span>
+
+<span class="nc" id="L46">        JPanel buttonPanel = VistaHelpers.createButtonPanel();</span>
+
+<span class="nc" id="L48">        JButton confirmButton = VistaHelpers.createSuccessButton(&quot;Confirmar&quot;);</span>
+<span class="nc" id="L49">        confirmButton.addActionListener(e -&gt; handleConfirmar(surveyNameField.getText()));</span>
+<span class="nc" id="L50">        VistaHelpers.makeButtonRespondToEnter(confirmButton);</span>
+
+<span class="nc" id="L52">        JButton cancelButton = VistaHelpers.createCancelButton(&quot;Cancel·lar&quot;);</span>
+<span class="nc" id="L53">        cancelButton.addActionListener(e -&gt; frame.dispose());</span>
+<span class="nc" id="L54">        VistaHelpers.makeButtonRespondToEnter(cancelButton);</span>
+
+<span class="nc" id="L56">        buttonPanel.add(confirmButton);</span>
+<span class="nc" id="L57">        buttonPanel.add(cancelButton);</span>
+
+<span class="nc" id="L59">        mainPanel.add(buttonPanel, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L61">        frame.add(mainPanel);</span>
+<span class="nc" id="L62">        frame.pack();</span>
+
+        // Setup keyboard navigation
+<span class="nc" id="L65">        VistaHelpers.setupKeyboardNavigation(frame, confirmButton);</span>
+<span class="nc" id="L66">    }</span>
+
+    /**
+     * Gestiona l'acció de confirmar la creació de l'enquesta.
+     *
+     * @param surveyName Nom de l'enquesta introduït per l'usuari
+     */
+    private void handleConfirmar(String surveyName) {
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (surveyName.trim().isEmpty()) {</span>
+<span class="nc" id="L75">            JOptionPane.showMessageDialog(frame, &quot;El nom de l'enquesta no pot estar buit.&quot;, &quot;Error&quot;, JOptionPane.ERROR_MESSAGE);</span>
+<span class="nc" id="L76">            return;</span>
+        }
+
+<span class="nc" id="L79">        int id = iCtrlPresentation.crearEnquesta(surveyName);</span>
+
+<span class="nc" id="L81">        JOptionPane.showMessageDialog(frame, &quot;Obrint menú d'edició de \&quot;&quot; + surveyName + &quot;\&quot;&quot;, &quot;Èxit&quot;, JOptionPane.INFORMATION_MESSAGE);</span>
+<span class="nc" id="L82">        dispose();</span>
+<span class="nc" id="L83">        vistaPrincipal.openEditSurvey(id);</span>
+<span class="nc" id="L84">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

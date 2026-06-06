@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RespostaAPreguntaMultiple.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">RespostaAPreguntaMultiple.java</span></div><h1>RespostaAPreguntaMultiple.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+
+/**
+ * Class RespostaAPreguntaMultiple that represents an answer to a multiple choice question
+ */
+public class RespostaAPreguntaMultiple extends RespostaAPreguntaSeleccio&lt;ArrayList&lt;Integer&gt;&gt; {
+    /**
+     * Constructor RespostaAPreguntaMultiple empty
+     * @param ordrePregunta order of the Pregunta that it answers
+     */
+    public RespostaAPreguntaMultiple(int ordrePregunta){
+<span class="fc" id="L14">        super(new ArrayList&lt;Integer&gt;(), ordrePregunta, CentroidePreguntaMultipleStrategy.getInstance());</span>
+<span class="fc" id="L15">        setCode(&quot;MULTIPLE&quot;);</span>
+<span class="fc" id="L16">    }</span>
+
+    /**
+     * Constructor of RespostaAPreguntaMultiple
+     * @param opcionsSeleccionades set of order of Opcio with options selected
+     * @param ordrePregunta order of Pregunta that it answers
+     */
+    public RespostaAPreguntaMultiple(ArrayList&lt;Integer&gt; opcionsSeleccionades, int ordrePregunta) {
+<span class="fc" id="L24">        super(opcionsSeleccionades, ordrePregunta, CentroidePreguntaMultipleStrategy.getInstance());</span>
+<span class="fc" id="L25">        setCode(&quot;MULTIPLE&quot;);</span>
+<span class="fc" id="L26">    }</span>
+
+    /**
+     * String representation of the answer
+     * @return String with the selected options (1-based index) separated by spaces
+     */
+    @Override
+    public String getStringResposta() {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if(isEmpty()) return &quot;No hi ha resposta&quot;;</span>
+<span class="fc" id="L35">        String respostaString = &quot;&quot;;</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        for(Integer opcio : super.getResposta()) {</span>
+<span class="fc" id="L37">            Integer opcioIndex = opcio + 1;</span>
+<span class="fc" id="L38">            respostaString += opcioIndex.toString() + &quot; &quot;;</span>
+<span class="fc" id="L39">        }</span>
+<span class="fc" id="L40">        return respostaString;</span>
+    }
+
+    /**
+     * True if the answer is empty, false otherwise
+     * @return resposta == null or empty array
+     */
+    @Override
+    public boolean isEmpty() {
+<span class="fc bfc" id="L49" title="All 4 branches covered.">        return super.getResposta() == null || super.getResposta().isEmpty();</span>
+    }
+
+    /**
+     * Distance between this RespostaAPreguntaMultiple and another RespostaAPreguntaMultiple
+     * @param r the other RespostaAPregunta
+     * @return distance between this RespostaAPreguntaMultiple and r
+     */
+    @Override
+    public double distRespostesPregunta(RespostaAPregunta&lt;ArrayList&lt;Integer&gt;&gt; r) {
+<span class="fc" id="L59">        ArrayList&lt;Integer&gt; o1 = this.getResposta(); </span>
+
+<span class="fc" id="L61">        RespostaAPreguntaMultiple r2 = (RespostaAPreguntaMultiple) r;</span>
+<span class="fc" id="L62">        ArrayList&lt;Integer&gt; o2 = r2.getResposta();</span>
+
+<span class="fc" id="L64">        double interseccio = 0.0;</span>
+<span class="fc bfc" id="L65" title="All 4 branches covered.">        for(Integer opcio : o1)  if(o2.contains(opcio)) interseccio += 1.0;</span>
+        
+<span class="fc" id="L67">        return 1 - (interseccio / (o1.size() + o2.size() - interseccio));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

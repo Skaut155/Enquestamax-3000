@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CentroidePreguntaObertaStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">CentroidePreguntaObertaStrategy.java</span></div><h1>CentroidePreguntaObertaStrategy.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Centroide strategy for open question responses (RespostaAPreguntaOberta).
+ */
+<span class="fc" id="L10">public class CentroidePreguntaObertaStrategy implements CentroideStrategy {</span>
+    private static CentroidePreguntaObertaStrategy instance;
+
+    /**
+     * Get the singleton instance of CentroidePreguntaObertaStrategy
+     * @return singleton instance of CentroidePreguntaObertaStrategy
+     */
+    public static CentroidePreguntaObertaStrategy getInstance() {
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        if(instance == null) {</span>
+<span class="fc" id="L19">            instance = new CentroidePreguntaObertaStrategy();</span>
+        }
+<span class="fc" id="L21">        return instance;</span>
+    }
+
+    /**
+     * Centroide of a set of RespostaAPregunta of the class RespostaAPreguntaOberta
+     * @param respostes set of RespostaAPregunta
+     * @return centroide of respostes
+     */
+    @Override
+    public RespostaAPregunta&lt;?&gt; calcularCentroide(ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt; respostes) {
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if(respostes.size() == 0) throw new IllegalArgumentException(&quot;Ha d'haver-hi minim una resposta&quot;);</span>
+
+<span class="fc" id="L33">        Map&lt;String, Integer&gt; paraulesFreq = new HashMap&lt;String, Integer&gt;();</span>
+        
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        for(RespostaAPregunta&lt;?&gt; resposta : respostes) {</span>
+            // Assegurar que la resposta és de tipus oberta
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            if(!(resposta instanceof RespostaAPreguntaOberta))</span>
+<span class="fc" id="L38">                throw new IllegalArgumentException(&quot;Resposta no és de tipus oberta&quot;);</span>
+
+            // Obtenir les paraules freqüents de la resposta
+<span class="fc" id="L41">            RespostaAPreguntaOberta respostaOberta = (RespostaAPreguntaOberta) resposta;</span>
+<span class="fc" id="L42">            String textResposta = respostaOberta.getResposta();</span>
+<span class="fc" id="L43">            ArrayList&lt;String&gt; paraules = getParaulesFrequents(textResposta);</span>
+
+            // Actualitzar el mapa de freqüències
+<span class="fc" id="L46">            addSubsetsParaules(paraules, paraulesFreq);</span>
+<span class="fc" id="L47">        }</span>
+
+<span class="fc" id="L49">        return new RespostaAPreguntaOberta(maxFreq(paraulesFreq), respostes.get(0).getOrdrePregunta());</span>
+    }
+
+    /**
+     * Get all the semantic filtered words 
+     * @param resposta string with words
+     * @return Array with each position a semantic filtered word of resposta
+     */
+    private ArrayList&lt;String&gt; getParaulesFrequents(String resposta) {
+<span class="fc" id="L58">        String[] paraulesArray = resposta.split(&quot; &quot;);</span>
+
+<span class="fc" id="L60">        ArrayList&lt;String&gt; paraules = new ArrayList&lt;String&gt;();</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for(String paraula : paraulesArray) {</span>
+<span class="fc" id="L62">            String filteredParaula = filterParaula(paraula);</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            if(filteredParaula == &quot;&quot;) continue;</span>
+<span class="fc" id="L64">            paraules.add(filteredParaula);</span>
+        }
+
+<span class="fc" id="L67">        return paraules;</span>
+    }
+
+    /**
+     * Filtered word
+     * @param paraula word to filter
+     * @return word with only the letters and converted all to lower case or empty string if there are less than 3 letters
+     */
+    private String filterParaula(String paraula) {
+        // Delete non alfabetical characters and lower case all
+<span class="fc" id="L77">        String filteredParaula = paraula.replaceAll(&quot;[^a-zA-Z]&quot;, &quot;&quot;).toLowerCase();</span>
+
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if(filteredParaula.length() &lt; 3) return &quot;&quot;;</span>
+<span class="fc" id="L80">        return filteredParaula;</span>
+    }
+
+    /**
+     * Add to a map of frequencies the frequency of all the posbile combinations of an Array of words
+     * @param paraules array of words
+     * @param paraulesFreq map of frequencies of words
+     */
+    private void addSubsetsParaules(ArrayList&lt;String&gt; paraules, Map&lt;String, Integer&gt; paraulesFreq) {
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        for(String paraula : paraules) {</span>
+<span class="fc" id="L90">            paraulesFreq.put(paraula, paraulesFreq.getOrDefault(paraula, 0) + 1);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">            for(String altraParaula : paraules) {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                if(!paraula.equals(altraParaula)) {</span>
+<span class="fc" id="L93">                    String combinacio = paraula + &quot; &quot; + altraParaula;</span>
+<span class="fc" id="L94">                    paraulesFreq.put(combinacio, paraulesFreq.getOrDefault(combinacio, 0) + 1);</span>
+                }
+<span class="fc" id="L96">            }</span>
+<span class="fc" id="L97">        }</span>
+<span class="fc" id="L98">    }</span>
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

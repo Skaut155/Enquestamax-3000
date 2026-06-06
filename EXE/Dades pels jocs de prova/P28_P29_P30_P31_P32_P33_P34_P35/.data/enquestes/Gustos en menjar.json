@@ -1,0 +1,426 @@
+{
+  "id": 2574,
+  "nom": "Gustos en menjar",
+  "dataCreacio": "2025-12-22T22:11:09.848647221",
+  "preguntes": [
+    {
+      "titol": "Quin tipus de menjar prefereixes?",
+      "obligatoria": true,
+      "ordre": 0,
+      "state": {
+        "code": "UNICA_NO_ORDENADA"
+      },
+      "opcions": [
+        {
+          "ordre": 0,
+          "text": "Cassolà"
+        },
+        {
+          "ordre": 1,
+          "text": "Fast Food"
+        },
+        {
+          "ordre": 2,
+          "text": "Menjar internacional"
+        },
+        {
+          "ordre": 3,
+          "text": "Menjar vegetarià / vegà"
+        },
+        {
+          "ordre": 4,
+          "text": "Altres"
+        }
+      ]
+    },
+    {
+      "titol": "Quin és el teu plat preferit?",
+      "obligatoria": true,
+      "ordre": 1,
+      "state": {
+        "code": "UNICA_NO_ORDENADA"
+      },
+      "opcions": [
+        {
+          "ordre": 0,
+          "text": "Carn"
+        },
+        {
+          "ordre": 1,
+          "text": "Peix"
+        },
+        {
+          "ordre": 2,
+          "text": "Arrós"
+        },
+        {
+          "ordre": 3,
+          "text": "Pasta"
+        },
+        {
+          "ordre": 4,
+          "text": "Amanides"
+        },
+        {
+          "ordre": 5,
+          "text": "Dolços"
+        }
+      ]
+    },
+    {
+      "titol": "Quina beguda prefereixes?",
+      "obligatoria": true,
+      "ordre": 2,
+      "state": {
+        "code": "UNICA_NO_ORDENADA"
+      },
+      "opcions": [
+        {
+          "ordre": 0,
+          "text": "Aigua"
+        },
+        {
+          "ordre": 1,
+          "text": "Sucs"
+        },
+        {
+          "ordre": 2,
+          "text": "Refrescos"
+        },
+        {
+          "ordre": 3,
+          "text": "Beagudes calentes (cafà, te)"
+        },
+        {
+          "ordre": 4,
+          "text": "Begudes alchòliques"
+        }
+      ]
+    },
+    {
+      "titol": "Quin tipus de postres prefereixes?",
+      "obligatoria": true,
+      "ordre": 3,
+      "state": {
+        "code": "UNICA_NO_ORDENADA"
+      },
+      "opcions": [
+        {
+          "ordre": 0,
+          "text": "Gelat / Sorbet"
+        },
+        {
+          "ordre": 1,
+          "text": "Pastissos"
+        },
+        {
+          "ordre": 2,
+          "text": "Fruita"
+        },
+        {
+          "ordre": 3,
+          "text": "Xocolata"
+        },
+        {
+          "ordre": 4,
+          "text": "No m\u0027agraden els postres"
+        }
+      ]
+    }
+  ],
+  "respostesContainer": {
+    "lastId": 10,
+    "respostes": [
+      {
+        "id": 0,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 3,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 1,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 1,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 1,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 2,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 3,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 4,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 3,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 2,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 1,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 3,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 4,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 2,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 3,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 2,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 4,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 5,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 3,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 4,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 3,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 2,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 4,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 2,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 2,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 2,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 1,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 5,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 3,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 3,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 1,
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 1,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          }
+        ]
+      }
+    ]
+  }
+}

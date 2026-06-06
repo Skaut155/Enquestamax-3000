@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TipusPregunta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">TipusPregunta.java</span></div><h1>TipusPregunta.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import Domain.Exceptions.RespostaNoValida;
+
+/**
+ * Abstract class TipusPregunta represents the type of a question in a survey
+ */
+<span class="fc" id="L8">public abstract class TipusPregunta {</span>
+    private String code;
+
+    /**
+     * Gets the string representation of the state
+     * @return A String of the type's name
+     */
+    public String getCode(){
+<span class="fc" id="L16">        return this.code;</span>
+    }
+
+    /**
+     * Sets the string representation of the state
+     * @param code A String of the type's name
+     */
+<span class="fc" id="L23">    protected void setCode(String code){this.code = code;}</span>
+
+    /**
+     * Check options validity for the question type
+     * @throws UnsupportedOperationException if the operation is not supported depending on the question type
+     */
+    public abstract void checkOpcions() throws UnsupportedOperationException;
+
+    /**
+     * Change the type to PreguntaSeleccioUnicaOrdenada
+     * @param p An instance of Pregunta (the caller's 'this')
+     */
+    public void setPreguntaSeleccioUnicaOrdenada(Pregunta p){
+<span class="fc" id="L36">        p.setTipusPregunta(PreguntaSeleccioUnicaOrdenada.getInstance());</span>
+<span class="fc" id="L37">    }</span>
+
+    /**
+     * Change the type to PreguntaRespostaObertaNumerica
+     * @param p An instance of Pregunta (the caller's 'this')
+     */
+    public void setPreguntaRespostaObertaNumerica(Pregunta p){
+<span class="fc" id="L44">        p.setTipusPregunta(PreguntaNumerica.getInstance());</span>
+<span class="fc" id="L45">    }</span>
+
+    /**
+     * Change the type to PreguntaRespostaOberta
+     * @param p An instance of Pregunta (the caller's 'this')
+     */
+    public void setPreguntaRespostaOberta(Pregunta p){
+<span class="fc" id="L52">        p.setTipusPregunta(PreguntaOberta.getInstance());</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Change the type to PreguntaSeleccioUnicaNoOrdenada
+     * @param p An instance of Pregunta (the caller's 'this')
+     */
+    public void setPreguntaSeleccioUnicaNoOrdenada(Pregunta p){
+<span class="fc" id="L60">        p.setTipusPregunta(PreguntaSeleccioUnicaNoOrdenada.getInstance());</span>
+<span class="fc" id="L61">    }</span>
+
+    /**
+     * Change the type to PreguntaSeleccioMultiple
+     * @param p An instance of Pregunta (the caller's 'this')
+     */
+    public void setPreguntaSeleccioMultiple(Pregunta p){
+<span class="fc" id="L68">        p.setTipusPregunta(PreguntaSeleccioMultiple.getInstance());</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Generate a generic answer for the question type
+     * @param resposta The answer string (unparsed)
+     * @param ordrePregunta The question order inside the survey
+     * @param p The question instance requesting the answer generation
+     * @return A RespostaAPregunta instance representing the parsed answer
+     * @throws RespostaNoValida If the answer is not valid for this question type, out of range, or duplicate selections
+     */
+    public RespostaAPregunta&lt;?&gt; generaResposta(String resposta, int ordrePregunta, Pregunta p) throws RespostaNoValida{
+<span class="fc" id="L80">        boolean isOptional = p.isOptional();</span>
+<span class="fc" id="L81">        boolean isBlank = false;</span>
+        // comprovar no empty i no null en cas de que sigui no oblig.
+<span class="fc bfc" id="L83" title="All 4 branches covered.">        if(resposta == null || resposta.isBlank()){</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            if(!isOptional){ //mandatory</span>
+<span class="fc" id="L85">                throw new RespostaNoValida(&quot;La resposta és obligatòria, l'has de respondre.&quot;);</span>
+            }
+<span class="fc" id="L87">            isBlank = true;</span>
+        }
+<span class="fc" id="L89">        return generaEspecific(resposta, ordrePregunta, isBlank, p);</span>
+    }
+
+    /**
+     * Generate a specific answer for the question type
+     * @param resposta The answer string (unparsed)
+     * @param ordrePregunta The question order inside the survey
+     * @param isBlank Whether the answer is blank
+     * @param p The question instance requesting the answer generation
+     * @return A RespostaAPregunta instance representing the parsed answer
+     * @throws RespostaNoValida If the answer is not valid for this question type, out of range, or duplicate selections
+     */
+    protected abstract RespostaAPregunta&lt;?&gt; generaEspecific(String resposta, int ordrePregunta, boolean isBlank, Pregunta p) throws RespostaNoValida;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

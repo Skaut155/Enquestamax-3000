@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TxPlot2D.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Transactions</a> &gt; <span class="el_source">TxPlot2D.java</span></div><h1>TxPlot2D.java</h1><pre class="source lang-java linenums">package Domain.Transactions;
+
+import java.util.ArrayList;
+
+import Domain.Controllers.IEnquestaCtrl;
+import Domain.Factories.CtrlFactory;
+import Domain.Model.AlgoritmeClustering;
+import Domain.Model.CoefficientCalinskiHarabaszStrategy;
+import Domain.Model.CoefficientClusterStrategy;
+import Domain.Model.CoefficientDunnStrategy;
+import Domain.Model.CoefficientSilouheteStrategy;
+import Domain.Model.DistanceEuclideanStrategy;
+import Domain.Model.DistanceManhattanStrategy;
+import Domain.Model.DistanceStrategy;
+import Domain.Model.Enquesta;
+import Domain.Model.K_meansPlusPlus;
+import Domain.Model.K_meansRandom;
+import Domain.Model.Kmedoids;
+import Domain.Model.Pregunta;
+import Domain.Model.RespostaEnquesta;
+
+public class TxPlot2D implements Transaction{
+    
+    private int idEnquesta;
+
+<span class="nc" id="L26">    private Integer k = null;</span>
+    private double thresholdRatio;
+    
+    private String algorithmName;
+    private String distanceStrategyName;
+    private String coefficientStrategyName;
+
+    private ArrayList&lt;RespostaEnquesta&gt;[] clusters;
+    private ArrayList&lt;RespostaEnquesta&gt; respostes;
+    private AlgoritmeClustering algoritme;
+
+<span class="nc" id="L37">    public TxPlot2D(int idEnquesta, String algorithmName, int k, String distanceStrategyName, String coefficientStrategyName) {</span>
+<span class="nc" id="L38">        this.idEnquesta = idEnquesta;</span>
+<span class="nc" id="L39">        this.algorithmName = algorithmName;</span>
+<span class="nc" id="L40">        this.distanceStrategyName = distanceStrategyName;</span>
+<span class="nc" id="L41">        this.coefficientStrategyName = coefficientStrategyName;</span>
+<span class="nc" id="L42">        this.k = k;</span>
+<span class="nc" id="L43">    }</span>
+
+<span class="nc" id="L45">    public TxPlot2D(int idEnquesta, String algorithmName, double thresholdRatio, String distanceStrategyName, String coefficientStrategyName) {</span>
+<span class="nc" id="L46">        this.idEnquesta = idEnquesta;</span>
+<span class="nc" id="L47">        this.algorithmName = algorithmName;</span>
+<span class="nc" id="L48">        this.distanceStrategyName = distanceStrategyName;</span>
+<span class="nc" id="L49">        this.coefficientStrategyName = coefficientStrategyName;</span>
+<span class="nc" id="L50">        this.thresholdRatio = thresholdRatio;</span>
+<span class="nc" id="L51">    }</span>
+
+    public void execute(){
+<span class="nc" id="L54">        IEnquestaCtrl ectrl = CtrlFactory.getInstance().GetEnquestaCtrl();</span>
+<span class="nc" id="L55">        Enquesta e = ectrl.GetEnquesta(idEnquesta);</span>
+<span class="nc" id="L56">        respostes = e.getAllRespostes();</span>
+
+<span class="nc bnc" id="L58" title="All 4 branches missed.">        algoritme = switch (algorithmName) {</span>
+<span class="nc" id="L59">            case &quot;K_MEANS_RANDOM&quot; -&gt; new K_meansRandom();</span>
+<span class="nc" id="L60">            case &quot;K_MEANS_PLUS_PLUS&quot; -&gt; new K_meansPlusPlus();</span>
+<span class="nc" id="L61">            case &quot;K_MEDOIDS&quot; -&gt; new Kmedoids();</span>
+            default -&gt;
+<span class="nc" id="L63">                    throw new IllegalArgumentException(&quot;Algoritme no reconegut, ha de ser K_MEANS_RANDOM, K_MEANS_PLUS_PLUS o K_MEDOIDS&quot;);</span>
+        };
+
+<span class="nc bnc" id="L66" title="All 3 branches missed.">        DistanceStrategy distance = switch(distanceStrategyName){</span>
+<span class="nc" id="L67">            case &quot;DISTANCIA_MANHATTAN&quot; -&gt; DistanceManhattanStrategy.getInstance();</span>
+<span class="nc" id="L68">            case &quot;DISTANCIA_EUCLIDEANA&quot; -&gt; DistanceEuclideanStrategy.getInstance();</span>
+            default -&gt;
+<span class="nc" id="L70">                    throw new IllegalArgumentException(&quot;Distancia no reconeguda, ha de ser DISTANCIA_MANHATTAN o DISTANCIA_EUCLIDEANA&quot;);</span>
+        };
+
+<span class="nc bnc" id="L73" title="All 4 branches missed.">        CoefficientClusterStrategy coefficient = switch(coefficientStrategyName){</span>
+<span class="nc" id="L74">            case &quot;COEFICIENT_DE_SILHOUETE&quot; -&gt; CoefficientSilouheteStrategy.getInstance();</span>
+<span class="nc" id="L75">            case &quot;COEFICIENT_DE_CALINSKI&quot; -&gt; CoefficientCalinskiHarabaszStrategy.getInstance();</span>
+<span class="nc" id="L76">            case &quot;COEFICIENT_DE_DUNN&quot; -&gt; CoefficientDunnStrategy.getInstance();</span>
+            default -&gt;
+<span class="nc" id="L78">                    throw new IllegalArgumentException(&quot;Coeficient no reconegut, ha de ser COEFICIENT_DE_SILHOUETE, COEFICIENT_DE_CALINSKI o COEFICIENT_DE_DUNN&quot;);</span>
+        };
+
+<span class="nc" id="L81">        algoritme.setDistanceStrategy(distance);</span>
+<span class="nc" id="L82">        algoritme.setCoefficientClusterStrategy(coefficient);</span>
+
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if(k == null) clusters = algoritme.computeBestAlgorithm(respostes, thresholdRatio);</span>
+<span class="nc" id="L85">        else clusters = algoritme.computeAlgorithm(k, respostes);</span>
+<span class="nc" id="L86">    }</span>
+
+    public double[][] getPlot2D(){
+<span class="nc" id="L89">        return algoritme.get2DPlot(respostes, clusters);</span>
+    }
+
+    public double getCoefficient(){
+<span class="nc" id="L93">        return algoritme.coefficientCluster(clusters);</span>
+    }
+
+    public int getK(){
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if(k == null) return clusters.length;</span>
+<span class="nc" id="L98">        else return this.k;</span>
+    }
+
+    public String[] getCentroidsStrings(){
+<span class="nc" id="L102">        IEnquestaCtrl enq_ctrl = CtrlFactory.getInstance().GetEnquestaCtrl();</span>
+<span class="nc" id="L103">        Enquesta enq = enq_ctrl.GetEnquesta(idEnquesta);</span>
+<span class="nc" id="L104">        ArrayList&lt;RespostaEnquesta&gt; centroids = algoritme.getCentroids();</span>
+<span class="nc" id="L105">        String[] centroidsStrings = new String[centroids.size()];</span>
+
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        for(int i = 0; i &lt; centroids.size(); ++i){</span>
+
+<span class="nc" id="L109">            RespostaEnquesta r = centroids.get(i);</span>
+<span class="nc" id="L110">            String[] valuesString = r.getRespostesString();</span>
+<span class="nc" id="L111">            centroidsStrings[i] = &quot;&quot;;</span>
+
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            for (int j = 0; j &lt; enq.numPreguntes(); ++j) {</span>
+<span class="nc" id="L114">                Pregunta p = enq.getPregunta(j);</span>
+
+<span class="nc" id="L116">                centroidsStrings[i] += p.toString();</span>
+<span class="nc" id="L117">                centroidsStrings[i] += &quot;Resposta: &quot; + valuesString[j] + &quot;\n&quot;;</span>
+            }
+        }
+<span class="nc" id="L120">        return centroidsStrings;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,7 @@
+Contingut del directori: ./build/jacocoHtml/Data.Controllers.LocalPersistenceCtrl
+  Fitxer: AdminCtrlLocalPersistence.html
+  Fitxer: AdminCtrlLocalPersistence.java.html
+  Fitxer: EnquestaCtrlLocalPersistence.html
+  Fitxer: EnquestaCtrlLocalPersistence.java.html
+  Fitxer: index.html
+  Fitxer: index.source.html

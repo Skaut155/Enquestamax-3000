@@ -1,0 +1,5 @@
+Contingut del directori: ./build/jacocoHtml/Presentation.Controllers
+  Fitxer: CtrlPresentation.html
+  Fitxer: CtrlPresentation.java.html
+  Fitxer: index.html
+  Fitxer: index.source.html

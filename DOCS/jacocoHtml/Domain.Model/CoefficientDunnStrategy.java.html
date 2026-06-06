@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CoefficientDunnStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">CoefficientDunnStrategy.java</span></div><h1>CoefficientDunnStrategy.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+
+/**
+ * Strategy to calculate the Dunn Coefficient for clustering evaluation
+ */
+<span class="fc" id="L8">public class CoefficientDunnStrategy implements CoefficientClusterStrategy {</span>
+
+    private static CoefficientDunnStrategy instance;
+
+    /**
+     * Get the singleton instance of CoefficientDunnStrategy
+     * @return singleton instance of CoefficientDunnStrategy
+     */
+    public static CoefficientDunnStrategy getInstance() {
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L18">            instance = new CoefficientDunnStrategy();</span>
+        }
+<span class="fc" id="L20">        return instance;</span>
+    }
+    
+    /**
+     * Dunn Coefficient to evaluate the clustering
+     * @param clusters result of the clustering
+     * @return Dunn coefficient of clusters
+     */
+    @Override
+    public double calcularCoefficient(ArrayList&lt;RespostaEnquesta&gt;[] clusters) {        
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (clusters.length == 1)</span>
+<span class="fc" id="L31">            throw new IllegalArgumentException(&quot;Ha d'haver-hi mínim 2 clusters per calcular Dunn&quot;);</span>
+
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for (ArrayList&lt;RespostaEnquesta&gt; cluster : clusters) {</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">            if (cluster.isEmpty())</span>
+<span class="fc" id="L35">                throw new IllegalArgumentException(&quot;No pot haver-hi clusters buits&quot;);</span>
+        }
+
+        // Compute minimum inter-cluster distance
+<span class="fc" id="L39">        double minInterClusterDist = minInterClusterDistance(clusters);</span>
+
+        // Compute maximum intra-cluster distance (diameter)
+<span class="fc" id="L42">        double maxIntraClusterDist = maxIntraClusterDistance(clusters);</span>
+
+        // Dunn Index = min inter-cluster distance / max intra-cluster distance
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (maxIntraClusterDist == 0) return Double.POSITIVE_INFINITY;</span>
+        
+<span class="fc" id="L47">        return minInterClusterDist / maxIntraClusterDist;</span>
+    }
+
+    /**
+     * Compute the minimum distance between any two clusters
+     * @param clusters Array of clusters
+     * @return Minimum inter-cluster distance
+     */
+    private double minInterClusterDistance(ArrayList&lt;RespostaEnquesta&gt;[] clusters) {
+<span class="fc" id="L56">        double minDist = Double.POSITIVE_INFINITY;</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        for (int i = 0; i &lt; clusters.length; i++) {</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            for (int j = i + 1; j &lt; clusters.length; j++) {</span>
+<span class="fc" id="L60">                double dist = clusterDistance(clusters[i], clusters[j]);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">                if (dist &lt; minDist) {</span>
+<span class="fc" id="L62">                    minDist = dist;</span>
+                }
+            }
+        }
+
+<span class="fc" id="L67">        return minDist;</span>
+    }
+
+    /**
+     * Compute the distance between two clusters (minimum distance between any two points)
+     * @param cluster1 First cluster
+     * @param cluster2 Second cluster
+     * @return Distance between the two clusters
+     */
+    private double clusterDistance(ArrayList&lt;RespostaEnquesta&gt; cluster1, ArrayList&lt;RespostaEnquesta&gt; cluster2) {
+<span class="fc" id="L77">        double minDist = Double.POSITIVE_INFINITY;</span>
+
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        for (RespostaEnquesta resposta1 : cluster1) {</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            for (RespostaEnquesta resposta2 : cluster2) {</span>
+<span class="fc" id="L81">                double dist = distance.calcularDistRespostesEnquesta(resposta1, resposta2);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">                if (dist &lt; minDist) {</span>
+<span class="fc" id="L83">                    minDist = dist;</span>
+                }
+<span class="fc" id="L85">            }</span>
+<span class="fc" id="L86">        }</span>
+
+<span class="fc" id="L88">        return minDist;</span>
+    }
+
+    /**
+     * Compute the maximum intra-cluster distance (diameter) across all clusters
+     * @param clusters Array of clusters
+     * @return Maximum intra-cluster distance
+     */
+    private double maxIntraClusterDistance(ArrayList&lt;RespostaEnquesta&gt;[] clusters) {
+<span class="fc" id="L97">        double maxDiameter = 0.0;</span>
+
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for (ArrayList&lt;RespostaEnquesta&gt; cluster : clusters) {</span>
+<span class="fc" id="L100">            double diameter = clusterDiameter(cluster);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if (diameter &gt; maxDiameter) {</span>
+<span class="fc" id="L102">                maxDiameter = diameter;</span>
+            }
+        }
+
+<span class="fc" id="L106">        return maxDiameter;</span>
+    }
+
+    /**
+     * Compute the diameter of a cluster (maximum distance between any two points)
+     * @param cluster Cluster to compute diameter for
+     * @return Diameter of the cluster
+     */
+    private double clusterDiameter(ArrayList&lt;RespostaEnquesta&gt; cluster) {
+<span class="fc" id="L115">        double maxDist = 0.0;</span>
+
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        for (int i = 0; i &lt; cluster.size(); i++) {</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            for (int j = i + 1; j &lt; cluster.size(); j++) {</span>
+<span class="fc" id="L119">                double dist = distance.calcularDistRespostesEnquesta(</span>
+<span class="fc" id="L120">                    cluster.get(i), cluster.get(j)</span>
+                );
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                if (dist &gt; maxDist) {</span>
+<span class="fc" id="L123">                    maxDist = dist;</span>
+                }
+            }
+        }
+
+<span class="fc" id="L128">        return maxDist;</span>
+    }
+
+    /**
+     * Acceptable threshold for the Dunn coefficient
+     * @return acceptable threshold value
+     */
+    @Override
+    public double acceptableThreshold() {
+<span class="fc" id="L137">        return 1.0;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

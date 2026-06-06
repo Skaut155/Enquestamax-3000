@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">BaseView.java</span></div><h1>BaseView.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import javax.swing.*;
+
+public abstract class BaseView {
+    protected final JFrame frame;
+
+<span class="nc" id="L8">    public BaseView(String title) {</span>
+<span class="nc" id="L9">        this.frame = new JFrame(title);</span>
+<span class="nc" id="L10">        configureFrame();</span>
+<span class="nc" id="L11">    }</span>
+
+    private void configureFrame() {
+<span class="nc" id="L14">        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);</span>
+<span class="nc" id="L15">        frame.setLocationRelativeTo(null);</span>
+<span class="nc" id="L16">    }</span>
+
+    public void hacerVisible() {
+<span class="nc" id="L19">        frame.setVisible(true);</span>
+<span class="nc" id="L20">    }</span>
+
+    public boolean isVisible() {
+<span class="nc" id="L23">        return frame.isVisible();</span>
+    }
+
+    public void toFront() {
+<span class="nc" id="L27">        frame.toFront();</span>
+<span class="nc" id="L28">        frame.setState(JFrame.NORMAL);</span>
+<span class="nc" id="L29">    }</span>
+
+    public void requestFocus() {
+<span class="nc" id="L32">        frame.requestFocus();</span>
+<span class="nc" id="L33">    }</span>
+
+    public void dispose() {
+<span class="nc" id="L36">        frame.dispose();</span>
+<span class="nc" id="L37">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

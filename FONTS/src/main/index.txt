@@ -1,0 +1,4 @@
+Directori: src/main
+
+Aquest directori conte el codi principal de l'aplicacio.
+

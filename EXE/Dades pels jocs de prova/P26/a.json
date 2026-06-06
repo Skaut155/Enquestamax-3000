@@ -1,0 +1,37 @@
+{
+  "id": 0,
+  "respostes": [
+    {
+      "code": "UNICA_NO_ORDENADA",
+      "resposta": 0,
+      "ordrePregunta": 0,
+      "centroideStrategy": {}
+    },
+    {
+      "code": "OBERTA",
+      "resposta": "a",
+      "ordrePregunta": 1,
+      "centroideStrategy": {}
+    },
+    {
+      "code": "NUMERICA",
+      "resposta": 0.0,
+      "ordrePregunta": 2,
+      "centroideStrategy": {}
+    },
+    {
+      "code": "UNICA_ORDENADA",
+      "resposta": 1,
+      "ordrePregunta": 3,
+      "centroideStrategy": {}
+    },
+    {
+      "code": "MULTIPLE",
+      "resposta": [
+        0
+      ],
+      "ordrePregunta": 4,
+      "centroideStrategy": {}
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminCtrlNoDB.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Controllers.NoDBCtrl</a> &gt; <span class="el_source">AdminCtrlNoDB.java</span></div><h1>AdminCtrlNoDB.java</h1><pre class="source lang-java linenums">package Domain.Controllers.NoDBCtrl;
+
+import Domain.Controllers.IAdminCtrl;
+import Domain.Model.Admin;
+import Domain.Exceptions.AdminJaExisteix;
+import Domain.Exceptions.AdminNoExisteix;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+/**
+ * In-memory implementation of the Admin controller without database persistence.
+ * Manages Admin instances using a Dictionary data structure.
+ */
+<span class="fc" id="L15">public class AdminCtrlNoDB implements IAdminCtrl {</span>
+
+    /**
+     * Dictionary storing Admin instances indexed by their name in memory.
+     */
+<span class="fc" id="L20">    private Dictionary&lt;String, Admin&gt; adminsMemoria = new Hashtable&lt;String, Admin&gt;();</span>
+
+    /**
+     * Dictionary storing Admin instances indexed by their name in persistence.
+     */
+<span class="fc" id="L25">    private Dictionary&lt;String, Admin&gt; adminsPersistencia = new Hashtable&lt;String, Admin&gt;();</span>
+
+    /**
+     * Retrieves an Admin instance by name.
+     *
+     * @param nom the name of the Admin to retrieve
+     * @return the Admin instance with the specified name
+     * @throws AdminNoExisteix if no Admin with the given name exists
+     */
+    public Admin GetAdmin(String nom) throws AdminNoExisteix{
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (nom == null) {</span>
+<span class="fc" id="L36">            throw new AdminNoExisteix(&quot;El nom de l'admin no pot ser null&quot;);</span>
+        }
+
+        Admin a;
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if ((a = adminsMemoria.get(nom)) != null) {</span>
+<span class="fc" id="L41">            return a;</span>
+        }
+        else {
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">            if ((a = adminsPersistencia.get(nom)) != null) {</span>
+<span class="nc" id="L45">                adminsMemoria.put(nom, a);</span>
+<span class="nc" id="L46">                return a;</span>
+            }
+        }
+
+<span class="fc" id="L50">        throw new AdminNoExisteix(&quot;No existeix una instància de admin amb nom &quot; + nom);</span>
+    }
+
+    /**
+     * Adds a new Admin instance to the system.
+     *
+     * @param new_admin the Admin instance to add
+     * @throws AdminJaExisteix if an Admin with the same name already exists
+     */
+    public void AddAdmin(Admin new_admin) throws AdminJaExisteix{
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (adminsMemoria.get(new_admin.getNom()) != null) {</span>
+<span class="fc" id="L61">            throw new AdminJaExisteix(&quot;Ja existeix una instància de admin amb nom &quot; + new_admin.getNom());</span>
+        }
+
+<span class="fc" id="L64">        adminsMemoria.put(new_admin.getNom(), new_admin);</span>
+<span class="fc" id="L65">        adminsPersistencia.put(new_admin.getNom(), new_admin);</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Updates an existing Admin instance from the system to persistence.
+     *
+     * @param admin the Admin instance to update
+     * @throws AdminNoExisteix if no Admin with the given name exists
+     */
+    @Override
+    public void updateAdmin(Admin admin) throws AdminNoExisteix {
+<span class="nc" id="L76">        String nom = admin.getNom();</span>
+
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        if (adminsMemoria.get(nom) == null) {</span>
+<span class="nc" id="L79">            throw new AdminNoExisteix(&quot;No existeix una instància de admin amb nom &quot; + nom + &quot; a la memòria&quot;);</span>
+        }
+
+<span class="nc" id="L82">        adminsPersistencia.remove(nom);</span>
+<span class="nc" id="L83">        adminsPersistencia.put(nom, adminsMemoria.get(nom));</span>
+<span class="nc" id="L84">    }</span>
+
+    /**
+     * Deletes an Admin instance from the system.
+     *
+     * @param nom the name of the Admin to delete
+     * @throws AdminNoExisteix if no Admin with the given name exists
+     */
+    @Override
+    public void deleteAdmin(String nom) throws AdminNoExisteix {
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (adminsPersistencia.get(nom) == null) {</span>
+<span class="nc" id="L95">            throw new AdminNoExisteix(&quot;No existeix una instància de admin amb nom &quot; + nom);</span>
+        }
+<span class="nc" id="L97">        adminsPersistencia.remove(nom);</span>
+
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (adminsMemoria.get(nom) != null) {</span>
+<span class="nc" id="L100">            adminsMemoria.remove(nom);</span>
+        }
+<span class="nc" id="L102">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

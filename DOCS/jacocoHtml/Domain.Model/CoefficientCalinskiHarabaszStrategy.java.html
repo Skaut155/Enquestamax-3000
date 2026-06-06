@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CoefficientCalinskiHarabaszStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">CoefficientCalinskiHarabaszStrategy.java</span></div><h1>CoefficientCalinskiHarabaszStrategy.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+
+/**
+ * Strategy to calculate the Calinski-Harabasz Coefficient for clustering evaluation
+ */
+<span class="fc" id="L8">public class CoefficientCalinskiHarabaszStrategy implements CoefficientClusterStrategy {</span>
+
+    private static CoefficientCalinskiHarabaszStrategy instance;
+
+    /**
+     * Get the singleton instance of CoefficientCalinskiHarabaszStrategy
+     * @return singleton instance of CoefficientCalinskiHarabaszStrategy
+     */
+    public static CoefficientCalinskiHarabaszStrategy getInstance() {
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L18">            instance = new CoefficientCalinskiHarabaszStrategy();</span>
+        }
+<span class="fc" id="L20">        return instance;</span>
+    }
+    
+    /**
+     * Calinski-Harabasz Coefficient to evaluate the clustering
+     * @param clusters result of the clustering
+     * @return Calinski-Harabasz coefficient of clusters
+     */
+    @Override
+    public double calcularCoefficient(ArrayList&lt;RespostaEnquesta&gt;[] clusters) {
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (clusters.length == 1)</span>
+<span class="fc" id="L31">            throw new IllegalArgumentException(&quot;Ha d'haver-hi mínim 2 clusters per calcular Calinski-Harabasz&quot;);</span>
+
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for (ArrayList&lt;RespostaEnquesta&gt; cluster : clusters) {</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">            if (cluster.isEmpty())</span>
+<span class="fc" id="L35">                throw new IllegalArgumentException(&quot;No pot haver-hi clusters buits&quot;);</span>
+        }
+
+        // Total number of points
+<span class="fc" id="L39">        int n = 0;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        for (ArrayList&lt;RespostaEnquesta&gt; cluster : clusters) {</span>
+<span class="fc" id="L41">            n += cluster.size();</span>
+        }
+
+        // Number of clusters
+<span class="fc" id="L45">        int k = clusters.length;</span>
+
+        // Compute global centroid
+<span class="fc" id="L48">        RespostaEnquesta globalCentroid = computeGlobalCentroid(clusters);</span>
+
+        // Compute between-cluster sum of squares (BCSS)
+<span class="fc" id="L51">        double bcss = computeBetweenClusterSS(clusters, globalCentroid);</span>
+
+        // Compute within-cluster sum of squares (WCSS)
+<span class="fc" id="L54">        double wcss = computeWithinClusterSS(clusters);</span>
+
+        // Calinski-Harabasz Index = (BCSS / (k - 1)) / (WCSS / (n - k))
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (wcss == 0) return Double.POSITIVE_INFINITY;</span>
+
+<span class="fc" id="L59">        return (bcss / (k - 1)) / (wcss / (n - k));</span>
+    }
+
+    /**
+     * Compute the global centroid of all clusters
+     * @param clusters Array of clusters
+     * @return Global centroid
+     */
+    private RespostaEnquesta computeGlobalCentroid(ArrayList&lt;RespostaEnquesta&gt;[] clusters) {
+<span class="fc" id="L68">        ArrayList&lt;RespostaEnquesta&gt; allRespostes = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        for (ArrayList&lt;RespostaEnquesta&gt; cluster : clusters) {</span>
+<span class="fc" id="L70">            allRespostes.addAll(cluster);</span>
+        }
+<span class="fc" id="L72">        return computeCentroid(allRespostes);</span>
+    }
+
+    /**
+     * Compute the centroids of a single cluster
+     * @param cluster cluster of RespostaEnquesta of the same Enquesta
+     * @return centroid (median) of the cluster
+     */
+    private RespostaEnquesta computeCentroid(ArrayList&lt;RespostaEnquesta&gt; cluster) {        
+<span class="fc" id="L81">        ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt;[] respostes = groupByPregunta(cluster);</span>
+<span class="fc" id="L82">        RespostaEnquesta centroid = new RespostaEnquesta();</span>
+<span class="fc" id="L83">        centroid.associaContainer(cluster.get(0).getContainer());</span>
+
+        // Compute the centroid for each question
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        for (int j = 0; j &lt; respostes.length; ++j) {</span>
+<span class="fc" id="L87">            RespostaAPregunta r = respostes[j].get(0).calcularCentroide(respostes[j]);</span>
+<span class="fc" id="L88">            centroid.addRespostaAPregunta(r);</span>
+        }
+
+<span class="fc" id="L91">        return centroid;</span>
+    }
+
+    /**
+     * Group responses by question
+     * @param cluster cluster of RespostaEnquesta
+     * @return Array of ArrayLists, each containing responses to the same question
+     */
+    private ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt;[] groupByPregunta(ArrayList&lt;RespostaEnquesta&gt; cluster) {        
+<span class="fc" id="L100">        int numPreguntes = cluster.get(0).getRespostes().size();</span>
+<span class="fc" id="L101">        ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt;[] respostes = new ArrayList[numPreguntes];</span>
+        
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        for (int i = 0; i &lt; numPreguntes; i++) {</span>
+<span class="fc" id="L104">            respostes[i] = new ArrayList&lt;&gt;();</span>
+        }
+        
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        for (RespostaEnquesta re : cluster) {</span>
+<span class="fc" id="L108">            ArrayList&lt;RespostaAPregunta&gt; respostesPreguntes = re.getRespostes();</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            for (int i = 0; i &lt; respostesPreguntes.size(); i++) {</span>
+<span class="fc" id="L110">                respostes[i].add(respostesPreguntes.get(i));</span>
+            }
+<span class="fc" id="L112">        }</span>
+        
+<span class="fc" id="L114">        return respostes;</span>
+    }
+
+    /**
+     * Compute between-cluster sum of squares (BCSS)
+     * @param clusters Array of clusters
+     * @param globalCentroid Global centroid of all data
+     * @return Between-cluster sum of squares
+     */
+    private double computeBetweenClusterSS(ArrayList&lt;RespostaEnquesta&gt;[] clusters, RespostaEnquesta globalCentroid) {
+<span class="fc" id="L124">        double bcss = 0.0;</span>
+
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        for (ArrayList&lt;RespostaEnquesta&gt; cluster : clusters) {</span>
+<span class="fc" id="L127">            RespostaEnquesta clusterCentroid = computeCentroid(cluster);</span>
+<span class="fc" id="L128">            double dist = distance.calcularDistRespostesEnquesta(clusterCentroid, globalCentroid);</span>
+<span class="fc" id="L129">            bcss += cluster.size() * dist * dist;</span>
+        }
+
+<span class="fc" id="L132">        return bcss;</span>
+    }
+
+    /**
+     * Compute within-cluster sum of squares (WCSS)
+     * @param clusters Array of clusters
+     * @return Within-cluster sum of squares
+     */
+    private double computeWithinClusterSS(ArrayList&lt;RespostaEnquesta&gt;[] clusters) {
+<span class="fc" id="L141">        double wcss = 0.0;</span>
+
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        for (ArrayList&lt;RespostaEnquesta&gt; cluster : clusters) {</span>
+<span class="fc" id="L144">            RespostaEnquesta clusterCentroid = computeCentroid(cluster);</span>
+            
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            for (RespostaEnquesta resposta : cluster) {</span>
+<span class="fc" id="L147">                double dist = distance.calcularDistRespostesEnquesta(resposta, clusterCentroid);</span>
+<span class="fc" id="L148">                wcss += dist * dist;</span>
+<span class="fc" id="L149">            }</span>
+        }
+
+<span class="fc" id="L152">        return wcss;</span>
+    }
+
+    /**
+     * Acceptable threshold for the Calinski-Harabasz coefficient
+     * @return acceptable threshold value
+     */
+    @Override
+    public double acceptableThreshold() {
+<span class="fc" id="L161">        return 10.0;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

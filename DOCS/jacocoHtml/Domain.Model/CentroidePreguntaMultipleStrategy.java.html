@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CentroidePreguntaMultipleStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">CentroidePreguntaMultipleStrategy.java</span></div><h1>CentroidePreguntaMultipleStrategy.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Centroide strategy for multiple choice question responses (&quot;RespostaAPreguntaMultiple&quot;).
+ */
+<span class="fc" id="L10">public class CentroidePreguntaMultipleStrategy implements CentroideStrategy {</span>
+    private static CentroidePreguntaMultipleStrategy instance;
+
+    /**
+     * Get the singleton instance of CentroidePreguntaMultipleStrategy
+     * @return singleton instance of CentroidePreguntaMultipleStrategy
+     */
+    public static CentroidePreguntaMultipleStrategy getInstance() {
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L19">            instance = new CentroidePreguntaMultipleStrategy();</span>
+        }
+<span class="fc" id="L21">        return instance;</span>
+    }
+
+    /**
+     * Centroide of a set of RespostaAPregunta of the class RespostaAPreguntaMultiple
+     * @param respostes set of RespostaAPregunta
+     * @return centroide of respostes
+     */
+    @Override
+    public RespostaAPregunta&lt;?&gt; calcularCentroide(ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt; respostes) {
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if(respostes.size() == 0) throw new IllegalArgumentException(&quot;Ha d'haver-hi minim una resposta&quot;);</span>
+
+<span class="fc" id="L33">        Map&lt;ArrayList&lt;Integer&gt;, Integer&gt; freqOpcions = new HashMap&lt;ArrayList&lt;Integer&gt;, Integer&gt;();</span>
+
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        for(RespostaAPregunta&lt;?&gt; resposta : respostes){</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            if(!(resposta instanceof RespostaAPreguntaMultiple))</span>
+<span class="fc" id="L37">                throw new IllegalArgumentException(&quot;Resposta no és de tipus multiple&quot;);</span>
+
+<span class="fc" id="L39">            RespostaAPreguntaMultiple respostaMultiple = (RespostaAPreguntaMultiple) resposta;</span>
+<span class="fc" id="L40">            ArrayList&lt;Integer&gt; opcions = respostaMultiple.getResposta();   </span>
+            
+            // Recalculate frequencies of options
+<span class="fc" id="L43">            freqOpcions.put(opcions, freqOpcions.getOrDefault(opcions, 0) + 1);</span>
+<span class="fc" id="L44">        }</span>
+        // Take the most common option
+<span class="fc" id="L46">        return new RespostaAPreguntaMultiple(maxFreq(freqOpcions), respostes.get(0).getOrdrePregunta());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

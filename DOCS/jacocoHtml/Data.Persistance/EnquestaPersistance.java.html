@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EnquestaPersistance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Data.Persistance</a> &gt; <span class="el_source">EnquestaPersistance.java</span></div><h1>EnquestaPersistance.java</h1><pre class="source lang-java linenums">package Data.Persistance;
+
+import Domain.Adapters.IEnquestaPersistance;
+import Domain.Model.*;
+import com.google.gson.*;
+
+import java.io.*;
+import java.time.LocalDateTime;
+
+/**
+ * Implementation of survey (enquesta) persistence operations using JSON files.
+ */
+<span class="fc" id="L13">public class EnquestaPersistance implements IEnquestaPersistance {</span>
+    /**
+     * Directory to store survey (enquesta) JSON files.
+     */
+    private static final String DATA_DIR = &quot;./.data/enquestes&quot;;
+
+    /**
+     * Ensures that the data directory exists; creates it if it doesn't.
+     */
+    private void ensureDataDirExists() {
+<span class="fc" id="L23">        File dir = new File(DATA_DIR);</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if (!dir.exists()) {</span>
+<span class="nc" id="L25">            dir.mkdirs();</span>
+        }
+<span class="fc" id="L27">    }</span>
+
+    /**
+     * Saves a survey (enquesta).
+     * @param enquesta the Enquesta object to save.
+     * @return the path to the saved JSON file.
+     */
+    public String saveEnquesta(Enquesta enquesta) {
+<span class="fc" id="L35">        ensureDataDirExists();</span>
+
+        // Java 21 safe LocalDateTime adapter
+<span class="fc" id="L38">        JsonSerializer&lt;LocalDateTime&gt; ldtSer = (src, typeOfSrc, context) -&gt; context.serialize(src.toString());</span>
+<span class="pc" id="L39">        JsonDeserializer&lt;LocalDateTime&gt; ldtDeser = (json, typeOfT, context) -&gt; LocalDateTime.parse(json.getAsString());</span>
+
+<span class="fc" id="L41">        Gson gson = new GsonBuilder()</span>
+<span class="fc" id="L42">                .registerTypeAdapter(LocalDateTime.class, ldtSer)</span>
+<span class="fc" id="L43">                .registerTypeAdapter(LocalDateTime.class, ldtDeser)</span>
+<span class="fc" id="L44">                .setPrettyPrinting()</span>
+<span class="fc" id="L45">                .create();</span>
+<span class="fc" id="L46">        String jsonString = gson.toJson(enquesta);</span>
+
+<span class="fc" id="L48">        String fPath = getPath(enquesta.getId());</span>
+<span class="fc" id="L49">        try (FileWriter fileWriter = new FileWriter(fPath)) {</span>
+<span class="fc" id="L50">            fileWriter.write(jsonString);</span>
+<span class="nc" id="L51">        } catch (IOException e) {</span>
+<span class="nc" id="L52">            throw new RuntimeException(e);</span>
+<span class="fc" id="L53">        }</span>
+
+<span class="fc" id="L55">        return fPath;</span>
+    }
+
+    /**
+     * Loads a survey (enquesta) by its ID.
+     * @param idEnquesta the ID of the survey to load.
+     * @return the Enquesta object if found, null otherwise.
+     */
+    public Enquesta loadEnquesta(int idEnquesta) {
+<span class="fc" id="L64">        return loadEnquestaByPath(getPath(idEnquesta));</span>
+    }
+
+    /**
+     * Loads a survey (enquesta) from a specified file path.
+     * @param pathToFile the path to the JSON file containing the survey data.
+     * @return the Enquesta object if found, null otherwise.
+     */
+    public Enquesta loadEnquestaByPath(String pathToFile) {
+<span class="fc" id="L73">        File file = new File(pathToFile);</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (!file.exists()) {</span>
+<span class="fc" id="L75">            return null;</span>
+        }
+
+<span class="pc" id="L78">        JsonSerializer&lt;LocalDateTime&gt; ldtSer = (src, typeOfSrc, context) -&gt; context.serialize(src.toString());</span>
+<span class="fc" id="L79">        JsonDeserializer&lt;LocalDateTime&gt; ldtDeser = (json, typeOfT, context) -&gt; LocalDateTime.parse(json.getAsString());</span>
+
+        // Custom deserializer to reconstruct the correct TipusPregunta singleton from its code
+<span class="fc" id="L82">        JsonDeserializer&lt;TipusPregunta&gt; tipusPreguntaDeser = (json, typeOfT, context) -&gt; {</span>
+<span class="fc" id="L83">            JsonObject obj = json.getAsJsonObject();</span>
+<span class="fc" id="L84">            JsonElement codeElem = obj.get(&quot;code&quot;);</span>
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">            if (codeElem == null || codeElem.isJsonNull()) {</span>
+<span class="nc" id="L86">                return PreguntaSeleccioUnicaNoOrdenada.getInstance(); // default type</span>
+            }
+<span class="fc" id="L88">            String code = codeElem.getAsString();</span>
+<span class="pc bpc" id="L89" title="1 of 6 branches missed.">            switch (code) {</span>
+                case &quot;UNICA_ORDENADA&quot;:
+<span class="fc" id="L91">                    return PreguntaSeleccioUnicaOrdenada.getInstance();</span>
+                case &quot;UNICA_NO_ORDENADA&quot;:
+<span class="fc" id="L93">                    return PreguntaSeleccioUnicaNoOrdenada.getInstance();</span>
+                case &quot;MULTIPLE&quot;:
+<span class="fc" id="L95">                    return PreguntaSeleccioMultiple.getInstance();</span>
+                case &quot;OBERTA&quot;:
+<span class="fc" id="L97">                    return PreguntaOberta.getInstance();</span>
+                case &quot;NUMERICA&quot;:
+<span class="fc" id="L99">                    return PreguntaNumerica.getInstance();</span>
+                default:
+<span class="nc" id="L101">                    return PreguntaSeleccioUnicaNoOrdenada.getInstance();</span>
+            }
+        };
+
+<span class="fc" id="L105">        JsonDeserializer&lt;RespostaAPregunta&lt;?&gt;&gt; respostaAPreguntaDeser = (json, typeOfT, context) -&gt; {</span>
+<span class="fc" id="L106">            JsonObject obj = json.getAsJsonObject();</span>
+            // We expect a 'code' discriminator that identifies the concrete type
+<span class="fc" id="L108">            JsonElement codeElem = obj.get(&quot;code&quot;);</span>
+<span class="pc bpc" id="L109" title="2 of 4 branches missed.">            if (codeElem == null || codeElem.isJsonNull()) {</span>
+                // Fallback: return null or throw; here we choose null to avoid breaking deserialization
+<span class="nc" id="L111">                return null;</span>
+            }
+<span class="fc" id="L113">            String code = codeElem.getAsString();</span>
+
+            // Get common fields
+<span class="fc" id="L116">            JsonElement ordreElem = obj.get(&quot;ordrePregunta&quot;);</span>
+<span class="pc bpc" id="L117" title="2 of 4 branches missed.">            if (ordreElem == null || ordreElem.isJsonNull()) {</span>
+<span class="nc" id="L118">                return null;</span>
+            }
+<span class="fc" id="L120">            int ordrePregunta = ordreElem.getAsInt();</span>
+
+            // Get the response value based on type
+<span class="fc" id="L123">            JsonElement respostaElem = obj.get(&quot;resposta&quot;);</span>
+
+<span class="pc bpc" id="L125" title="1 of 6 branches missed.">            switch (code) {</span>
+                case &quot;NUMERICA&quot;:
+<span class="pc bpc" id="L127" title="2 of 4 branches missed.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull()) {</span>
+<span class="fc" id="L128">                        double valorNumeric = respostaElem.getAsDouble();</span>
+<span class="fc" id="L129">                        return new RespostaAPreguntaNumerica(valorNumeric, ordrePregunta);</span>
+                    }
+<span class="nc" id="L131">                    return new RespostaAPreguntaNumerica(ordrePregunta);</span>
+
+                case &quot;OBERTA&quot;:
+<span class="pc bpc" id="L134" title="2 of 4 branches missed.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull()) {</span>
+<span class="fc" id="L135">                        String valorOberta = respostaElem.getAsString();</span>
+<span class="fc" id="L136">                        return new RespostaAPreguntaOberta(valorOberta, ordrePregunta);</span>
+                    }
+<span class="nc" id="L138">                    return new RespostaAPreguntaOberta(ordrePregunta);</span>
+
+                case &quot;MULTIPLE&quot;:
+<span class="pc bpc" id="L141" title="3 of 6 branches missed.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull() &amp;&amp; respostaElem.isJsonArray()) {</span>
+<span class="fc" id="L142">                        java.util.ArrayList&lt;Integer&gt; opcionsMultiples = new java.util.ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                        for (JsonElement elem : respostaElem.getAsJsonArray()) {</span>
+<span class="fc" id="L144">                            opcionsMultiples.add(elem.getAsInt());</span>
+<span class="fc" id="L145">                        }</span>
+<span class="fc" id="L146">                        return new RespostaAPreguntaMultiple(opcionsMultiples, ordrePregunta);</span>
+                    }
+<span class="nc" id="L148">                    return new RespostaAPreguntaMultiple(ordrePregunta);</span>
+
+                case &quot;UNICA_ORDENADA&quot;:
+<span class="pc bpc" id="L151" title="2 of 4 branches missed.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull()) {</span>
+<span class="fc" id="L152">                        int valorOrdenada = respostaElem.getAsInt();</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">                        if(valorOrdenada != -1)</span>
+<span class="fc" id="L154">                            return new RespostaAPreguntaOrdenada(valorOrdenada, ordrePregunta);</span>
+                        else
+<span class="nc" id="L156">                            return new RespostaAPreguntaOrdenada(ordrePregunta);</span>
+                    }
+<span class="nc" id="L158">                    return new RespostaAPreguntaOrdenada(ordrePregunta);</span>
+
+                case &quot;UNICA_NO_ORDENADA&quot;:
+<span class="pc bpc" id="L161" title="2 of 4 branches missed.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull()) {</span>
+<span class="fc" id="L162">                        int valorNoOrdenada = respostaElem.getAsInt();</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">                        if(valorNoOrdenada != -1)</span>
+<span class="fc" id="L164">                            return new RespostaAPreguntaNoOrdenada(valorNoOrdenada, ordrePregunta);</span>
+                        else
+<span class="nc" id="L166">                            return new RespostaAPreguntaNoOrdenada(ordrePregunta);</span>
+                    }
+<span class="nc" id="L168">                    return new RespostaAPreguntaNoOrdenada(ordrePregunta);</span>
+
+                default:
+<span class="nc" id="L171">                    return null;</span>
+            }
+        };
+
+<span class="fc" id="L175">        Gson gson = new GsonBuilder()</span>
+<span class="fc" id="L176">                .registerTypeAdapter(LocalDateTime.class, ldtSer)</span>
+<span class="fc" id="L177">                .registerTypeAdapter(LocalDateTime.class, ldtDeser)</span>
+<span class="fc" id="L178">                .registerTypeAdapter(TipusPregunta.class, tipusPreguntaDeser)</span>
+<span class="fc" id="L179">                .registerTypeAdapter(RespostaAPregunta.class, respostaAPreguntaDeser)</span>
+<span class="fc" id="L180">                .create();</span>
+
+<span class="fc" id="L182">        try (FileReader reader = new FileReader(file)) {</span>
+<span class="fc" id="L183">            Enquesta e = gson.fromJson(reader, Enquesta.class);</span>
+            // iterate through all RespostaEnquesta and set their parent RepostesContainer
+<span class="fc" id="L185">            RespostesContainer respostesContainer = e.getRespostesContainer();</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">            for (RespostaEnquesta re : e.getAllRespostes()) {</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">                for(RespostaAPregunta&lt;?&gt; rap : re.getRespostes()) {</span>
+<span class="fc" id="L188">                    rap.setRespostaEnquesta(re);</span>
+<span class="fc" id="L189">                }</span>
+<span class="fc" id="L190">                re.associaContainer(respostesContainer);</span>
+
+<span class="fc" id="L192">            }</span>
+<span class="fc" id="L193">            respostesContainer.associaEnquesta(e);</span>
+
+<span class="fc" id="L195">            return e;</span>
+<span class="nc" id="L196">        } catch (IOException e) {</span>
+<span class="nc" id="L197">            throw new RuntimeException(e.getMessage());</span>
+        }
+    }
+
+    /**
+     * Deletes a survey (enquesta) by its ID.
+     * @param idEnquesta the ID of the survey to delete.
+     * @return true if the survey was successfully deleted, false otherwise.
+     */
+    public boolean deleteEnquesta(int idEnquesta) {
+<span class="fc" id="L207">        File file = new File(getPath(idEnquesta));</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        if (file.exists()) {</span>
+<span class="fc" id="L209">            return file.delete();</span>
+        }
+<span class="fc" id="L211">        return false;</span>
+    }
+
+    /**
+     * Checks if a survey (enquesta) with the given ID exists.
+     * @param idEnquesta the ID of the survey to check.
+     * @return true if the survey exists, false otherwise.
+     */
+    public boolean existsEnquesta(int idEnquesta) {
+<span class="fc" id="L220">        File file = new File(getPath(idEnquesta));</span>
+<span class="fc" id="L221">        return file.exists();</span>
+    }
+
+    /**
+     * Gets the last used survey (enquesta) ID.
+     * @return the last used ID, or 0 if no surveys exist.
+     */
+    public int getLastId(){
+<span class="fc" id="L229">        ensureDataDirExists();</span>
+<span class="fc" id="L230">        File dir = new File(DATA_DIR);</span>
+<span class="fc" id="L231">        String[] files = dir.list();</span>
+<span class="fc" id="L232">        int maxId = 0;</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">        if (files != null) {</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">            for (String fileName : files) {</span>
+<span class="pc bpc" id="L235" title="1 of 4 branches missed.">                if (fileName.startsWith(&quot;enquesta-&quot;) &amp;&amp; fileName.endsWith(&quot;.json&quot;)) {</span>
+<span class="fc" id="L236">                    String idStr = fileName.substring(9, fileName.length() - 5);</span>
+<span class="fc" id="L237">                    int id = Integer.parseInt(idStr);</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">                    if (id &gt; maxId) {</span>
+<span class="fc" id="L239">                        maxId = id;</span>
+                    }
+                }
+            }
+        }
+<span class="fc" id="L244">        return maxId;</span>
+    }
+
+    /** Returns the file path for a given survey (enquesta) ID.
+     * @param idEnquesta the ID of the survey.
+     * @return the file path as a String.
+     */
+    public String getPathOfEnquesta(int idEnquesta) {
+<span class="fc" id="L252">            return getPath(idEnquesta);</span>
+    }
+
+    /**
+     * Gets the file path for a given survey (enquesta) ID.
+     * @param idEnquesta the ID of the survey.
+     * @return the file path as a String.
+     */
+    private static String getPath(int idEnquesta) {
+<span class="fc" id="L261">        return DATA_DIR + &quot;/enquesta-&quot; + idEnquesta + &quot;.json&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

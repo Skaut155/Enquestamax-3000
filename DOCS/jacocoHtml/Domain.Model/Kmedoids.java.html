@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Kmedoids.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">Kmedoids.java</span></div><h1>Kmedoids.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+
+/**
+ * Class Kmedoids implements the algorithm k-medoids to distribute the answers in k clusters. The algorithm selects k medoids (random answers from the survey) and distributes the answers in k clusters, each one in the cluster corresponding to the closest medoid. Afterward, new medoids are selected via PAM Optimization and convergence is checked (medoids no longer change). If false, the process is repeated. Otherwise, the k clusters with the answers are returned.
+ */
+public class Kmedoids extends AlgoritmeClustering {
+	private int k;
+	private ArrayList&lt;RespostaEnquesta&gt; respostes;
+	private RespostaEnquesta[] medoids;
+	private ArrayList&lt;RespostaEnquesta&gt;[] clusters;
+
+    /**
+     * Constructor for Kmedoids
+     */
+<span class="fc" id="L19">    public Kmedoids() {</span>
+<span class="fc" id="L20">    }</span>
+
+    /**
+     * Calculate how to divide the answers in k groups (clusters) by similarity (distance between them)
+     * @param k Number of clusters to distribute the answers in
+     * @param respostes List of answers to the survey
+     * @return Array (clusters) of ArrayList of RespostaEnquesta (list of elements in each cluster)
+     */
+    @Override
+    public ArrayList&lt;RespostaEnquesta&gt;[] computeClustering(int k, ArrayList&lt;RespostaEnquesta&gt; respostes){
+<span class="fc" id="L30">        this.respostes = respostes;</span>
+<span class="fc" id="L31">        this.k = k;</span>
+<span class="fc" id="L32">        return calcularClusters();</span>
+    }
+
+	@Override
+    public ArrayList&lt;RespostaEnquesta&gt; getCentroids() {
+<span class="fc" id="L37">		ArrayList&lt;RespostaEnquesta&gt; centroides = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">		for (RespostaEnquesta medoid : medoids) {</span>
+<span class="fc" id="L39">			centroides.add(medoid);</span>
+		}
+<span class="fc" id="L41">        return centroides;</span>
+    }
+
+    /**
+         * Initialize the k medoids, choosing k random answers.
+         */
+	private void initializeMedoids(){
+<span class="fc" id="L48">		this.clusters = new ArrayList[k];</span>
+<span class="fc" id="L49">		this.medoids = new RespostaEnquesta[k];</span>
+<span class="fc" id="L50">		Random rand = new Random();</span>
+		int randomInt;
+<span class="fc" id="L52">		int i = 0;</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">		while(i &lt; k){</span>
+<span class="fc" id="L54">			randomInt = rand.nextInt(respostes.size());</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">			if (!Arrays.asList(medoids).contains(respostes.get(randomInt))){</span>
+<span class="fc" id="L56">				medoids[i] = respostes.get(randomInt);</span>
+<span class="fc" id="L57">				++i;</span>
+			}
+		}
+<span class="fc" id="L60">	}</span>
+	
+	/**
+         * Initialize medoids and assign clusters iteratively, optimizing them via PAM Optimization until they have converged.
+         * @return Array (clusters) of ArrayList&lt;RespostaEnquesta&gt; (list of elements in the cluster)
+         */
+	private ArrayList&lt;RespostaEnquesta&gt;[] calcularClusters(){
+<span class="fc" id="L67">		initializeMedoids();</span>
+<span class="fc" id="L68">		boolean converged = false;</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">		while (!converged){</span>
+<span class="fc" id="L70">			assignClusters();</span>
+<span class="fc" id="L71">			RespostaEnquesta[] newMedoids = pamOptimization();</span>
+<span class="fc" id="L72">			converged = checkConvergence(newMedoids);</span>
+<span class="fc" id="L73">			this.medoids = newMedoids;</span>
+<span class="fc" id="L74">		}</span>
+<span class="fc" id="L75">		return this.clusters;</span>
+	}
+	 
+	/**
+	  * Given the current medoids, the answers are assigned to their corresponding cluster. It is done by calculating the distance to the medoids, and adding the answer to the cluster corresponding to the closest medoid.
+	  */
+	private void assignClusters(){
+<span class="fc" id="L82">		Arrays.fill(clusters, null);</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">		for (int i = 0; i &lt; k; ++i){</span>
+<span class="fc" id="L84">			clusters[i] = new ArrayList&lt;&gt;();</span>
+		}
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        for (RespostaEnquesta resposte : respostes) {</span>
+<span class="fc" id="L87">            double minDistance = -1;</span>
+<span class="fc" id="L88">            int closestCluster = 0;</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            for (int j = 0; j &lt; k; ++j) {</span>
+<span class="fc" id="L90">                double dist = distRespostesEnquesta(resposte, medoids[j]);</span>
+<span class="fc bfc" id="L91" title="All 4 branches covered.">                if ((minDistance == -1) || (dist &lt; minDistance)) {</span>
+<span class="fc" id="L92">                    minDistance = dist;</span>
+<span class="fc" id="L93">                    closestCluster = j;</span>
+                }
+            }
+            // Add to the closest cluster only once
+<span class="fc" id="L97">            clusters[closestCluster].add(resposte);</span>
+<span class="fc" id="L98">        }</span>
+        // Fix empty clusters by moving elements from the largest clusters
+<span class="fc" id="L100">        fixEmptyClusters();</span>
+<span class="fc" id="L101">	}</span>
+
+	/**
+	 * Ensures no cluster is empty by moving elements from the largest cluster to empty ones.
+	 */
+	private void fixEmptyClusters(){
+<span class="fc bfc" id="L107" title="All 2 branches covered.">		for (int i = 0; i &lt; k; ++i){</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">			if (clusters[i].isEmpty()){</span>
+				// Find the largest cluster
+<span class="fc" id="L110">				int largestClusterIdx = 0;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">				for (int j = 1; j &lt; k; ++j){</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">					if (clusters[j].size() &gt; clusters[largestClusterIdx].size()){</span>
+<span class="fc" id="L113">						largestClusterIdx = j;</span>
+					}
+				}
+				// Move the farthest element from the largest cluster to the empty one
+<span class="fc bfc" id="L117" title="All 2 branches covered.">				if (clusters[largestClusterIdx].size() &gt; 1){</span>
+<span class="fc" id="L118">					int farthestIdx = 0;</span>
+<span class="fc" id="L119">					double maxDist = -1;</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">					for (int j = 0; j &lt; clusters[largestClusterIdx].size(); ++j){</span>
+<span class="fc" id="L121">						double dist = distRespostesEnquesta(medoids[largestClusterIdx], clusters[largestClusterIdx].get(j));</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">						if (dist &gt; maxDist){</span>
+<span class="fc" id="L123">							maxDist = dist;</span>
+<span class="fc" id="L124">							farthestIdx = j;</span>
+						}
+					}
+<span class="fc" id="L127">					RespostaEnquesta moved = clusters[largestClusterIdx].remove(farthestIdx);</span>
+<span class="fc" id="L128">					clusters[i].add(moved);</span>
+<span class="fc" id="L129">					medoids[i] = moved;</span>
+				}
+			}
+		}
+<span class="fc" id="L133">	}</span>
+	 
+	/**
+         * Iteratively chooses new medoids and changes them if the cost improves.
+         * @return Array of the k new better medoids
+         */
+	private RespostaEnquesta[] pamOptimization(){
+<span class="fc" id="L140">		RespostaEnquesta[] newMedoids = Arrays.copyOf(medoids, k);</span>
+<span class="fc" id="L141">		double bestCost = calculateTotalCost(medoids);</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">		for (int i = 0; i &lt; k; ++i){</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">			for (RespostaEnquesta j : respostes){</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">				if (!Arrays.asList(medoids).contains(j)){</span>
+<span class="fc" id="L145">					RespostaEnquesta[] newMedoidsAux = Arrays.copyOf(medoids, k);</span>
+<span class="fc" id="L146">					newMedoidsAux[i] = j;</span>
+<span class="fc" id="L147">					double newCost = calculateTotalCost(newMedoidsAux);</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">					if (newCost &lt; bestCost){</span>
+<span class="fc" id="L149">						bestCost = newCost;</span>
+<span class="fc" id="L150">						newMedoids = newMedoidsAux;</span>
+					}
+				}
+<span class="fc" id="L153">			}</span>
+		}
+<span class="fc" id="L155">		return newMedoids;</span>
+	}
+
+	/**
+         * Calculates the total cost of the current clusters.
+         * @param medoids Medoids used to calculate the distance.
+         * @return Total cost of the answers in the clusters
+         */
+	private double calculateTotalCost(RespostaEnquesta[] medoids){
+<span class="fc" id="L164">		double totalCost = 0;</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">		for (int i = 0; i &lt; k; ++i){</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">			for (int j = 0; j &lt; clusters[i].size(); ++j){</span>
+<span class="fc" id="L167">				totalCost += distRespostesEnquesta(medoids[i], clusters[i].get(j));</span>
+			}
+		}
+<span class="fc" id="L170">		return totalCost;</span>
+	}
+	 
+	/**
+         * Checks if the medoids have converged, meaning the new and optimized ones are not different from the last ones.
+         * @return True if new medoids have converged, false otherwise.
+         */
+	private boolean checkConvergence(RespostaEnquesta[] newMedoids){
+<span class="fc bfc" id="L178" title="All 2 branches covered.">		for (int i = 0; i &lt; k; ++i){</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">			if (medoids[i] != newMedoids[i]){</span>
+<span class="fc" id="L180">				return false;</span>
+			}
+		}
+<span class="fc" id="L183">		return true;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

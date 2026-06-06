@@ -1,0 +1,37 @@
+Directori: Domain.Model
+
+Aquest directori conte les classes que representen el model de domini de l'aplicacio.
+
+Fitxers:
+- Admin.java: Representa un usuari administrador del sistema.
+- AlgoritmeClustering.java: Interficie per als algoritmes de clustering.
+- CentroidePreguntaMultipleStrategy.java: Estrategia per al calcul del centroide de preguntes de seleccio multiple.
+- CentroidePreguntaNoOrdenadaStrategy.java: Estrategia per al calcul del centroide de preguntes de seleccio unica no ordenada.
+- CentroidePreguntaNumericaStrategy.java: Estrategia per al calcul del centroide de preguntes numeriques.
+- CentroidePreguntaObertaStrategy.java: Estrategia per al calcul del centroide de preguntes obertes.
+- CentroidePreguntaOrdenadaStrategy.java: Estrategia per al calcul del centroide de preguntes de seleccio unica ordenada.
+- CentroideStrategy.java: Interficie per a les estrategies de calcul de centroides.
+- Enquesta.java: Representa una enquesta amb les seves preguntes.
+- K_means.java: Implementacio de l'algoritme de clustering K-means.
+- K_meansPlusPlus.java: Implementacio de l'algoritme de clustering K-means++.
+- K_meansRandom.java: Implementacio de l'algoritme de clustering K-means amb inicialitzacio aleatoria.
+- Kmedoids.java: Implementacio de l'algoritme de clustering K-medoids.
+- Opcio.java: Representa una opcio de resposta per a una pregunta.
+- Pregunta.java: Representa una pregunta d'una enquesta.
+- PreguntaNumerica.java: Representa una pregunta de tipus numeric.
+- PreguntaOberta.java: Representa una pregunta de tipus obert.
+- PreguntaSeleccioMultiple.java: Representa una pregunta de seleccio multiple.
+- PreguntaSeleccioUnicaNoOrdenada.java: Representa una pregunta de seleccio unica no ordenada.
+- PreguntaSeleccioUnicaOrdenada.java: Representa una pregunta de seleccio unica ordenada.
+- RespostaAPregunta.java: Classe base per a les respostes a una pregunta.
+- RespostaAPreguntaMultiple.java: Representa una resposta a una pregunta de seleccio multiple.
+- RespostaAPreguntaNoOrdenada.java: Representa una resposta a una pregunta de seleccio unica no ordenada.
+- RespostaAPreguntaNumerica.java: Representa una resposta a una pregunta de tipus numeric.
+- RespostaAPreguntaOberta.java: Representa una resposta a una pregunta de tipus obert.
+- RespostaAPreguntaOrdenada.java: Representa una resposta a una pregunta de seleccio unica ordenada.
+- RespostaAPreguntaSeleccio.java: Classe base per a les respostes a preguntes de seleccio.
+- RespostaAPreguntaUnica.java: Classe base per a les respostes a preguntes de seleccio unica.
+- RespostaEnquesta.java: Representa un conjunt de respostes a una enquesta.
+- RespostesContainer.java: Conte i gestiona un conjunt de respostes a enquestes.
+- TipusPregunta.java: Classe abstracta per als diferents tipus de pregunta.
+

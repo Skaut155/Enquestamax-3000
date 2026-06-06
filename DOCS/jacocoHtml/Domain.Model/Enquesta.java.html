@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Enquesta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">Enquesta.java</span></div><h1>Enquesta.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import Domain.Exceptions.PreguntaNoExisteix;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+
+/**
+ * Represents a survey (&quot;Enquesta&quot;) containing a list of questions and a container for responses.
+ *
+ * Each Enquesta has a unique id, a name, creation date, an ordered list of Pregunta instances
+ * and a RespostesContainer that holds submitted responses.
+ */
+public class Enquesta{
+    /**
+     * Unique identifier for this Enquesta.
+     */
+    private int id;
+
+    /**
+     * Name/title of the Enquesta.
+     */
+    private String nom;
+
+    /**
+     * Timestamp when the Enquesta was created.
+     */
+    private LocalDateTime dataCreacio;
+
+    /**
+     * Ordered list of questions in the survey.
+     */
+    private ArrayList&lt;Pregunta&gt; preguntes;
+
+    /**
+     * Container holding responses submitted to this survey.
+     */
+    private RespostesContainer respostesContainer;
+
+    /**
+     * Constructs a new Enquesta with the given name.
+     * The constructor assigns a unique id, sets the creation timestamp, and initializes
+     * the question list and responses container.
+     *
+     * @param nom the name/title of the survey
+     */
+    public Enquesta(String nom)
+<span class="fc" id="L49">    {</span>
+<span class="fc" id="L50">        this.nom = nom;</span>
+<span class="fc" id="L51">        this.dataCreacio = LocalDateTime.now();</span>
+<span class="fc" id="L52">        this.preguntes = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L53">        this.respostesContainer = new RespostesContainer(this);</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * Sets the unique identifier for this survey.
+     *
+     * @param id the survey id to set
+     */
+    public void setId(int id)
+    {
+<span class="fc" id="L63">        this.id = id;</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Returns the name of the survey.
+     *
+     * @return the survey name
+     */
+    public String getNom() {
+<span class="fc" id="L72">        return nom;</span>
+    }
+
+    /**
+     * Sets the name of the survey.
+     *
+     * @param nom new survey name
+     */
+    public void setNom(String nom) {
+<span class="fc" id="L81">        this.nom = nom;</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * Returns the unique identifier of this survey.
+     *
+     * @return survey id
+     */
+    public int  getId() {
+<span class="fc" id="L90">        return id;</span>
+    }
+
+    /**
+     * Returns the creation date and time of the survey.
+     *
+     * @return creation timestamp
+     */
+    public LocalDateTime getDate() {
+<span class="fc" id="L99">        return dataCreacio;</span>
+    }
+
+    /**
+     * Returns the question at the given order/index.
+     *
+     * @param ordrePregunta zero-based index of the question
+     * @return the Pregunta at the specified index
+     * @throws PreguntaNoExisteix if the index is out of bounds (negative or &gt;= number of questions)
+     */
+    public Pregunta getPregunta(int ordrePregunta) throws PreguntaNoExisteix {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (ordrePregunta &gt;= preguntes.size()) {</span>
+<span class="fc" id="L111">            throw new PreguntaNoExisteix(&quot;No existeix una instància de Pregunta amb ordre &quot; + ordrePregunta + &quot; Dins l'enquesta &quot; + nom + &quot; id:&quot; + id);</span>
+        }
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if (ordrePregunta &lt; 0) {</span>
+<span class="fc" id="L114">            throw new PreguntaNoExisteix(&quot;L'ordre de la pregunta no pot ser menor que 0&quot;);</span>
+        }
+
+<span class="fc" id="L117">        return preguntes.get(ordrePregunta);</span>
+    }
+
+    /**
+     * Adds a question to the end of the question list and sets its ordre to the correct index.
+     *
+     * @param p question to add
+     */
+    public void afegirPregunta(Pregunta p) {
+<span class="fc" id="L126">        preguntes.add(p);</span>
+<span class="fc" id="L127">        p.setOrdre(preguntes.size()-1);</span>
+<span class="fc" id="L128">    }</span>
+
+    /**
+     * Swaps the positions of two questions identified by their indices and updates their ordre values.
+     *
+     * @param i index of the first question
+     * @param j index of the second question
+     */
+    public void swapPreguntes(int i, int j) {
+<span class="fc" id="L137">        Pregunta p1 = preguntes.get(i);</span>
+<span class="fc" id="L138">        Pregunta p2 = preguntes.get(j);</span>
+<span class="fc" id="L139">        p1.setOrdre(j);</span>
+<span class="fc" id="L140">        p2.setOrdre(i);</span>
+<span class="fc" id="L141">        Collections.swap(preguntes, i, j);</span>
+<span class="fc" id="L142">    }</span>
+
+    /**
+     * Removes the question at the specified index.
+     *
+     * @param ordrePregunta zero-based index of the question to remove
+     * @throws PreguntaNoExisteix if the index is out of bounds (negative or &gt;= number of questions)
+     */
+    public void eliminarPregunta(int ordrePregunta) throws PreguntaNoExisteix {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if (ordrePregunta &gt;= preguntes.size()) {</span>
+<span class="fc" id="L152">            throw new PreguntaNoExisteix(&quot;No existeix una instància de Pregunta amb ordre &quot; + ordrePregunta + &quot; Dins l'enquesta &quot; + nom + &quot; id:&quot; + id);</span>
+        }
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        if (ordrePregunta &lt; 0) {</span>
+<span class="fc" id="L155">            throw new PreguntaNoExisteix(&quot;L'ordre de la pregunta no pot ser menor que 0&quot;);</span>
+        }
+
+<span class="fc" id="L158">        preguntes.remove(ordrePregunta);</span>
+
+        // Update ordre of remaining questions
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        for (int i = ordrePregunta; i &lt; preguntes.size(); i++) {</span>
+<span class="fc" id="L162">            preguntes.get(i).setOrdre(i);</span>
+        }
+<span class="fc" id="L164">    }</span>
+
+    /**
+     * Adds a new response to this survey's responses container.
+     * @return the unique id of the newly created response
+     */
+    public int afegirNovaResposta() {
+<span class="fc" id="L171">        RespostaEnquesta re = new RespostaEnquesta();</span>
+<span class="fc" id="L172">        respostesContainer.addResposta(re);</span>
+<span class="fc" id="L173">        return re.getId();</span>
+    }
+
+    /**
+     * Removes the response with the specified id from the responses container.
+     *
+     * @param idResposta identifier of the response to remove
+     */
+    public void eliminaResposta(int idResposta) {
+<span class="fc" id="L182">        respostesContainer.removeResposta(idResposta);</span>
+<span class="fc" id="L183">    }</span>
+
+    /**
+     * Returns the number of questions in this survey.
+     *
+     * @return number of questions
+     */
+    public int numPreguntes() {
+<span class="fc" id="L191">        return preguntes.size();</span>
+    }
+
+    /**
+     * Returns a list of response ids recorded for this survey.
+     *
+     * @return list of response ids
+     */
+    public ArrayList&lt;Integer&gt; getIdsRespostes() {
+<span class="fc" id="L200">        return respostesContainer.getIdsRespostes();</span>
+    }
+
+    /**
+     * Returns the response with the specified id.
+     *
+     * @param id response identifier
+     * @return the corresponding RespostaEnquesta, or null if not found
+     */
+    public RespostaEnquesta getResposta(int id) {
+<span class="fc" id="L210">        return respostesContainer.getResposta(id);</span>
+    }
+
+    /**
+     * Returns all responses recorded for this survey as an array.
+     *
+     * @return array of all RespostaEnquesta instances
+     */
+    public ArrayList&lt;RespostaEnquesta&gt; getAllRespostes() {
+<span class="fc" id="L219">        ArrayList&lt;Integer&gt; respostes = respostesContainer.getIdsRespostes();</span>
+<span class="fc" id="L220">        ArrayList&lt;RespostaEnquesta&gt; respostesArray = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        for (int i = 0; i &lt; respostes.size(); i++) {</span>
+<span class="fc" id="L222">            respostesArray.add(respostesContainer.getResposta(respostes.get(i)));</span>
+        }
+<span class="fc" id="L224">        return respostesArray;</span>
+    }
+
+    /**
+     * Returns a string representation of the survey, including its id, creation date,
+     * and details of each question.
+     *
+     * @return string representation of the Enquesta
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L235">        StringBuilder s =</span>
+                new StringBuilder(&quot;Enquesta \&quot;&quot; + nom + &quot;\&quot;\n&quot;
+                        + &quot;------------------------------------------\n&quot;
+                        + &quot;-id: &quot; + id + &quot;\n&quot;
+<span class="fc" id="L239">                        + &quot;-Data de creacio: &quot; + dataCreacio.toString() + &quot;\n&quot;</span>
+                        + &quot;----------------------------------------\n&quot;);
+
+<span class="fc bfc" id="L242" title="All 2 branches covered.">        for (Pregunta p : preguntes) {</span>
+<span class="fc" id="L243">            s.append(p.toString()).append(&quot;\n&quot;);</span>
+<span class="fc" id="L244">        }</span>
+
+<span class="fc" id="L246">        return s.toString();</span>
+    }
+
+
+    /**
+     * Deletes all responses recorded for this survey.
+     */
+    public void esborrarRespostes() {
+<span class="fc" id="L254">        respostesContainer.EsborrarRespostes();</span>
+<span class="fc" id="L255">    }</span>
+
+    /**
+     * Returns the responses container associated with this survey.
+     *
+     * @return the RespostesContainer instance
+     */
+    public RespostesContainer getRespostesContainer() {
+<span class="fc" id="L263">        return respostesContainer;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

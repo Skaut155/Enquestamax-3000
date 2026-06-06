@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EditarEnquesta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">EditarEnquesta.java</span></div><h1>EditarEnquesta.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import Presentation.Controllers.CtrlPresentation;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EditarEnquesta extends BaseView {
+    private final CtrlPresentation cp;
+    private final VistaPrincipal vistaPrincipal;
+    private final int idEnquesta;
+<span class="nc" id="L15">    private int preguntesNum = 0;</span>
+    private JPanel questionsContainer;
+
+<span class="nc" id="L18">    private final List&lt;QuestionUI&gt; questions = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L20">    private enum PseudoTipusPregunta {</span>
+<span class="nc" id="L21">        OBERTA,</span>
+<span class="nc" id="L22">        NUMERICA,</span>
+<span class="nc" id="L23">        UNICA_NO_ORDENADA,</span>
+<span class="nc" id="L24">        UNICA_ORDENADA,</span>
+<span class="nc" id="L25">        MULTIPLE;</span>
+
+        public PseudoTipusPregunta next() {
+<span class="nc" id="L28">            return values()[(this.ordinal() + 1) % values().length];</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc bnc" id="L33" title="All 5 branches missed.">            return switch (this) {</span>
+<span class="nc" id="L34">                case OBERTA -&gt; &quot;Oberta&quot;;</span>
+<span class="nc" id="L35">                case NUMERICA -&gt; &quot;Numèrica&quot;;</span>
+<span class="nc" id="L36">                case UNICA_NO_ORDENADA -&gt; &quot;Única No Ordenada&quot;;</span>
+<span class="nc" id="L37">                case UNICA_ORDENADA -&gt; &quot;Única Ordenada&quot;;</span>
+<span class="nc" id="L38">                case MULTIPLE -&gt; &quot;Resposta Mútliple&quot;;</span>
+            };
+        }
+
+        public String toTxString() {
+<span class="nc bnc" id="L43" title="All 5 branches missed.">            return switch (this) {</span>
+<span class="nc" id="L44">                case OBERTA -&gt; &quot;OBERTA&quot;;</span>
+<span class="nc" id="L45">                case NUMERICA -&gt; &quot;NUMERICA&quot;;</span>
+<span class="nc" id="L46">                case UNICA_NO_ORDENADA -&gt; &quot;UNICA_NO_ORDENADA&quot;;</span>
+<span class="nc" id="L47">                case UNICA_ORDENADA -&gt; &quot;UNICA_ORDENADA&quot;;</span>
+<span class="nc" id="L48">                case MULTIPLE -&gt; &quot;MULTIPLE&quot;;</span>
+            };
+        }
+        static PseudoTipusPregunta fromStringCode(String s) {
+<span class="nc bnc" id="L52" title="All 6 branches missed.">            return switch (s) {</span>
+<span class="nc" id="L53">                case &quot;OBERTA&quot; -&gt; OBERTA;</span>
+<span class="nc" id="L54">                case &quot;NUMERICA&quot; -&gt; NUMERICA;</span>
+<span class="nc" id="L55">                case &quot;UNICA_NO_ORDENADA&quot; -&gt; UNICA_NO_ORDENADA;</span>
+<span class="nc" id="L56">                case &quot;UNICA_ORDENADA&quot; -&gt; UNICA_ORDENADA;</span>
+<span class="nc" id="L57">                case &quot;MULTIPLE&quot; -&gt; MULTIPLE;</span>
+<span class="nc" id="L58">                default -&gt; throw new IllegalStateException(&quot;Unexpected value: &quot; + s);</span>
+            };
+        }
+    }
+
+<span class="nc" id="L63">    private static class QuestionUI {</span>
+        JTextField textField;
+        PseudoTipusPregunta tipus;
+        JPanel rootPanel;
+        JPanel optionsPanel;
+        JButton changeTypeButton;
+        JButton deleteButton;
+        JButton addOptionButton;
+        int ordre;
+<span class="nc" id="L72">        List&lt;JTextField&gt; optionFields = new ArrayList&lt;&gt;();</span>
+    }
+
+    public EditarEnquesta(CtrlPresentation ctrl, VistaPrincipal vistaPrincipal, int idEnquesta) {
+<span class="nc" id="L76">        super(&quot;Editar enquesta&quot;);</span>
+<span class="nc" id="L77">        this.cp = ctrl;</span>
+<span class="nc" id="L78">        this.vistaPrincipal = vistaPrincipal;</span>
+<span class="nc" id="L79">        this.idEnquesta = idEnquesta;</span>
+<span class="nc" id="L80">        configurarVista();</span>
+<span class="nc" id="L81">        carregarDadesInicials();</span>
+<span class="nc" id="L82">    }</span>
+
+    private void configurarVista() {
+<span class="nc" id="L85">        JPanel mainPanel = ViewHelpers.createMainPanel();</span>
+<span class="nc" id="L86">        mainPanel.add(ViewHelpers.createTitlePanel(&quot;Editant &quot; + cp.getEnquestaTitol(idEnquesta)), BorderLayout.NORTH);</span>
+
+<span class="nc" id="L88">        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));</span>
+<span class="nc" id="L89">        centerPanel.setBackground(new Color(245, 245, 250));</span>
+
+        // Questions scroll area
+<span class="nc" id="L92">        questionsContainer = new JPanel();</span>
+<span class="nc" id="L93">        questionsContainer.setLayout(new BoxLayout(questionsContainer, BoxLayout.Y_AXIS));</span>
+<span class="nc" id="L94">        questionsContainer.setBackground(Color.WHITE);</span>
+
+<span class="nc" id="L96">        JScrollPane scrollPane = new JScrollPane(questionsContainer);</span>
+<span class="nc" id="L97">        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));</span>
+<span class="nc" id="L98">        centerPanel.add(scrollPane, BorderLayout.CENTER);</span>
+
+        // Add question button
+<span class="nc" id="L101">        JButton addQuestionButton = new JButton(&quot;Afegir pregunta&quot;);</span>
+<span class="nc" id="L102">        ViewHelpers.styleButton(addQuestionButton, new Color(60, 179, 113));</span>
+<span class="nc" id="L103">        addQuestionButton.addActionListener(this::afegirPreguntaBuida);</span>
+
+<span class="nc" id="L105">        JPanel addQuestionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));</span>
+<span class="nc" id="L106">        addQuestionPanel.setBackground(new Color(245, 245, 250));</span>
+<span class="nc" id="L107">        addQuestionPanel.add(addQuestionButton);</span>
+<span class="nc" id="L108">        centerPanel.add(addQuestionPanel, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L110">        mainPanel.add(centerPanel, BorderLayout.CENTER);</span>
+
+        // Bottom buttons: Cancel &amp; Save
+<span class="nc" id="L113">        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));</span>
+<span class="nc" id="L114">        buttonPanel.setBackground(new Color(245, 245, 250));</span>
+
+<span class="nc" id="L116">        JButton cancelButton = new JButton(&quot;Cancel·lar&quot;);</span>
+<span class="nc" id="L117">        ViewHelpers.styleButton(cancelButton, new Color(180, 180, 180), Color.BLACK);</span>
+<span class="nc" id="L118">        cancelButton.addActionListener(this::onCancel);</span>
+
+<span class="nc" id="L120">        JButton saveButton = new JButton(&quot;Desar&quot;);</span>
+<span class="nc" id="L121">        ViewHelpers.styleButton(saveButton, new Color(70, 130, 180));</span>
+<span class="nc" id="L122">        saveButton.addActionListener(this::onSave);</span>
+
+<span class="nc" id="L124">        buttonPanel.add(cancelButton);</span>
+<span class="nc" id="L125">        buttonPanel.add(saveButton);</span>
+
+<span class="nc" id="L127">        mainPanel.add(buttonPanel, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L129">        frame.add(mainPanel);</span>
+<span class="nc" id="L130">        frame.pack();</span>
+<span class="nc" id="L131">        frame.setSize(900, 600);</span>
+<span class="nc" id="L132">    }</span>
+
+    private void carregarDadesInicials() {
+        // For now, we only know how to get question texts as Strings
+
+<span class="nc" id="L137">        preguntesNum = cp.getNumPreguntes(idEnquesta);</span>
+<span class="nc" id="L138">        System.out.println(&quot;Nombre de preguntes a carregar: &quot; + preguntesNum);</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            for (int i = 0; i &lt; preguntesNum; i++) {</span>
+<span class="nc" id="L140">                System.out.println(&quot;Carregant pregunta &quot; + i);</span>
+<span class="nc" id="L141">                String p = cp.getTitolPregunta(idEnquesta, i);</span>
+<span class="nc" id="L142">                String type = cp.getTipusPregunta(idEnquesta,i);</span>
+<span class="nc" id="L143">                PseudoTipusPregunta tipus = PseudoTipusPregunta.fromStringCode(type);</span>
+<span class="nc" id="L144">                afegirPreguntaAmbText(p, tipus, i, false);</span>
+            }
+<span class="nc" id="L146">    }</span>
+
+    private void afegirPreguntaBuida(ActionEvent e) {
+        // When adding from UI, also add in DomainController via CtrlPresentation
+<span class="nc" id="L150">        afegirPreguntaAmbText(&quot;&quot;, PseudoTipusPregunta.OBERTA, preguntesNum++, true);</span>
+<span class="nc" id="L151">    }</span>
+
+    private void afegirPreguntaAmbText(String text, PseudoTipusPregunta tipusInicial, int ordre, boolean isAdd) {
+<span class="nc" id="L154">        QuestionUI q = new QuestionUI();</span>
+<span class="nc" id="L155">        q.tipus = tipusInicial;</span>
+<span class="nc" id="L156">        q.ordre = ordre;</span>
+
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if(isAdd) {</span>
+<span class="nc" id="L159">            cp.afegirPregunta(idEnquesta);</span>
+<span class="nc" id="L160">            text = cp.getTitolPregunta(idEnquesta,ordre);</span>
+<span class="nc" id="L161">            tipusInicial = PseudoTipusPregunta.fromStringCode(cp.getTipusPregunta(idEnquesta, ordre));</span>
+        }
+
+<span class="nc" id="L164">        JPanel root = new JPanel();</span>
+<span class="nc" id="L165">        root.setLayout(new BorderLayout(5, 5));</span>
+<span class="nc" id="L166">        root.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L167">                BorderFactory.createEmptyBorder(8, 8, 8, 8),</span>
+<span class="nc" id="L168">                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220))</span>
+        ));
+<span class="nc" id="L170">        root.setBackground(Color.WHITE);</span>
+
+        // Top row: label + text + change type + delete
+<span class="nc" id="L173">        JPanel topRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));</span>
+<span class="nc" id="L174">        topRow.setBackground(Color.WHITE);</span>
+
+<span class="nc" id="L176">        JLabel label = new JLabel(&quot;P&quot; + (questions.size() + 1) + &quot;:&quot;);</span>
+<span class="nc" id="L177">        topRow.add(label);</span>
+
+<span class="nc" id="L179">        JTextField textField = ViewHelpers.createTextField();</span>
+<span class="nc" id="L180">        textField.setText(text);</span>
+<span class="nc" id="L181">        textField.setColumns(30);</span>
+<span class="nc" id="L182">        q.textField = textField;</span>
+<span class="nc" id="L183">        topRow.add(textField);</span>
+
+<span class="nc" id="L185">        JButton changeTypeButton = new JButton(tipusInicial.toString());</span>
+<span class="nc" id="L186">        ViewHelpers.styleButton(changeTypeButton, new Color(85, 85, 255));</span>
+<span class="nc" id="L187">        changeTypeButton.addActionListener(ev -&gt; {</span>
+<span class="nc" id="L188">            q.tipus = q.tipus.next();</span>
+<span class="nc" id="L189">            cp.canviarTipusPregunta(idEnquesta, q.ordre, q.tipus.toTxString());</span>
+<span class="nc" id="L190">            changeTypeButton.setText(q.tipus.toString());</span>
+<span class="nc" id="L191">            actualitzarOpcionsVisible(q);</span>
+<span class="nc" id="L192">        });</span>
+<span class="nc" id="L193">        q.changeTypeButton = changeTypeButton;</span>
+<span class="nc" id="L194">        topRow.add(changeTypeButton);</span>
+
+<span class="nc" id="L196">        JButton deleteButton = new JButton(&quot;Eliminar&quot;);</span>
+<span class="nc" id="L197">        ViewHelpers.styleButton(deleteButton, new Color(220, 20, 60));</span>
+<span class="nc" id="L198">        deleteButton.addActionListener(ev -&gt; eliminarPregunta(q));</span>
+<span class="nc" id="L199">        q.deleteButton = deleteButton;</span>
+<span class="nc" id="L200">        topRow.add(deleteButton);</span>
+
+<span class="nc" id="L202">        root.add(topRow, BorderLayout.NORTH);</span>
+
+        // Options panel (for single/multiple)
+<span class="nc" id="L205">        JPanel optionsPanel = new JPanel();</span>
+<span class="nc" id="L206">        optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));</span>
+<span class="nc" id="L207">        optionsPanel.setBackground(new Color(250, 250, 250));</span>
+<span class="nc" id="L208">        optionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 25, 5, 5));</span>
+<span class="nc" id="L209">        q.optionsPanel = optionsPanel;</span>
+
+        // Add-option button
+<span class="nc" id="L212">        JButton addOptionButton = new JButton(&quot;Afegir opció&quot;);</span>
+<span class="nc" id="L213">        ViewHelpers.styleButton(addOptionButton, new Color(210, 210, 210), Color.BLACK);</span>
+<span class="nc" id="L214">        addOptionButton.addActionListener(ev -&gt; afegirOpcio(q, &quot;&quot;));</span>
+<span class="nc" id="L215">        q.addOptionButton = addOptionButton;</span>
+
+
+<span class="nc" id="L218">        JPanel addOptionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));</span>
+<span class="nc" id="L219">        addOptionPanel.setBackground(new Color(250, 250, 250));</span>
+<span class="nc" id="L220">        addOptionPanel.add(addOptionButton);</span>
+
+<span class="nc" id="L222">        JPanel optionsWrapper = new JPanel();</span>
+<span class="nc" id="L223">        optionsWrapper.setLayout(new BorderLayout());</span>
+<span class="nc" id="L224">        optionsWrapper.setBackground(new Color(250, 250, 250));</span>
+<span class="nc" id="L225">        optionsWrapper.add(optionsPanel, BorderLayout.CENTER);</span>
+<span class="nc" id="L226">        optionsWrapper.add(addOptionPanel, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L228">        root.add(optionsWrapper, BorderLayout.CENTER);</span>
+
+<span class="nc" id="L230">        q.rootPanel = root;</span>
+<span class="nc" id="L231">        questions.add(q);</span>
+<span class="nc" id="L232">        questionsContainer.add(root);</span>
+
+<span class="nc" id="L234">        actualitzarOpcionsVisible(q);</span>
+<span class="nc" id="L235">        questionsContainer.revalidate();</span>
+<span class="nc" id="L236">        questionsContainer.repaint();</span>
+
+
+<span class="nc" id="L239">    }</span>
+
+    private void afegirOpcio(QuestionUI q, String text) {
+<span class="nc" id="L242">        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));</span>
+<span class="nc" id="L243">        row.setBackground(new Color(250, 250, 250));</span>
+
+<span class="nc" id="L245">        JTextField optionField = ViewHelpers.createTextField();</span>
+<span class="nc" id="L246">        optionField.setText(text);</span>
+<span class="nc" id="L247">        optionField.setColumns(20);</span>
+<span class="nc" id="L248">        q.optionFields.add(optionField);</span>
+
+<span class="nc" id="L250">        JButton deleteOptionButton = new JButton(&quot;X&quot;);</span>
+<span class="nc" id="L251">        ViewHelpers.styleButton(deleteOptionButton, new Color(200, 100, 100));</span>
+<span class="nc" id="L252">        deleteOptionButton.addActionListener(e -&gt; {</span>
+<span class="nc" id="L253">            q.optionsPanel.remove(row);</span>
+<span class="nc" id="L254">            q.optionFields.remove(optionField);</span>
+<span class="nc" id="L255">            q.optionsPanel.revalidate();</span>
+<span class="nc" id="L256">            q.optionsPanel.repaint();</span>
+<span class="nc" id="L257">        });</span>
+
+<span class="nc" id="L259">        row.add(new JLabel(&quot;Opció:&quot;));</span>
+<span class="nc" id="L260">        row.add(optionField);</span>
+<span class="nc" id="L261">        row.add(deleteOptionButton);</span>
+
+<span class="nc" id="L263">        q.optionsPanel.add(row);</span>
+<span class="nc" id="L264">        q.optionsPanel.revalidate();</span>
+<span class="nc" id="L265">        q.optionsPanel.repaint();</span>
+<span class="nc" id="L266">    }</span>
+
+    private void actualitzarOpcionsVisible(QuestionUI q) {
+<span class="nc bnc" id="L269" title="All 6 branches missed.">        boolean visible = (q.tipus == PseudoTipusPregunta.UNICA_NO_ORDENADA || q.tipus == PseudoTipusPregunta.UNICA_ORDENADA || q.tipus == PseudoTipusPregunta.MULTIPLE);</span>
+<span class="nc" id="L270">        q.optionsPanel.setVisible(visible);</span>
+<span class="nc" id="L271">        q.addOptionButton.setVisible(visible);</span>
+<span class="nc" id="L272">        q.rootPanel.revalidate();</span>
+<span class="nc" id="L273">        q.rootPanel.repaint();</span>
+<span class="nc" id="L274">    }</span>
+
+    private void eliminarPregunta(QuestionUI q) {
+<span class="nc" id="L277">        questionsContainer.remove(q.rootPanel);</span>
+<span class="nc" id="L278">        questions.remove(q);</span>
+<span class="nc" id="L279">        questionsContainer.revalidate();</span>
+<span class="nc" id="L280">        questionsContainer.repaint();</span>
+<span class="nc" id="L281">        cp.eliminarPregunta(idEnquesta, q.ordre);</span>
+<span class="nc" id="L282">    }</span>
+
+    private void onCancel(ActionEvent e) {
+<span class="nc" id="L285">        cp.cancelarEdicioEnquesta(idEnquesta);</span>
+<span class="nc" id="L286">        dispose();</span>
+<span class="nc" id="L287">    }</span>
+
+    private void onSave(ActionEvent e) {
+        // Persist changes through CtrlPresentation using primitive data only
+        // Simplest approach: clear and rebuild questions in domain based on current UI
+        try {
+            // finally, save to persistence
+<span class="nc" id="L294">            cp.guardarEdicioEnquesta(idEnquesta);</span>
+<span class="nc" id="L295">            JOptionPane.showMessageDialog(frame, &quot;Enquesta desada correctament.&quot;, &quot;Èxit&quot;, JOptionPane.INFORMATION_MESSAGE);</span>
+<span class="nc" id="L296">            dispose();</span>
+<span class="nc" id="L297">            vistaPrincipal.actualizarEstadoSesion();</span>
+<span class="nc" id="L298">        } catch (Exception ex) {</span>
+<span class="nc" id="L299">            JOptionPane.showMessageDialog(frame, &quot;Error en desar l'enquesta: &quot; + ex.getMessage(), &quot;Error&quot;, JOptionPane.ERROR_MESSAGE);</span>
+<span class="nc" id="L300">        }</span>
+<span class="nc" id="L301">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

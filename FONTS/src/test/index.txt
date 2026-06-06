@@ -1,0 +1,4 @@
+Directori: src/test
+
+Aquest directori conte el codi de test de l'aplicacio.
+

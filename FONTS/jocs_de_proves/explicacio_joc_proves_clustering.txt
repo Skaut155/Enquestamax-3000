@@ -1,0 +1,29 @@
+Aquest document descriu el funcionament del joc de proves `joc_proves_clustering.txt`.
+
+L'objectiu és provar els diferents algoritmes de clustering sobre un conjunt de respostes d'una enquesta. Aquest joc de proves és acumulatiu: primer crea tot l'entorn necessari (administrador, enquesta i respostes) i després executa les proves de clustering.
+
+Seqüència d'accions:
+
+**Part 1: Creació de l'Entorn de Proves**
+1.  **Creació d'Usuari i Enquesta**: Es registra un nou administrador (`testAdmin`), es crea una enquesta (`Enquesta de prova`) i s'edita per incloure 5 preguntes de diferents tipus.
+2.  **Població de Respostes**: S'introdueixen 30 respostes a l'enquesta, incloent casos vàlids i invàlids per assegurar que només les respostes correctes són desades.
+
+**Part 2: Execució dels Algoritmes de Clustering**
+Un cop l'enquesta té respostes, es procedeix a provar els algoritmes de clustering.
+
+1.  **Clustering amb `k` Fixa (k=4)**:
+    *   `9, 0, 4, K_MEANS_RANDOM`: Executa l'algoritme **K-Means (inicialització aleatòria)** sobre l'enquesta amb ID `0` per agrupar les respostes en **4 clústers**.
+    *   `9, 0, 4, K_MEANS_PLUS_PLUS`: Executa l'algoritme **K-Means++** amb les mateixes condicions.
+    *   `9, 0, 4, K_MEDOIDS`: Executa l'algoritme **K-Medoids** amb les mateixes condicions.
+
+2.  **Clustering amb `k` Òptima**:
+    *   `10, 0, 0.8, K_MEANS_RANDOM`: Executa **K-Means (aleatori)** buscant el nombre òptim de clústers (`k`) amb un llindar de `0.8`.
+    *   `10, 0, 0.8, K_MEANS_PLUS_PLUS`: Executa **K-Means++** buscant la `k` òptima.
+    *   `10, 0, 0.8, K_MEDOIDS`: Executa **K-Medoids** buscant la `k` òptima.
+
+**Part 3: Finalització**
+1.  **Tancament de Sessió**:
+    *   `11`: Tanca la sessió de l'administrador.
+2.  **Sortida del Programa**:
+    *   `0`: Finalitza l'execució.
+

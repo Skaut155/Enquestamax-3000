@@ -1,0 +1,46 @@
+Aquest document descriu el funcionament del joc de proves `joc_proves_creacio_interactiva.txt`.
+
+L'objectiu és simular la creació i configuració completa d'una enquesta per part d'un administrador.
+
+Seqüència d'accions:
+1.  **Registre d'Administrador**:
+    *   `1`: Tria l'opció de registrar un nou administrador.
+    *   `testAdmin`: Nom d'usuari.
+    *   `testPass`: Contrasenya.
+    *   El sistema crea l'usuari i inicia sessió.
+
+2.  **Creació d'Enquesta**:
+    *   `1`: Tria l'opció de crear una nova enquesta.
+    *   `Enquesta de prova`: Nom de l'enquesta.
+    *   El sistema crea l'enquesta i entra al mode d'edició.
+
+3.  **Edició de l'Enquesta**:
+    *   `1` (x5): Afegeix 5 preguntes. Per defecte, són de tipus `UNICA_NO_ORDENADA`.
+    *   **Pregunta 1 -> NUMERICA**:
+        *   `3, 1, NUMERICA`: Canvia el tipus a numèrica.
+        *   `4, 1, Quants anys tens?`: Canvia el text.
+        *   `8, 1, true`: La marca com a obligatòria.
+    *   **Pregunta 2 -> UNICA_NO_ORDENADA (per defecte)**:
+        *   `4, 2, Quin es el teu gènere?`: Canvia el text.
+        *   `5, 2, ...`: Afegeix opcions ("Home", "Dona", "Altre").
+        *   `6, 2, 3, Prefereixo no dir-ho`: Modifica una opció.
+        *   `7, 2, 3`: Elimina l'opció modificada.
+        *   `8, 2, false`: La marca com a no obligatòria.
+    *   **Pregunta 3 -> UNICA_ORDENADA**:
+        *   `3, 3, UNICA_ORDENADA`: Canvia el tipus.
+        *   `4, 3, Valora la teva satisfacció...`: Canvia el text.
+        *   `5, 3, ...`: Afegeix 5 opcions ordenades.
+    *   **Pregunta 4 -> MULTI**:
+        *   `3, 4, MULTI`: Canvia el tipus a selecció múltiple.
+        *   `4, 4, Quins mitjans de transport...`: Canvia el text.
+        *   `5, 4, ...`: Afegeix 5 opcions.
+    *   **Pregunta 5 -> OBERTA**:
+        *   `3, 5, OBERTA`: Canvia el tipus a text obert.
+        *   `4, 5, Tens algun comentari...`: Canvia el text.
+
+4.  **Finalització**:
+    *   `0`: Surt del mode d'edició.
+    *   `11`: Tanca la sessió de l'administrador.
+    *   `0`: Surt del programa.
+
+

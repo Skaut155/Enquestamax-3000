@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RespostaAPregunta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">RespostaAPregunta.java</span></div><h1>RespostaAPregunta.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+
+/**
+ * Abstract class that represents an answer to a question in a survey
+ * @param &lt;T&gt; type of the response
+ */
+public abstract class RespostaAPregunta&lt;T&gt; {
+
+    private String code;
+    private T resposta;
+    private transient RespostaEnquesta respostaEnquesta;
+    private Integer ordrePregunta;
+    private CentroideStrategy centroideStrategy;
+
+    /**
+     * Constructor for RespostaAPregunta
+     * @param ordrePregunta order of Pregunta that it answers
+     * @param cs the strategy used to calculate the centroide
+     */
+<span class="fc" id="L22">    RespostaAPregunta(T resposta, int ordrePregunta, CentroideStrategy cs) {</span>
+<span class="fc" id="L23">        this.resposta = resposta;</span>
+<span class="fc" id="L24">        this.ordrePregunta = ordrePregunta;</span>
+<span class="fc" id="L25">        this.centroideStrategy = cs;</span>
+<span class="fc" id="L26">    }</span>
+
+    /**
+     * Set code of the RespostaAPregunta
+     * @param code code of the RespostaAPregunta
+     */
+    protected void setCode(String code){
+<span class="fc" id="L33">        this.code = code;</span>
+<span class="fc" id="L34">    }</span>
+
+    /**
+     * Get string representation of the answer
+     * @return answer as a string
+     */
+    public abstract String getStringResposta();
+
+    /**
+     * Get answer
+     * @return resposta
+     */
+    public T getResposta() {
+<span class="fc" id="L47">        return resposta;</span>
+    }
+
+    /**
+     * Set value of resposta
+     * @param resposta answer
+     */
+    public void setResposta(T resposta) {
+<span class="fc" id="L55">        this.resposta = resposta;</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * True if the answer is empty, false otherwise
+     * @return resposta == null
+     */
+    public boolean isEmpty(){
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        return resposta == null;</span>
+    }
+
+    /**
+     * Set respostaEnquesa
+     * @param respostaEnquesta respostaEnquesta that it belongs
+     */
+    public void setRespostaEnquesta(RespostaEnquesta respostaEnquesta){
+<span class="fc" id="L71">        this.respostaEnquesta = respostaEnquesta;</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Get the order of Pregunta that it answers
+     * @return ordrePregunta
+     */
+    public Integer getOrdrePregunta() {
+<span class="fc" id="L79">        return ordrePregunta;</span>
+    }
+
+    /**
+     * Distance between this RespostaAPregunta and another
+     * @param r the other RespostaAPregunta
+     * @return distance between this RespostaAPregunta and r
+     */
+    public abstract double distRespostesPregunta(RespostaAPregunta&lt;T&gt; r);
+
+    /**
+     * Centroide of a set of RespostaAPregunta of the same type
+     * @param respostes set of RespostaAPregunta
+     * @return centroide of respostes
+     */
+    public RespostaAPregunta&lt;?&gt; calcularCentroide(ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt; respostes){
+<span class="fc" id="L95">        return centroideStrategy.calcularCentroide(respostes);</span>
+    }
+
+    /**
+     * Maximum value of the total of answers at the same question
+     * @return maximum value of the total of answers at the same question
+     */
+    public double calcMax(){
+<span class="fc" id="L103">        return respostaEnquesta.calcMax(this.ordrePregunta);</span>
+    }
+
+    /**
+     * Minimum value of the total of answers at the same question
+     * @return minimum value of the total of answers at the same question
+     */
+    public double calcMin(){
+<span class="fc" id="L111">        return respostaEnquesta.calcMin(this.ordrePregunta);</span>
+    }
+
+    /**
+     * Total number of possible options that has the question
+     * @return number of options of Pregunta ordrePregunta of this RespostaAPregunta
+     */
+    public int getNumOpcionsPregunta(){
+<span class="fc" id="L119">        return respostaEnquesta.getPregunta(ordrePregunta).numOpcions();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

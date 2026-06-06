@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminPersistance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Data.Persistance</a> &gt; <span class="el_source">AdminPersistance.java</span></div><h1>AdminPersistance.java</h1><pre class="source lang-java linenums">package Data.Persistance;
+
+import Domain.Adapters.IAdminPersistance;
+import Domain.Model.Admin;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+/**
+ * Implementation of admin persistence operations using JSON files.
+ */
+<span class="fc" id="L17">public class AdminPersistance implements IAdminPersistance {</span>
+    /**
+     * Directory to store admin JSON files.
+     */
+    private static final String DATA_DIR = &quot;./.data/admins&quot;;
+
+    /**
+     * Ensures that the data directory exists; creates it if it doesn't.
+     */
+    private void ensureDataDirExists() {
+<span class="fc" id="L27">        File dir = new File(DATA_DIR);</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if (!dir.exists()) {</span>
+<span class="nc" id="L29">            dir.mkdirs();</span>
+        }
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Saves an admin.
+     * @param admin the Admin object to save.
+     */
+    public void saveAdmin(Admin admin) {
+<span class="fc" id="L38">        ensureDataDirExists();</span>
+
+<span class="fc" id="L40">        Gson gson = new GsonBuilder().setPrettyPrinting().create();</span>
+<span class="fc" id="L41">        String jsonString = gson.toJson(admin);</span>
+
+<span class="fc" id="L43">        try (FileWriter fileWriter = new FileWriter(DATA_DIR + &quot;/&quot; + admin.getNom()+&quot;.json&quot;)) {</span>
+<span class="fc" id="L44">            fileWriter.write(jsonString);</span>
+<span class="nc" id="L45">        } catch (IOException e) {</span>
+<span class="nc" id="L46">            throw new RuntimeException(e);</span>
+<span class="fc" id="L47">        }</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Loads an admin by their name.
+     * @param nomAdmin the name of the admin to load.
+     * @return the Admin object if found, null otherwise.
+     */
+    public Admin loadAdmin(String nomAdmin) {
+<span class="fc" id="L56">        File file = new File(DATA_DIR + &quot;/&quot; + nomAdmin + &quot;.json&quot;);</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (!file.exists()) {</span>
+<span class="fc" id="L58">            return null;</span>
+        }
+
+<span class="fc" id="L61">        Gson gson = new GsonBuilder().create();</span>
+
+<span class="fc" id="L63">        try (FileReader reader = new FileReader(file)) {</span>
+<span class="fc" id="L64">            return gson.fromJson(reader, Admin.class);</span>
+<span class="nc" id="L65">        } catch (IOException e) {</span>
+<span class="nc" id="L66">            throw new RuntimeException(e.getMessage());</span>
+        }
+    }
+
+    /**
+     * Checks if an admin with the given name exists.
+     * @param nomAdmin the name of the admin to check.
+     * @return true if the admin exists, false otherwise.
+     */
+    public boolean existsAdmin(String nomAdmin) {
+<span class="fc" id="L76">        File file = new File(DATA_DIR + &quot;/&quot; + nomAdmin + &quot;.json&quot;);</span>
+<span class="fc" id="L77">        return file.exists();</span>
+    }
+
+    /**
+     * Deletes an admin by their name.
+     * @param nomAdmin the name of the admin to delete.
+     * @return true if the admin was successfully deleted, false otherwise.
+     */
+    public boolean deleteAdmin(String nomAdmin) {
+<span class="fc" id="L86">        File file = new File(DATA_DIR + &quot;/&quot; + nomAdmin + &quot;.json&quot;);</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (file.exists()) {</span>
+<span class="fc" id="L88">            return file.delete();</span>
+        }
+<span class="nc" id="L90">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

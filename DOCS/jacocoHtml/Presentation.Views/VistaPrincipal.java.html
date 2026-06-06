@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VistaPrincipal.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">VistaPrincipal.java</span></div><h1>VistaPrincipal.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import Presentation.Controllers.CtrlPresentation;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+public class VistaPrincipal {
+    /* Controlador de presentació */
+    private final CtrlPresentation iCtrlPresentacion;
+    /* Finestra principal de la vista */
+<span class="nc" id="L13">    private final JFrame frameVista = new JFrame(&quot;Enquestamax 3000&quot;);</span>
+
+    /* Botó de registre */
+<span class="nc" id="L16">    private final JButton buttonRegister = new JButton(&quot;Registrar-se&quot;);</span>
+    /* Botó d'inici de sessió */
+<span class="nc" id="L18">    private final JButton buttonLogin = new JButton(&quot;Iniciar sessió&quot;);</span>
+    /* Botó del menú d'usuari */
+<span class="nc" id="L20">    private final JButton buttonUserMenu = new JButton(&quot;≡&quot;);</span>
+    /* Botó per afegir enquesta */
+<span class="nc" id="L22">    private final JButton buttonAddSurvey = new JButton(&quot;Crear enquesta&quot;);</span>
+    /* Botó per importar enquestes */
+<span class="nc" id="L24">    private final JButton buttonImportSurvey = new JButton(&quot;Importar enquesta&quot;);</span>
+    /* Label per al títol del panel d'informació */
+<span class="nc" id="L26">    private final JLabel labelPanelInformacion1 = new JLabel(&quot;Llistat d'enquestes:&quot;);</span>
+    /* Label per mostrar l'usuari actual */
+<span class="nc" id="L28">    private final JLabel labelUsuario = new JLabel(&quot;&quot;);</span>
+
+    /* Vista de registre d'usuari */
+<span class="nc" id="L31">    private VistaRegister vistaRegister = null;</span>
+    /* Vista d'inici de sessió */
+<span class="nc" id="L33">    private VistaLogin vistaLogin = null;</span>
+    /* Vista per afegir enquestes */
+<span class="nc" id="L35">    private VistaAddSurvey vistaAddSurvey = null;</span>
+    /* Vista d'edició d'enquesta */
+<span class="nc" id="L37">    private VistaEditarEnquesta vistaEditarEnquesta = null;</span>
+
+    /* Panel principal de la vista */
+    private JPanel mainPanel;
+    /* Panel de botons d'inici de sessió i registre */
+    private JPanel buttonPanel;
+    /* Panel d'informació amb la llista d'enquestes */
+    private JPanel infoPanel;
+    /* Panel per al botó d'afegir enquesta */
+    private JPanel addSurveyPanel;
+
+    /**
+     * Constructor de la vista principal.
+     * @param ctrl Controlador de presentació.
+     */
+<span class="nc" id="L52">    public VistaPrincipal(CtrlPresentation ctrl) {</span>
+<span class="nc" id="L53">        iCtrlPresentacion = ctrl;</span>
+<span class="nc" id="L54">        configurarVista();</span>
+<span class="nc" id="L55">        inicialitzarComponents();</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * Fa visible la vista principal.
+     */
+    public void hacerVisible(){
+<span class="nc" id="L62">        frameVista.setVisible(true);</span>
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * Obre la vista d'edició d'enquestes per a una enquesta específica.
+     * Només permet una finestra d'edició oberta a la vegada.
+     * @param id ID de l'enquesta a editar.
+     */
+    public void openEditSurvey(int id) {
+<span class="nc bnc" id="L71" title="All 4 branches missed.">        if (vistaEditarEnquesta != null &amp;&amp; vistaEditarEnquesta.isVisible()) {</span>
+<span class="nc" id="L72">            vistaEditarEnquesta.toFront();</span>
+<span class="nc" id="L73">            vistaEditarEnquesta.requestFocus();</span>
+<span class="nc" id="L74">            JOptionPane.showMessageDialog(frameVista,</span>
+                &quot;Ja hi ha una enquesta oberta en mode edició. Si us plau, tanca-la primer.&quot;,
+                &quot;Avís&quot;,
+                JOptionPane.WARNING_MESSAGE);
+        } else {
+<span class="nc" id="L79">            vistaEditarEnquesta = new VistaEditarEnquesta(iCtrlPresentacion, this, id);</span>
+<span class="nc" id="L80">            vistaEditarEnquesta.hacerVisible();</span>
+        }
+<span class="nc" id="L82">    }</span>
+
+    /**
+     * Configura la vista principal.
+     */
+    private void configurarVista() {
+<span class="nc" id="L88">        frameVista.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L89">        frameVista.setSize(500, 400);</span>
+
+        // Main panel with padding
+<span class="nc" id="L92">        mainPanel = VistaHelpers.createMainPanel();</span>
+
+        // Current user panel
+<span class="nc" id="L95">        JPanel currentUserPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));</span>
+<span class="nc" id="L96">        currentUserPanel.setBackground(VistaHelpers.BACKGROUND_COLOR);</span>
+
+        // Title panel
+<span class="nc" id="L99">        JPanel titlePanel = new JPanel(new BorderLayout());</span>
+<span class="nc" id="L100">        titlePanel.setBackground(VistaHelpers.BACKGROUND_COLOR);</span>
+
+<span class="nc" id="L102">        JLabel titleLabel = new JLabel(&quot;Enquestamax 3000&quot;);</span>
+<span class="nc" id="L103">        titleLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 24));</span>
+<span class="nc" id="L104">        titleLabel.setForeground(VistaHelpers.TITLE_COLOR);</span>
+<span class="nc" id="L105">        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);</span>
+<span class="nc" id="L106">        titlePanel.add(titleLabel, BorderLayout.CENTER);</span>
+<span class="nc" id="L107">        titlePanel.add(currentUserPanel, BorderLayout.EAST);</span>
+
+        // Usuario label
+<span class="nc" id="L110">        labelUsuario.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L111">        labelUsuario.setForeground(VistaHelpers.TEXT_COLOR);</span>
+<span class="nc" id="L112">        currentUserPanel.add(labelUsuario);</span>
+
+        // Style user menu button (three dots)
+<span class="nc" id="L115">        buttonUserMenu.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 15));</span>
+<span class="nc" id="L116">        buttonUserMenu.setBackground(VistaHelpers.BACKGROUND_COLOR);</span>
+<span class="nc" id="L117">        buttonUserMenu.setForeground(VistaHelpers.TEXT_COLOR);</span>
+<span class="nc" id="L118">        buttonUserMenu.setMargin(new Insets(2, 8, 2, 8));</span>
+<span class="nc" id="L119">        buttonUserMenu.setCursor(new Cursor(Cursor.HAND_CURSOR));</span>
+<span class="nc" id="L120">        buttonUserMenu.setFocusPainted(false);</span>
+<span class="nc" id="L121">        buttonUserMenu.setBorderPainted(false);</span>
+<span class="nc" id="L122">        buttonUserMenu.setContentAreaFilled(false);</span>
+<span class="nc" id="L123">        currentUserPanel.add(buttonUserMenu);</span>
+
+        // Button panel with better layout
+<span class="nc" id="L126">        buttonPanel = new JPanel();</span>
+<span class="nc" id="L127">        buttonPanel.setLayout(new GridLayout(2, 1, 10, 15));</span>
+<span class="nc" id="L128">        buttonPanel.setBackground(VistaHelpers.BACKGROUND_COLOR);</span>
+<span class="nc" id="L129">        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));</span>
+<span class="nc" id="L130">        buttonPanel.add(buttonRegister);</span>
+<span class="nc" id="L131">        buttonPanel.add(buttonLogin);</span>
+
+        // Style buttons
+<span class="nc" id="L134">        VistaHelpers.styleButton(buttonRegister, VistaHelpers.PRIMARY_COLOR);</span>
+<span class="nc" id="L135">        VistaHelpers.styleButton(buttonLogin, VistaHelpers.PRIMARY_COLOR);</span>
+<span class="nc" id="L136">        VistaHelpers.styleButton(buttonAddSurvey, VistaHelpers.SUCCESS_COLOR);</span>
+<span class="nc" id="L137">        VistaHelpers.styleButton(buttonImportSurvey, VistaHelpers.PRIMARY_COLOR);</span>
+
+        // Make buttons respond to Enter key
+<span class="nc" id="L140">        VistaHelpers.makeButtonRespondToEnter(buttonRegister);</span>
+<span class="nc" id="L141">        VistaHelpers.makeButtonRespondToEnter(buttonLogin);</span>
+<span class="nc" id="L142">        VistaHelpers.makeButtonRespondToEnter(buttonAddSurvey);</span>
+<span class="nc" id="L143">        VistaHelpers.makeButtonRespondToEnter(buttonImportSurvey);</span>
+<span class="nc" id="L144">        VistaHelpers.makeButtonRespondToEnter(buttonUserMenu);</span>
+
+        // Panel for add survey button (when logged in)
+<span class="nc" id="L147">        addSurveyPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));</span>
+<span class="nc" id="L148">        addSurveyPanel.setBackground(VistaHelpers.BACKGROUND_COLOR);</span>
+<span class="nc" id="L149">        addSurveyPanel.add(buttonAddSurvey);</span>
+<span class="nc" id="L150">        addSurveyPanel.add(buttonImportSurvey);</span>
+
+
+        // Information panel
+<span class="nc" id="L154">        infoPanel = new JPanel(new BorderLayout());</span>
+<span class="nc" id="L155">        infoPanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L156">        infoPanel.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L157">            BorderFactory.createLineBorder(VistaHelpers.BORDER_COLOR, 1),</span>
+<span class="nc" id="L158">            BorderFactory.createEmptyBorder(10, 10, 10, 10)</span>
+        ));
+
+<span class="nc" id="L161">        labelPanelInformacion1.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));</span>
+<span class="nc" id="L162">        labelPanelInformacion1.setForeground(VistaHelpers.TEXT_COLOR);</span>
+<span class="nc" id="L163">        infoPanel.add(labelPanelInformacion1, BorderLayout.NORTH);</span>
+
+        // Add a placeholder for survey list
+<span class="nc" id="L166">        JPanel surveyListContainer = new JPanel(new BorderLayout());</span>
+<span class="nc" id="L167">        surveyListContainer.setBackground(Color.WHITE);</span>
+<span class="nc" id="L168">        infoPanel.add(surveyListContainer, BorderLayout.CENTER);</span>
+
+
+<span class="nc" id="L171">        mainPanel.add(titlePanel, BorderLayout.NORTH);</span>
+<span class="nc" id="L172">        mainPanel.add(buttonPanel, BorderLayout.CENTER);</span>
+<span class="nc" id="L173">        mainPanel.add(addSurveyPanel, BorderLayout.SOUTH); // Add it but keep it invisible initially</span>
+
+        // Initially show login/register buttons
+<span class="nc" id="L176">        actualitzarBotons(false);</span>
+
+<span class="nc" id="L178">        frameVista.add(mainPanel);</span>
+<span class="nc" id="L179">        frameVista.setLocationRelativeTo(null);</span>
+
+        // Setup keyboard navigation
+<span class="nc" id="L182">        setupKeyboardNavigation();</span>
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * Configura la navegació per teclat de la vista principal.
+     */
+    private void setupKeyboardNavigation() {
+        // Configure Tab traversal
+<span class="nc" id="L190">        java.util.Set&lt;AWTKeyStroke&gt; forwardKeys = new java.util.HashSet&lt;&gt;(frameVista.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));</span>
+<span class="nc" id="L191">        forwardKeys.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_TAB, 0));</span>
+<span class="nc" id="L192">        frameVista.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);</span>
+
+<span class="nc" id="L194">        java.util.Set&lt;AWTKeyStroke&gt; backwardKeys = new java.util.HashSet&lt;&gt;(frameVista.getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));</span>
+<span class="nc" id="L195">        backwardKeys.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_TAB, java.awt.event.InputEvent.SHIFT_DOWN_MASK));</span>
+<span class="nc" id="L196">        frameVista.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeys);</span>
+<span class="nc" id="L197">    }</span>
+
+    /**
+     * Actualitza la llista d'enquestes mostrada a la vista principal.
+     */
+    private void actualizarListaEncuestas() {
+<span class="nc" id="L203">        JPanel surveyListPanel = new JPanel();</span>
+<span class="nc" id="L204">        surveyListPanel.setLayout(new BoxLayout(surveyListPanel, BoxLayout.Y_AXIS));</span>
+<span class="nc" id="L205">        surveyListPanel.setBackground(Color.WHITE);</span>
+
+<span class="nc" id="L207">        java.util.Map&lt;Integer, String&gt; enquestes = iCtrlPresentacion.getEnquestes();</span>
+
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        if (enquestes.isEmpty()) {</span>
+<span class="nc" id="L210">            JLabel noSurveysLabel = new JLabel(&quot;No hi ha enquestes disponibles.&quot;);</span>
+<span class="nc" id="L211">            noSurveysLabel.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 12));</span>
+<span class="nc" id="L212">            noSurveysLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));</span>
+<span class="nc" id="L213">            surveyListPanel.add(noSurveysLabel);</span>
+<span class="nc" id="L214">        } else {</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            for (java.util.Map.Entry&lt;Integer, String&gt; entry : enquestes.entrySet()) {</span>
+<span class="nc" id="L216">                surveyListPanel.add(createSurveyItemPanel(entry.getKey(), entry.getValue()));</span>
+<span class="nc" id="L217">            }</span>
+        }
+
+<span class="nc" id="L220">        JPanel surveyListContainer = (JPanel) infoPanel.getComponent(1);</span>
+<span class="nc" id="L221">        surveyListContainer.removeAll();</span>
+<span class="nc" id="L222">        JScrollPane scrollPane = new JScrollPane(surveyListPanel);</span>
+<span class="nc" id="L223">        scrollPane.setBorder(BorderFactory.createEmptyBorder());</span>
+<span class="nc" id="L224">        surveyListContainer.add(scrollPane, BorderLayout.CENTER);</span>
+
+<span class="nc" id="L226">        surveyListContainer.revalidate();</span>
+<span class="nc" id="L227">        surveyListContainer.repaint();</span>
+<span class="nc" id="L228">    }</span>
+
+    /**
+     * Crea un panel per a un element de la llista d'enquestes.
+     * @param surveyId ID de l'enquesta.
+     * @param surveyName Nom de l'enquesta.
+     * @return Panel que representa l'element de l'enquesta.
+     */
+    private JPanel createSurveyItemPanel(int surveyId, String surveyName) {
+<span class="nc" id="L237">        JPanel itemPanel = new JPanel(new BorderLayout());</span>
+<span class="nc" id="L238">        itemPanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L239">        itemPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, VistaHelpers.BORDER_COLOR));</span>
+<span class="nc" id="L240">        itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));</span>
+<span class="nc" id="L241">        itemPanel.setPreferredSize(new Dimension(400, 50));</span>
+
+        // Panel para el nombre con centrado vertical
+<span class="nc" id="L244">        JPanel namePanel = new JPanel(new GridBagLayout());</span>
+<span class="nc" id="L245">        namePanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L246">        JLabel nameLabel = new JLabel(surveyName);</span>
+<span class="nc" id="L247">        nameLabel.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L248">        namePanel.add(nameLabel);</span>
+<span class="nc" id="L249">        namePanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));</span>
+<span class="nc" id="L250">        itemPanel.add(namePanel, BorderLayout.WEST);</span>
+
+<span class="nc" id="L252">        JButton editButton = new JButton(&quot;✎&quot;); // Pencil icon</span>
+<span class="nc" id="L253">        JButton deleteButton = new JButton(&quot;\uD83D\uDDD1&quot;); // Trash can icon</span>
+<span class="nc" id="L254">        JButton viewButton = new JButton(&quot;\uD83D\uDCCB&quot;); // Clipboard icon</span>
+<span class="nc" id="L255">        JButton respondButton = new JButton(&quot;➤&quot;); // Arrow icon</span>
+<span class="nc" id="L256">        JButton analyzeButton = new JButton(&quot;\uD83D\uDCC8&quot;); // Chart icon</span>
+<span class="nc" id="L257">        JButton cloneButton = new JButton(&quot;⎘&quot;); // Copy icon</span>
+<span class="nc" id="L258">        JButton exportButton = new JButton(&quot;⬇&quot;); // Download icon</span>
+
+<span class="nc" id="L260">        VistaHelpers.styleActionButton(editButton);</span>
+<span class="nc" id="L261">        VistaHelpers.styleActionButton(deleteButton);</span>
+<span class="nc" id="L262">        VistaHelpers.styleActionButton(cloneButton);</span>
+<span class="nc" id="L263">        VistaHelpers.styleActionButton(viewButton);</span>
+<span class="nc" id="L264">        VistaHelpers.styleActionButton(analyzeButton);</span>
+<span class="nc" id="L265">        VistaHelpers.styleActionButton(respondButton);</span>
+<span class="nc" id="L266">        VistaHelpers.styleActionButton(exportButton);</span>
+
+        // Make action buttons respond to Enter key
+<span class="nc" id="L269">        VistaHelpers.makeButtonRespondToEnter(editButton);</span>
+<span class="nc" id="L270">        VistaHelpers.makeButtonRespondToEnter(deleteButton);</span>
+<span class="nc" id="L271">        VistaHelpers.makeButtonRespondToEnter(cloneButton);</span>
+<span class="nc" id="L272">        VistaHelpers.makeButtonRespondToEnter(viewButton);</span>
+<span class="nc" id="L273">        VistaHelpers.makeButtonRespondToEnter(analyzeButton);</span>
+<span class="nc" id="L274">        VistaHelpers.makeButtonRespondToEnter(respondButton);</span>
+<span class="nc" id="L275">        VistaHelpers.makeButtonRespondToEnter(exportButton);</span>
+
+        // Add tooltips
+<span class="nc" id="L278">        editButton.setToolTipText(&quot;Editar enquesta&quot;);</span>
+<span class="nc" id="L279">        deleteButton.setToolTipText(&quot;Esborrar enquesta&quot;);</span>
+<span class="nc" id="L280">        viewButton.setToolTipText(&quot;Veure respostes&quot;);</span>
+<span class="nc" id="L281">        respondButton.setToolTipText(&quot;Respondre enquesta&quot;);</span>
+<span class="nc" id="L282">        analyzeButton.setToolTipText(&quot;Analitzar enquesta&quot;);</span>
+<span class="nc" id="L283">        cloneButton.setToolTipText(&quot;Clonar enquesta&quot;);</span>
+<span class="nc" id="L284">        exportButton.setToolTipText(&quot;Exportar enquesta&quot;);</span>
+
+<span class="nc" id="L286">        editButton.addActionListener(e -&gt; iCtrlPresentacion.editarEnquesta(surveyId));</span>
+<span class="nc" id="L287">        deleteButton.addActionListener(e -&gt; {</span>
+<span class="nc" id="L288">            int confirm = JOptionPane.showConfirmDialog(frameVista, &quot;¿Segur que desitja esborrar l'enquesta '&quot; + surveyName + &quot;'?&quot;, &quot;Confirmar esborrat&quot;, JOptionPane.YES_NO_OPTION);</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">            if (confirm == JOptionPane.YES_OPTION) {</span>
+<span class="nc" id="L290">                iCtrlPresentacion.esborrarEnquesta(surveyId);</span>
+<span class="nc" id="L291">                actualizarListaEncuestas();</span>
+            }
+<span class="nc" id="L293">        });</span>
+<span class="nc" id="L294">        viewButton.addActionListener(e -&gt; iCtrlPresentacion.veureRespostesEnquesta(surveyId));</span>
+<span class="nc" id="L295">        respondButton.addActionListener(e -&gt; iCtrlPresentacion.respondreEnquesta(surveyId));</span>
+<span class="nc" id="L296">        analyzeButton.addActionListener(e -&gt; iCtrlPresentacion.analitzarEnquesta(surveyId));</span>
+<span class="nc" id="L297">        cloneButton.addActionListener(e -&gt; {</span>
+<span class="nc" id="L298">            iCtrlPresentacion.clonarEnquesta(surveyId);</span>
+<span class="nc" id="L299">            actualizarListaEncuestas();</span>
+<span class="nc" id="L300">        });</span>
+<span class="nc" id="L301">        exportButton.addActionListener(e -&gt; openExportDialog(surveyId, surveyName));</span>
+
+        // Panel para los botones con centrado vertical
+<span class="nc" id="L304">        JPanel buttonGroup = new JPanel(new GridBagLayout());</span>
+<span class="nc" id="L305">        buttonGroup.setBackground(Color.WHITE);</span>
+<span class="nc" id="L306">        GridBagConstraints gbc = new GridBagConstraints();</span>
+<span class="nc" id="L307">        gbc.gridy = 0;</span>
+<span class="nc" id="L308">        gbc.insets = new Insets(0, 0, 0, 0);</span>
+<span class="nc" id="L309">        buttonGroup.add(editButton, gbc);</span>
+<span class="nc" id="L310">        buttonGroup.add(deleteButton, gbc);</span>
+<span class="nc" id="L311">        buttonGroup.add(cloneButton, gbc);</span>
+<span class="nc" id="L312">        buttonGroup.add(exportButton, gbc);</span>
+<span class="nc" id="L313">        buttonGroup.add(viewButton, gbc);</span>
+<span class="nc" id="L314">        buttonGroup.add(analyzeButton, gbc);</span>
+<span class="nc" id="L315">        buttonGroup.add(respondButton, gbc);</span>
+
+<span class="nc" id="L317">        itemPanel.add(buttonGroup, BorderLayout.EAST);</span>
+
+<span class="nc" id="L319">        return itemPanel;</span>
+    }
+
+
+    /**
+     * Gestiona l'acció del botó de registre.
+     * Obre la finestra de registre si no està ja oberta.
+     * @param event Esdeveniment d'acció que desencadena aquest mètode.
+     */
+    private void actionPerformed_buttonRegister (ActionEvent event) {
+<span class="nc" id="L329">        SwingUtilities.invokeLater(() -&gt; {</span>
+<span class="nc bnc" id="L330" title="All 4 branches missed.">            if (vistaRegister == null || !vistaRegister.isVisible()) {</span>
+<span class="nc" id="L331">                vistaRegister = new VistaRegister(iCtrlPresentacion);</span>
+<span class="nc" id="L332">                vistaRegister.hacerVisible();</span>
+            } else {
+<span class="nc" id="L334">                vistaRegister.toFront();</span>
+<span class="nc" id="L335">                vistaRegister.requestFocus();</span>
+            }
+<span class="nc" id="L337">        });</span>
+<span class="nc" id="L338">    }</span>
+
+    /**
+     * Gestiona l'acció del botó d'inici de sessió.
+     * Obre la finestra d'inici de sessió si no està ja oberta.
+     * @param event Esdeveniment d'acció que desencadena aquest mètode.
+     */
+    private void actionPerformed_buttonLogin (ActionEvent event) {
+<span class="nc" id="L346">        SwingUtilities.invokeLater(() -&gt; {</span>
+<span class="nc bnc" id="L347" title="All 4 branches missed.">            if (vistaLogin == null || !vistaLogin.isVisible()) {</span>
+<span class="nc" id="L348">                vistaLogin = new VistaLogin(iCtrlPresentacion);</span>
+<span class="nc" id="L349">                vistaLogin.hacerVisible();</span>
+            } else {
+<span class="nc" id="L351">                vistaLogin.toFront();</span>
+<span class="nc" id="L352">                vistaLogin.requestFocus();</span>
+            }
+<span class="nc" id="L354">        });</span>
+<span class="nc" id="L355">    }</span>
+
+    /**
+     * Gestiona l'acció del botó del menú d'usuari.
+     * Mostra un menú emergent amb opcions per tancar sessió o eliminar l'usuari.
+     * @param event Esdeveniment d'acció que desencadena aquest mètode.
+     */
+    private void actionPerformed_buttonUserMenu (ActionEvent event) {
+<span class="nc" id="L363">        JPopupMenu popupMenu = new JPopupMenu();</span>
+
+        // Crear el ítem de cerrar sesión
+<span class="nc" id="L366">        JMenuItem logoutItem = new JMenuItem(&quot;Tancar sessió&quot;);</span>
+<span class="nc" id="L367">        logoutItem.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 12));</span>
+<span class="nc" id="L368">        logoutItem.addActionListener(e -&gt; {</span>
+<span class="nc" id="L369">            int confirmacion = JOptionPane.showConfirmDialog(frameVista,</span>
+                    &quot;Està segur de que desitja tancar la sessió?&quot;,
+                    &quot;Confirmar tancament de sessió&quot;,
+                    JOptionPane.YES_NO_OPTION);
+
+<span class="nc bnc" id="L374" title="All 2 branches missed.">            if (confirmacion == JOptionPane.YES_OPTION) {</span>
+<span class="nc" id="L375">                iCtrlPresentacion.tancarSessio();</span>
+<span class="nc" id="L376">                JOptionPane.showMessageDialog(frameVista,</span>
+                        &quot;Sessió tancada amb èxit&quot;,
+                        &quot;Èxit&quot;,
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+<span class="nc" id="L381">        });</span>
+
+        // Crear el ítem de eliminar usuario
+<span class="nc" id="L384">        JMenuItem deleteUserItem = getJMenuItem();</span>
+
+<span class="nc" id="L386">        popupMenu.add(logoutItem);</span>
+<span class="nc" id="L387">        popupMenu.addSeparator();</span>
+<span class="nc" id="L388">        popupMenu.add(deleteUserItem);</span>
+
+        // Mostrar el menú en la posición del botón
+<span class="nc" id="L391">        popupMenu.show(buttonUserMenu, 0, buttonUserMenu.getHeight());</span>
+<span class="nc" id="L392">    }</span>
+
+    private JMenuItem getJMenuItem() {
+<span class="nc" id="L395">        JMenuItem deleteUserItem = new JMenuItem(&quot;Eliminar usuari&quot;);</span>
+<span class="nc" id="L396">        deleteUserItem.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 12));</span>
+<span class="nc" id="L397">        deleteUserItem.setForeground(new Color(220, 20, 60));</span>
+<span class="nc" id="L398">        deleteUserItem.addActionListener(e -&gt; {</span>
+<span class="nc" id="L399">            int confirmacion = JOptionPane.showConfirmDialog(frameVista,</span>
+                    &quot;¿Està segur de que desitja eliminar el seu compte d'usuari?\nAquesta acció no es pot desfer.&quot;,
+                    &quot;Confirmar eliminació de l'usuari&quot;,
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
+<span class="nc bnc" id="L405" title="All 2 branches missed.">            if (confirmacion == JOptionPane.YES_OPTION) {</span>
+<span class="nc" id="L406">                iCtrlPresentacion.eliminarUsuariActual();</span>
+<span class="nc" id="L407">                JOptionPane.showMessageDialog(frameVista,</span>
+                        &quot;Usuari esborrat amb èxit&quot;,
+                        &quot;Èxit&quot;,
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+<span class="nc" id="L412">        });</span>
+<span class="nc" id="L413">        return deleteUserItem;</span>
+    }
+
+    /**
+     * Gestiona l'acció del botó d'afegir enquesta.
+     * @param event Esdeveniment d'acció que desencadena aquest mètode.
+     */
+    private void actionPerformed_buttonAddSurvey (ActionEvent event) {
+<span class="nc" id="L421">        SwingUtilities.invokeLater(() -&gt; {</span>
+<span class="nc bnc" id="L422" title="All 4 branches missed.">            if (vistaAddSurvey == null || !vistaAddSurvey.isVisible()) {</span>
+<span class="nc" id="L423">                vistaAddSurvey = new VistaAddSurvey(iCtrlPresentacion, this);</span>
+<span class="nc" id="L424">                vistaAddSurvey.hacerVisible();</span>
+            } else {
+<span class="nc" id="L426">                vistaAddSurvey.toFront();</span>
+<span class="nc" id="L427">                vistaAddSurvey.requestFocus();</span>
+            }
+<span class="nc" id="L429">        });</span>
+<span class="nc" id="L430">    }</span>
+
+    /**
+     * Gestiona l'acció del botó d'importació d'enquestes.
+     * @param event Esdeveniment d'acció que desencadena aquest mètode.
+     */
+    private void actionPerformed_buttonImportSurvey(ActionEvent event) {
+<span class="nc" id="L437">        SwingUtilities.invokeLater(() -&gt; {</span>
+<span class="nc" id="L438">            VistaFileChooser vistaImport = new VistaFileChooser(</span>
+                VistaFileChooser.Mode.IMPORT,
+                &quot;Enquesta&quot;,
+                path -&gt; {
+                    try {
+<span class="nc" id="L443">                        iCtrlPresentacion.importarEnquesta(path);</span>
+                    }
+<span class="nc" id="L445">                    catch (Exception e) {</span>
+<span class="nc" id="L446">                        JOptionPane.showMessageDialog(frameVista,</span>
+<span class="nc" id="L447">                            &quot;Error en importar l'enquesta:\n&quot; + e.getMessage(),</span>
+                            &quot;Error&quot;,
+                            JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L450">                        return;</span>
+<span class="nc" id="L451">                    }</span>
+<span class="nc" id="L452">                    JOptionPane.showMessageDialog(frameVista,</span>
+                        &quot;Enquesta importada correctament des de:\n&quot; + path,
+                        &quot;Èxit&quot;,
+                        JOptionPane.INFORMATION_MESSAGE);
+<span class="nc" id="L456">                    actualizarListaEncuestas();</span>
+<span class="nc" id="L457">                }</span>
+            );
+<span class="nc" id="L459">            vistaImport.hacerVisible();</span>
+<span class="nc" id="L460">        });</span>
+<span class="nc" id="L461">    }</span>
+
+    /**
+     * Obre el diàleg d'exportació per a una enquesta específica.
+     * @param surveyId ID de l'enquesta a exportar.
+     * @param surveyName Nom de l'enquesta a exportar.
+     */
+    private void openExportDialog(int surveyId, String surveyName) {
+<span class="nc" id="L469">        SwingUtilities.invokeLater(() -&gt; {</span>
+<span class="nc" id="L470">            VistaFileChooser vistaExport = new VistaFileChooser(</span>
+                VistaFileChooser.Mode.EXPORT,
+                &quot;Enquesta&quot;,
+                path -&gt; {
+                    try {
+<span class="nc" id="L475">                        iCtrlPresentacion.exportarEnquesta(surveyId, path);</span>
+                    }
+<span class="nc" id="L477">                    catch (Exception e) {</span>
+<span class="nc" id="L478">                        JOptionPane.showMessageDialog(frameVista,</span>
+                            &quot;La ruta introduida no existeix&quot;,
+                            &quot;Error&quot;,
+                            JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L482">                        return;</span>
+<span class="nc" id="L483">                    }</span>
+<span class="nc" id="L484">                    JOptionPane.showMessageDialog(frameVista,</span>
+                        &quot;Enquesta '&quot; + surveyName + &quot;' exportada correctament a:\n&quot; + path,
+                        &quot;Èxit&quot;,
+                        JOptionPane.INFORMATION_MESSAGE);
+<span class="nc" id="L488">                }</span>
+            );
+<span class="nc" id="L490">            vistaExport.hacerVisible();</span>
+<span class="nc" id="L491">        });</span>
+<span class="nc" id="L492">    }</span>
+
+    /**
+     * Assigna els actionListeners als botons de la vista principal.
+     */
+    private void inicialitzarComponents() {
+<span class="nc" id="L498">        buttonRegister.addActionListener(this::actionPerformed_buttonRegister);</span>
+<span class="nc" id="L499">        buttonLogin.addActionListener(this::actionPerformed_buttonLogin);</span>
+<span class="nc" id="L500">        buttonUserMenu.addActionListener(this::actionPerformed_buttonUserMenu);</span>
+<span class="nc" id="L501">        buttonAddSurvey.addActionListener(this::actionPerformed_buttonAddSurvey);</span>
+<span class="nc" id="L502">        buttonImportSurvey.addActionListener(this::actionPerformed_buttonImportSurvey);</span>
+<span class="nc" id="L503">    }</span>
+
+    /**
+     * Actualitza l'estat de la sessió a la vista principal.
+     * Mostra o amaga els botons i panells segons si hi ha una sessió iniciada.
+     */
+    public void actualitzarEstatSessio() {
+<span class="nc" id="L510">        boolean loggedIn = iCtrlPresentacion.sessioIniciada();</span>
+<span class="nc bnc" id="L511" title="All 2 branches missed.">        if (loggedIn) {</span>
+<span class="nc" id="L512">            labelUsuario.setText(&quot;Usuari: &quot; + iCtrlPresentacion.getUsuariActual());</span>
+<span class="nc" id="L513">            actualizarListaEncuestas();</span>
+        } else {
+<span class="nc" id="L515">            labelUsuario.setText(&quot;&quot;);</span>
+        }
+<span class="nc" id="L517">        actualitzarBotons(loggedIn);</span>
+<span class="nc" id="L518">    }</span>
+
+    /**
+     * Actualitza la visibilitat dels botonss i panells segons l'estat de l'inici de sessió.
+     * @param loggedIn true si hi ha una sessió iniciada, false en cas contrari.
+     */
+    private void actualitzarBotons(boolean loggedIn) {
+        // Toggle visibility based on login state
+<span class="nc bnc" id="L526" title="All 2 branches missed.">        buttonPanel.setVisible(!loggedIn);</span>
+<span class="nc" id="L527">        infoPanel.setVisible(loggedIn);</span>
+<span class="nc" id="L528">        addSurveyPanel.setVisible(loggedIn);</span>
+<span class="nc" id="L529">        buttonUserMenu.setVisible(loggedIn);</span>
+<span class="nc" id="L530">        labelUsuario.setVisible(loggedIn);</span>
+
+        // If logged in, infoPanel should be in the center
+<span class="nc bnc" id="L533" title="All 2 branches missed.">        if (loggedIn) {</span>
+<span class="nc" id="L534">            mainPanel.add(infoPanel, BorderLayout.CENTER);</span>
+        } else {
+<span class="nc" id="L536">            mainPanel.remove(infoPanel);</span>
+<span class="nc" id="L537">            mainPanel.add(buttonPanel, BorderLayout.CENTER);</span>
+        }
+
+<span class="nc" id="L540">        mainPanel.revalidate();</span>
+<span class="nc" id="L541">        mainPanel.repaint();</span>
+<span class="nc" id="L542">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

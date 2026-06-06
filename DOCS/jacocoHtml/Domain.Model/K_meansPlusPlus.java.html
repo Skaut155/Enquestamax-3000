@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>K_meansPlusPlus.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">K_meansPlusPlus.java</span></div><h1>K_meansPlusPlus.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ * K_means++ clustering algorithm for survey responses (&quot;RespostaEnquesta&quot;).
+ */
+public class K_meansPlusPlus extends K_means {
+    
+    /**
+     * Deffault constructor K_meansPlusPlus
+     */
+<span class="fc" id="L14">    public K_meansPlusPlus(){}</span>
+
+    /**
+     * Initialize firsts centroids with k-means++ algorithm 
+     * @param k number of clusters
+     * @param respostes set of minimum k RespostaEnquesta and all of the same Enquesta
+     * @return array of k different centroids choosen by k-means++
+     */
+    @Override
+    public ArrayList&lt;RespostaEnquesta&gt; initialize(int k, ArrayList&lt;RespostaEnquesta&gt; respostes) {          
+<span class="fc" id="L24">        Random rand = new Random();</span>
+<span class="fc" id="L25">        ArrayList&lt;RespostaEnquesta&gt; centroids = new ArrayList&lt;RespostaEnquesta&gt;();</span>
+        
+        // Choose first random centroid
+<span class="fc" id="L28">        int firstIndex = rand.nextInt(respostes.size());</span>
+<span class="fc" id="L29">        centroids.add(respostes.get(firstIndex));</span>
+
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        while(centroids.size() &lt; k) {</span>
+            // Compute the distance between each answer and the nearest centroid
+<span class="fc" id="L33">            double[] minDists = new double[respostes.size()];</span>
+<span class="fc" id="L34">            double totalDist = minDists(respostes, centroids, minDists);</span>
+
+            // Choose the next centroid with probability of squared distance
+<span class="fc" id="L37">            int c = selectNextCentroid(minDists, rand.nextDouble() * totalDist);</span>
+<span class="fc" id="L38">            centroids.add(respostes.get(c));</span>
+<span class="fc" id="L39">        }</span>
+<span class="fc" id="L40">        return centroids;</span>
+    }
+
+    /**
+     * Squared distance between each answer and the nearest centroid and the total sum
+     * @param respostes answers
+     * @param centroids centroids
+     * @param minDists empty set completed with the squared distance between each answer and the nearest centroid
+     * @return sum of the distances
+     */
+    private double minDists(ArrayList&lt;RespostaEnquesta&gt; respostes, ArrayList&lt;RespostaEnquesta&gt; centroids, double[] minDists) {
+<span class="fc" id="L51">        double totalDist = 0.0;</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        for(int i = 0; i &lt; respostes.size(); i++) {</span>
+<span class="fc" id="L53">            double minDist = Double.MAX_VALUE; //minDist &gt; 1.0</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            for(RespostaEnquesta centroid : centroids) {</span>
+<span class="fc" id="L55">                double dist = distRespostesEnquesta(respostes.get(i), centroid);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">                if(dist &lt; minDist) {</span>
+<span class="fc" id="L57">                    minDist = dist;</span>
+                }
+<span class="fc" id="L59">            }</span>
+<span class="fc" id="L60">            minDists[i] = minDist * minDist;</span>
+<span class="fc" id="L61">            totalDist += minDists[i];</span>
+        }
+<span class="fc" id="L63">        return totalDist;</span>
+    }
+
+    /**
+     * Choose the next centroid with probability of the squared ditances
+     * @param sqDists squared distances
+     * @param dist random distance choosed
+     * @return index i of the centroid. First index that fulfills: sum(j in 0..i) sqDists[j] &gt;= dist
+     */
+    private int selectNextCentroid(double[] sqDists, double dist){
+<span class="fc" id="L73">        double acumulativeDist = 0.0;</span>
+<span class="fc" id="L74">        int i = 0;</span>
+<span class="fc" id="L75">        boolean found = false;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        for(i = 0; !found; i++) {</span>
+<span class="fc" id="L77">            acumulativeDist += sqDists[i];</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            if(acumulativeDist &gt;= dist) found = true;</span>
+        }
+<span class="fc" id="L80">        return i-1;</span>
+    }
+
+
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

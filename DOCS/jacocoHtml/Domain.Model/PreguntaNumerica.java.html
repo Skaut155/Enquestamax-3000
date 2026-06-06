@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreguntaNumerica.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">PreguntaNumerica.java</span></div><h1>PreguntaNumerica.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import Domain.Exceptions.RespostaNoValida;
+
+/**
+ * Class representing a numeric question type
+ */
+public class PreguntaNumerica extends TipusPregunta {
+<span class="fc" id="L9">    private static PreguntaNumerica instance = null;</span>
+<span class="fc" id="L10">    private PreguntaNumerica() {</span>
+<span class="fc" id="L11">        setCode(&quot;NUMERICA&quot;);</span>
+<span class="fc" id="L12">    }</span>
+
+    /**
+     * Get the singleton instance of PreguntaNumerica
+     * @return The singleton instance of PreguntaNumerica
+     */
+    public static PreguntaNumerica getInstance() {
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L20">            instance = new PreguntaNumerica();</span>
+        }
+<span class="fc" id="L22">        return instance;</span>
+    }
+
+    @Override
+    public void checkOpcions() {
+<span class="fc" id="L27">        throw new UnsupportedOperationException(&quot;Les preguntes numèriques no tenen opcions.&quot;);</span>
+    }
+
+    /**
+     * Generate a specific answer for numeric question
+     * @param resposta The answer string (unparsed)
+     * @param ordrePregunta The question order inside the survey
+     * @param isBlank Indicates if the answer is blank (non answered)
+     * @param p The question instance
+     * @return A RespostaAPregunta instance representing the parsed answer
+     * @throws RespostaNoValida If the answer is not a valid number, or out of range
+     */
+    @Override
+    protected RespostaAPregunta&lt;Double&gt; generaEspecific(String resposta, int ordrePregunta, boolean isBlank, Pregunta p) throws RespostaNoValida {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if(isBlank) {</span>
+             // skip cast, generate a blank answer
+<span class="fc" id="L43">            return new RespostaAPreguntaNumerica(ordrePregunta);</span>
+        }
+        try {
+<span class="fc" id="L46">            Double valor = Double.parseDouble(resposta);</span>
+<span class="fc" id="L47">            return new RespostaAPreguntaNumerica(valor, ordrePregunta);</span>
+<span class="fc" id="L48">        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L49">            throw new RespostaNoValida(&quot;La resposta proporcionada no és un número vàlid.&quot;);</span>
+        }
+    }
+
+    /**
+     * Change the state of the question to numeric open answer
+     * @param p An instance of Pregunta (the caller's 'this')
+     */
+    @Override
+    public void setPreguntaRespostaObertaNumerica(Pregunta p) {
+        // Ja està en aquest estat
+<span class="fc" id="L60">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VistaHelpers.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">VistaHelpers.java</span></div><h1>VistaHelpers.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Classe utilitària per estilitzar components de la interfície d'usuari
+ * amb un estil coherent a tota l'aplicació.
+ */
+<span class="nc" id="L13">public class VistaHelpers {</span>
+
+    /** Color de fons estàndard de l'aplicació */
+<span class="nc" id="L16">    public static final Color BACKGROUND_COLOR = new Color(245, 245, 250);</span>
+    /** Color principal per a botons d'acció */
+<span class="nc" id="L18">    public static final Color PRIMARY_COLOR = new Color(70, 130, 180);</span>
+    /** Color d'èxit per a accions positives */
+<span class="nc" id="L20">    public static final Color SUCCESS_COLOR = new Color(60, 179, 113);</span>
+    /** Color de perill per a accions destructives */
+<span class="nc" id="L22">    public static final Color DANGER_COLOR = new Color(220, 20, 60);</span>
+    /** Color secundari per a botons cancel·lar */
+<span class="nc" id="L24">    public static final Color SECONDARY_COLOR = new Color(180, 180, 180);</span>
+    /** Color de text principal */
+<span class="nc" id="L26">    public static final Color TEXT_COLOR = new Color(60, 60, 60);</span>
+    /** Color de títols */
+<span class="nc" id="L28">    public static final Color TITLE_COLOR = new Color(60, 60, 120);</span>
+    /** Color de vores */
+<span class="nc" id="L30">    public static final Color BORDER_COLOR = new Color(200, 200, 200);</span>
+
+    /** Color del borde de focus */
+<span class="nc" id="L33">    public static final Color FOCUS_BORDER_COLOR = new Color(0, 120, 215);</span>
+
+    /**
+     * Aplica un estil coherent a un botó amb colors personalitzats.
+     *
+     * @param button Botó a estilitzar
+     * @param baseColor Color de fons del botó
+     * @param foregroundColor Color del text del botó
+     */
+    public static void styleButton(JButton button, Color baseColor, Color foregroundColor) {
+<span class="nc" id="L43">        button.setBackground(baseColor);</span>
+<span class="nc" id="L44">        button.setForeground(foregroundColor);</span>
+<span class="nc" id="L45">        button.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 13));</span>
+<span class="nc" id="L46">        button.setFocusPainted(false);</span>
+<span class="nc" id="L47">        button.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));</span>
+<span class="nc" id="L48">        button.setCursor(new Cursor(Cursor.HAND_CURSOR));</span>
+
+        // Afegir indicador visual de focus
+<span class="nc" id="L51">        button.addFocusListener(new FocusAdapter() {</span>
+            @Override
+            public void focusGained(FocusEvent e) {
+<span class="nc" id="L54">                button.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L55">                    BorderFactory.createLineBorder(FOCUS_BORDER_COLOR, 2),</span>
+<span class="nc" id="L56">                    BorderFactory.createEmptyBorder(6, 18, 6, 18)</span>
+                ));
+<span class="nc" id="L58">            }</span>
+
+            @Override
+            public void focusLost(FocusEvent e) {
+<span class="nc" id="L62">                button.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));</span>
+<span class="nc" id="L63">            }</span>
+        });
+
+<span class="nc" id="L66">        button.addMouseListener(new MouseAdapter() {</span>
+            @Override
+            public void mouseEntered(MouseEvent e) {
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                if (button.isEnabled()) {</span>
+<span class="nc" id="L70">                    button.setBackground(baseColor.brighter());</span>
+                }
+<span class="nc" id="L72">            }</span>
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                if (button.isEnabled()) {</span>
+<span class="nc" id="L77">                    button.setBackground(baseColor);</span>
+                }
+<span class="nc" id="L79">            }</span>
+        });
+
+        // Afegir navegació amb fletxes
+<span class="nc" id="L83">        addArrowKeyNavigation(button);</span>
+<span class="nc" id="L84">    }</span>
+
+    /**
+     * Aplica un estil coherent a un botó amb color de fons personalitzat
+     * i text blanc per defecte.
+     *
+     * @param button Botó a estilitzar
+     * @param baseColor Color de fons del botó
+     */
+    public static void styleButton(JButton button, Color baseColor) {
+<span class="nc" id="L94">        styleButton(button, baseColor, Color.WHITE);</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * Crea un panel de títol amb estil coherent.
+     *
+     * @param titleText Text del títol
+     * @return Panel amb el títol estilitzat
+     */
+    public static JPanel createTitlePanel(String titleText) {
+<span class="nc" id="L104">        JPanel titlePanel = new JPanel();</span>
+<span class="nc" id="L105">        titlePanel.setBackground(new Color(245, 245, 250));</span>
+<span class="nc" id="L106">        JLabel titleLabel = new JLabel(titleText);</span>
+<span class="nc" id="L107">        titleLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L108">        titleLabel.setForeground(new Color(60, 60, 120));</span>
+<span class="nc" id="L109">        titlePanel.add(titleLabel);</span>
+<span class="nc" id="L110">        return titlePanel;</span>
+    }
+
+    /**
+     * Crea un panel principal amb marges i estil coherent.
+     *
+     * @return Panel principal estilitzat
+     */
+    public static JPanel createMainPanel() {
+<span class="nc" id="L119">        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));</span>
+<span class="nc" id="L120">        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));</span>
+<span class="nc" id="L121">        mainPanel.setBackground(new Color(245, 245, 250));</span>
+<span class="nc" id="L122">        return mainPanel;</span>
+    }
+
+    /**
+     * Crea un panel de formulari amb estil coherent.
+     *
+     * @return Panel de formulari estilitzat amb GridBagLayout
+     */
+    public static JPanel createFormPanel() {
+<span class="nc" id="L131">        JPanel formPanel = new JPanel(new GridBagLayout());</span>
+<span class="nc" id="L132">        formPanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L133">        formPanel.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L134">                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),</span>
+<span class="nc" id="L135">                BorderFactory.createEmptyBorder(20, 20, 20, 20)</span>
+        ));
+<span class="nc" id="L137">        return formPanel;</span>
+    }
+
+    /**
+     * Crea un camp de text amb estil coherent.
+     *
+     * @return Camp de text estilitzat
+     */
+    public static JTextField createTextField() {
+<span class="nc" id="L146">        JTextField textField = new JTextField(20);</span>
+<span class="nc" id="L147">        textField.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L148">        textField.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L149">                BorderFactory.createLineBorder(new Color(180, 180, 180)),</span>
+<span class="nc" id="L150">                BorderFactory.createEmptyBorder(5, 5, 5, 5)</span>
+        ));
+
+        // Afegir indicador visual de focus
+<span class="nc" id="L154">        textField.addFocusListener(new FocusAdapter() {</span>
+            @Override
+            public void focusGained(FocusEvent e) {
+<span class="nc" id="L157">                textField.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L158">                    BorderFactory.createLineBorder(FOCUS_BORDER_COLOR, 2),</span>
+<span class="nc" id="L159">                    BorderFactory.createEmptyBorder(4, 4, 4, 4)</span>
+                ));
+<span class="nc" id="L161">            }</span>
+
+            @Override
+            public void focusLost(FocusEvent e) {
+<span class="nc" id="L165">                textField.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L166">                    BorderFactory.createLineBorder(new Color(180, 180, 180)),</span>
+<span class="nc" id="L167">                    BorderFactory.createEmptyBorder(5, 5, 5, 5)</span>
+                ));
+<span class="nc" id="L169">            }</span>
+        });
+
+<span class="nc" id="L172">        return textField;</span>
+    }
+
+    /**
+     * Crea un camp de contrasenya amb estil coherent.
+     *
+     * @return Camp de contrasenya estilitzat
+     */
+    public static JPasswordField createPasswordField() {
+<span class="nc" id="L181">        JPasswordField passwordField = new JPasswordField(20);</span>
+<span class="nc" id="L182">        passwordField.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L183">        passwordField.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L184">                BorderFactory.createLineBorder(new Color(180, 180, 180)),</span>
+<span class="nc" id="L185">                BorderFactory.createEmptyBorder(5, 5, 5, 5)</span>
+        ));
+
+        // Afegir indicador visual de focus
+<span class="nc" id="L189">        passwordField.addFocusListener(new FocusAdapter() {</span>
+            @Override
+            public void focusGained(FocusEvent e) {
+<span class="nc" id="L192">                passwordField.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L193">                    BorderFactory.createLineBorder(FOCUS_BORDER_COLOR, 2),</span>
+<span class="nc" id="L194">                    BorderFactory.createEmptyBorder(4, 4, 4, 4)</span>
+                ));
+<span class="nc" id="L196">            }</span>
+
+            @Override
+            public void focusLost(FocusEvent e) {
+<span class="nc" id="L200">                passwordField.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L201">                    BorderFactory.createLineBorder(new Color(180, 180, 180)),</span>
+<span class="nc" id="L202">                    BorderFactory.createEmptyBorder(5, 5, 5, 5)</span>
+                ));
+<span class="nc" id="L204">            }</span>
+        });
+
+<span class="nc" id="L207">        return passwordField;</span>
+    }
+
+    /**
+     * Afegeix un camp de formulari (etiqueta + component) a un panel.
+     *
+     * @param panel Panel al qual cal afegir el camp
+     * @param label Etiqueta del camp
+     * @param component Component del camp (TextField, etc.)
+     * @param gbc Constrains de GridBagLayout
+     * @param y Posició Y (fila) del camp
+     */
+    public static void addFormField(JPanel panel, JLabel label, JComponent component, GridBagConstraints gbc, int y) {
+<span class="nc" id="L220">        label.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));</span>
+<span class="nc" id="L221">        gbc.gridx = 0;</span>
+<span class="nc" id="L222">        gbc.gridy = y;</span>
+<span class="nc" id="L223">        gbc.weightx = 0.3;</span>
+<span class="nc" id="L224">        panel.add(label, gbc);</span>
+
+<span class="nc" id="L226">        gbc.gridx = 1;</span>
+<span class="nc" id="L227">        gbc.weightx = 0.7;</span>
+<span class="nc" id="L228">        panel.add(component, gbc);</span>
+<span class="nc" id="L229">    }</span>
+
+    /**
+     * Crea un panel de botons centrat amb estil coherent.
+     *
+     * @return Panel de botons estilitzat
+     */
+    public static JPanel createButtonPanel() {
+<span class="nc" id="L237">        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));</span>
+<span class="nc" id="L238">        buttonPanel.setBackground(BACKGROUND_COLOR);</span>
+<span class="nc" id="L239">        return buttonPanel;</span>
+    }
+
+    /**
+     * Crea un botó d'acció principal (confirmar, acceptar, etc.)
+     *
+     * @param text Text del botó
+     * @return Botó estilitzat
+     */
+    public static JButton createPrimaryButton(String text) {
+<span class="nc" id="L249">        JButton button = new JButton(text);</span>
+<span class="nc" id="L250">        styleButton(button, PRIMARY_COLOR);</span>
+<span class="nc" id="L251">        return button;</span>
+    }
+
+    /**
+     * Crea un botó d'èxit (desar, crear, etc.)
+     *
+     * @param text Text del botó
+     * @return Botó estilitzat
+     */
+    public static JButton createSuccessButton(String text) {
+<span class="nc" id="L261">        JButton button = new JButton(text);</span>
+<span class="nc" id="L262">        styleButton(button, SUCCESS_COLOR);</span>
+<span class="nc" id="L263">        return button;</span>
+    }
+
+    /**
+     * Crea un botó de cancel·lar amb estil coherent.
+     *
+     * @param text Text del botó
+     * @return Botó estilitzat
+     */
+    public static JButton createCancelButton(String text) {
+<span class="nc" id="L273">        JButton button = new JButton(text);</span>
+<span class="nc" id="L274">        styleButton(button, SECONDARY_COLOR, Color.BLACK);</span>
+<span class="nc" id="L275">        return button;</span>
+    }
+
+    /**
+     * Crea un botó de perill (esborrar, eliminar, etc.)
+     *
+     * @param text Text del botó
+     * @return Botó estilitzat
+     */
+    public static JButton createDangerButton(String text) {
+<span class="nc" id="L285">        JButton button = new JButton(text);</span>
+<span class="nc" id="L286">        styleButton(button, DANGER_COLOR);</span>
+<span class="nc" id="L287">        return button;</span>
+    }
+
+    /**
+     * Crea un panell amb camp de contrasenya i botó per mostrar/ocultar.
+     *
+     * @param passwordField Camp de contrasenya
+     * @return Panel amb el camp i el botó de toggle
+     */
+    public static JPanel createPasswordPanelWithToggle(JPasswordField passwordField) {
+<span class="nc" id="L297">        JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));</span>
+<span class="nc" id="L298">        passwordPanel.setBackground(BACKGROUND_COLOR);</span>
+<span class="nc" id="L299">        passwordPanel.add(passwordField, BorderLayout.CENTER);</span>
+
+<span class="nc" id="L301">        JButton toggleButton = new JButton(&quot;•••&quot;);</span>
+<span class="nc" id="L302">        toggleButton.setFont(new Font(&quot;SansSerif&quot;, Font.PLAIN, 12));</span>
+<span class="nc" id="L303">        toggleButton.setPreferredSize(new Dimension(40, passwordField.getPreferredSize().height));</span>
+<span class="nc" id="L304">        toggleButton.setCursor(new Cursor(Cursor.HAND_CURSOR));</span>
+<span class="nc" id="L305">        toggleButton.setFocusPainted(false);</span>
+<span class="nc" id="L306">        toggleButton.setBackground(new Color(220, 220, 220));</span>
+<span class="nc" id="L307">        toggleButton.setToolTipText(&quot;Mostrar/ocultar contrasenya&quot;);</span>
+
+<span class="nc" id="L309">        toggleButton.addActionListener(e -&gt; {</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">            if (passwordField.getEchoChar() == (char) 0) {</span>
+<span class="nc" id="L311">                passwordField.setEchoChar('•');</span>
+<span class="nc" id="L312">                toggleButton.setText(&quot;•••&quot;);</span>
+            } else {
+<span class="nc" id="L314">                passwordField.setEchoChar((char) 0);</span>
+<span class="nc" id="L315">                toggleButton.setText(&quot;ABC&quot;);</span>
+            }
+<span class="nc" id="L317">        });</span>
+<span class="nc" id="L318">        passwordPanel.add(toggleButton, BorderLayout.EAST);</span>
+
+<span class="nc" id="L320">        return passwordPanel;</span>
+    }
+
+    /**
+     * Crea un panell de títol amb subtítol opcional.
+     *
+     * @param titleText Text del títol
+     * @param subtitleText Text del subtítol (pot ser null)
+     * @return Panel amb títol i subtítol estilitzats
+     */
+    public static JPanel createTitlePanelWithSubtitle(String titleText, String subtitleText) {
+<span class="nc" id="L331">        JPanel titlePanel = new JPanel(new BorderLayout());</span>
+<span class="nc" id="L332">        titlePanel.setBackground(BACKGROUND_COLOR);</span>
+<span class="nc" id="L333">        titlePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));</span>
+
+<span class="nc" id="L335">        JLabel titleLabel = new JLabel(titleText);</span>
+<span class="nc" id="L336">        titleLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 18));</span>
+<span class="nc" id="L337">        titleLabel.setForeground(TITLE_COLOR);</span>
+<span class="nc" id="L338">        titlePanel.add(titleLabel, BorderLayout.CENTER);</span>
+
+<span class="nc bnc" id="L340" title="All 2 branches missed.">        if (subtitleText != null) {</span>
+<span class="nc" id="L341">            JLabel subtitleLabel = new JLabel(subtitleText);</span>
+<span class="nc" id="L342">            subtitleLabel.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 12));</span>
+<span class="nc" id="L343">            titlePanel.add(subtitleLabel, BorderLayout.SOUTH);</span>
+        }
+
+<span class="nc" id="L346">        return titlePanel;</span>
+    }
+
+    /**
+     * Estilitza un botó d'acció per a llistes (icones).
+     *
+     * @param button Botó a estilitzar
+     */
+    public static void styleActionButton(JButton button) {
+<span class="nc" id="L355">        button.setFont(new Font(&quot;SansSerif&quot;, Font.BOLD, 18));</span>
+<span class="nc" id="L356">        button.setMargin(new Insets(5, 8, 5, 8));</span>
+<span class="nc" id="L357">        button.setFocusPainted(false);</span>
+<span class="nc" id="L358">        button.setOpaque(false);</span>
+<span class="nc" id="L359">        button.setContentAreaFilled(false);</span>
+<span class="nc" id="L360">        button.setBorderPainted(true);</span>
+<span class="nc" id="L361">        button.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));</span>
+<span class="nc" id="L362">        button.setCursor(new Cursor(Cursor.HAND_CURSOR));</span>
+<span class="nc" id="L363">        button.setForeground(new Color(100, 100, 100));</span>
+
+        // Afegir indicador visual de focus
+<span class="nc" id="L366">        button.addFocusListener(new FocusAdapter() {</span>
+            @Override
+            public void focusGained(FocusEvent e) {
+<span class="nc" id="L369">                button.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L370">                    BorderFactory.createLineBorder(FOCUS_BORDER_COLOR, 2),</span>
+<span class="nc" id="L371">                    BorderFactory.createEmptyBorder(0, 2, 0, 2)</span>
+                ));
+<span class="nc" id="L373">                button.setForeground(FOCUS_BORDER_COLOR);</span>
+<span class="nc" id="L374">            }</span>
+
+            @Override
+            public void focusLost(FocusEvent e) {
+<span class="nc" id="L378">                button.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));</span>
+<span class="nc" id="L379">                button.setForeground(new Color(100, 100, 100));</span>
+<span class="nc" id="L380">            }</span>
+        });
+
+<span class="nc" id="L383">        button.addMouseListener(new MouseAdapter() {</span>
+            @Override
+            public void mouseEntered(MouseEvent e) {
+<span class="nc" id="L386">                button.setForeground(Color.BLACK);</span>
+<span class="nc" id="L387">            }</span>
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+<span class="nc bnc" id="L391" title="All 2 branches missed.">                if (!button.isFocusOwner()) {</span>
+<span class="nc" id="L392">                    button.setForeground(new Color(100, 100, 100));</span>
+                } else {
+<span class="nc" id="L394">                    button.setForeground(FOCUS_BORDER_COLOR);</span>
+                }
+<span class="nc" id="L396">            }</span>
+        });
+
+        // Afegir navegació amb fletxes
+<span class="nc" id="L400">        addArrowKeyNavigation(button);</span>
+<span class="nc" id="L401">    }</span>
+
+    /**
+     * Crea un JScrollPane amb estil coherent.
+     *
+     * @param component Component a embolcallar
+     * @return JScrollPane estilitzat
+     */
+    public static JScrollPane createScrollPane(JComponent component) {
+<span class="nc" id="L410">        JScrollPane scrollPane = new JScrollPane(component);</span>
+<span class="nc" id="L411">        scrollPane.setBorder(BorderFactory.createEmptyBorder());</span>
+<span class="nc" id="L412">        scrollPane.getVerticalScrollBar().setUnitIncrement(16);</span>
+<span class="nc" id="L413">        return scrollPane;</span>
+    }
+
+    /**
+     * Crea un panell de contingut amb vora i fons blanc.
+     *
+     * @return Panel de contingut estilitzat
+     */
+    public static JPanel createContentPanel() {
+<span class="nc" id="L422">        JPanel panel = new JPanel(new BorderLayout(10, 10));</span>
+<span class="nc" id="L423">        panel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L424">        panel.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L425">            BorderFactory.createLineBorder(BORDER_COLOR, 1),</span>
+<span class="nc" id="L426">            BorderFactory.createEmptyBorder(20, 20, 20, 20)</span>
+        ));
+<span class="nc" id="L428">        return panel;</span>
+    }
+
+    /**
+     * Configura la navegació per teclat en una finestra.
+     * Permet usar Tab/Shift+Tab per navegar, Enter per activar botons,
+     * i Escape per tancar la finestra.
+     *
+     * @param frame La finestra a configurar
+     * @param defaultButton El botó per defecte que s'activarà amb Enter (pot ser null)
+     */
+    public static void setupKeyboardNavigation(JFrame frame, JButton defaultButton) {
+        // Configure Tab traversal
+<span class="nc" id="L441">        Set&lt;AWTKeyStroke&gt; forwardKeys = new HashSet&lt;&gt;(frame.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));</span>
+<span class="nc" id="L442">        forwardKeys.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_TAB, 0));</span>
+<span class="nc" id="L443">        frame.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);</span>
+
+<span class="nc" id="L445">        Set&lt;AWTKeyStroke&gt; backwardKeys = new HashSet&lt;&gt;(frame.getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));</span>
+<span class="nc" id="L446">        backwardKeys.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK));</span>
+<span class="nc" id="L447">        frame.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeys);</span>
+
+        // Configure Escape to close the window
+<span class="nc" id="L450">        frame.getRootPane().registerKeyboardAction(</span>
+<span class="nc" id="L451">            e -&gt; frame.dispose(),</span>
+<span class="nc" id="L452">            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),</span>
+            JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
+
+        // Configure default button for Enter key
+<span class="nc bnc" id="L457" title="All 2 branches missed.">        if (defaultButton != null) {</span>
+<span class="nc" id="L458">            frame.getRootPane().setDefaultButton(defaultButton);</span>
+        }
+<span class="nc" id="L460">    }</span>
+
+    /**
+     * Configura la navegació per teclat en una finestra de diàleg.
+     *
+     * @param dialog El diàleg a configurar
+     * @param defaultButton El botó per defecte (pot ser null)
+     */
+    public static void setupKeyboardNavigation(JDialog dialog, JButton defaultButton) {
+        // Configure Tab traversal
+<span class="nc" id="L470">        Set&lt;AWTKeyStroke&gt; forwardKeys = new HashSet&lt;&gt;(dialog.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));</span>
+<span class="nc" id="L471">        forwardKeys.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_TAB, 0));</span>
+<span class="nc" id="L472">        dialog.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);</span>
+
+<span class="nc" id="L474">        Set&lt;AWTKeyStroke&gt; backwardKeys = new HashSet&lt;&gt;(dialog.getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));</span>
+<span class="nc" id="L475">        backwardKeys.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK));</span>
+<span class="nc" id="L476">        dialog.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeys);</span>
+
+        // Configure Escape to close the dialog
+<span class="nc" id="L479">        dialog.getRootPane().registerKeyboardAction(</span>
+<span class="nc" id="L480">            e -&gt; dialog.dispose(),</span>
+<span class="nc" id="L481">            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),</span>
+            JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
+
+        // Configure default button for Enter key
+<span class="nc bnc" id="L486" title="All 2 branches missed.">        if (defaultButton != null) {</span>
+<span class="nc" id="L487">            dialog.getRootPane().setDefaultButton(defaultButton);</span>
+        }
+<span class="nc" id="L489">    }</span>
+
+    /**
+     * Configura les tecles de fletxa per navegar entre components d'un panell.
+     *
+     * @param panel El panell que conté els components
+     */
+    public static void setupArrowKeyNavigation(JPanel panel) {
+<span class="nc" id="L497">        panel.addKeyListener(new KeyAdapter() {</span>
+            @Override
+            public void keyPressed(KeyEvent e) {
+<span class="nc bnc" id="L500" title="All 4 branches missed.">                if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_RIGHT) {</span>
+<span class="nc" id="L501">                    KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();</span>
+<span class="nc bnc" id="L502" title="All 4 branches missed.">                } else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_LEFT) {</span>
+<span class="nc" id="L503">                    KeyboardFocusManager.getCurrentKeyboardFocusManager().focusPreviousComponent();</span>
+                }
+<span class="nc" id="L505">            }</span>
+        });
+<span class="nc" id="L507">    }</span>
+
+    /**
+     * Fa que un botó respongui a la tecla Enter quan té el focus.
+     *
+     * @param button El botó a configurar
+     */
+    public static void makeButtonRespondToEnter(JButton button) {
+<span class="nc" id="L515">        button.getInputMap(JComponent.WHEN_FOCUSED).put(</span>
+<span class="nc" id="L516">            KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), &quot;press&quot;</span>
+        );
+<span class="nc" id="L518">        button.getActionMap().put(&quot;press&quot;, new AbstractAction() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L521">                button.doClick();</span>
+<span class="nc" id="L522">            }</span>
+        });
+        // També afegir navegació amb fletxes
+<span class="nc" id="L525">        addArrowKeyNavigation(button);</span>
+<span class="nc" id="L526">    }</span>
+
+    /**
+     * Afegeix navegació amb fletxes a un component.
+     * Les fletxes permeten navegar al següent/anterior component amb focus.
+     *
+     * @param component El component a configurar
+     */
+    public static void addArrowKeyNavigation(JComponent component) {
+<span class="nc" id="L535">        component.getInputMap(JComponent.WHEN_FOCUSED).put(</span>
+<span class="nc" id="L536">            KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), &quot;focusNext&quot;</span>
+        );
+<span class="nc" id="L538">        component.getInputMap(JComponent.WHEN_FOCUSED).put(</span>
+<span class="nc" id="L539">            KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), &quot;focusNext&quot;</span>
+        );
+<span class="nc" id="L541">        component.getInputMap(JComponent.WHEN_FOCUSED).put(</span>
+<span class="nc" id="L542">            KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), &quot;focusPrev&quot;</span>
+        );
+<span class="nc" id="L544">        component.getInputMap(JComponent.WHEN_FOCUSED).put(</span>
+<span class="nc" id="L545">            KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), &quot;focusPrev&quot;</span>
+        );
+
+<span class="nc" id="L548">        component.getActionMap().put(&quot;focusNext&quot;, new AbstractAction() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L551">                KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();</span>
+<span class="nc" id="L552">            }</span>
+        });
+<span class="nc" id="L554">        component.getActionMap().put(&quot;focusPrev&quot;, new AbstractAction() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L557">                KeyboardFocusManager.getCurrentKeyboardFocusManager().focusPreviousComponent();</span>
+<span class="nc" id="L558">            }</span>
+        });
+<span class="nc" id="L560">    }</span>
+
+    /**
+     * Configura navegació per fletxes per a un grup de radio buttons.
+     *
+     * @param radioButtons Array de radio buttons del grup
+     */
+    public static void setupRadioButtonNavigation(JRadioButton[] radioButtons) {
+<span class="nc bnc" id="L568" title="All 2 branches missed.">        for (int i = 0; i &lt; radioButtons.length; i++) {</span>
+<span class="nc" id="L569">            final int index = i;</span>
+<span class="nc" id="L570">            radioButtons[i].addKeyListener(new KeyAdapter() {</span>
+                @Override
+                public void keyPressed(KeyEvent e) {
+<span class="nc bnc" id="L573" title="All 4 branches missed.">                    if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_RIGHT) {</span>
+<span class="nc" id="L574">                        int next = (index + 1) % radioButtons.length;</span>
+<span class="nc" id="L575">                        radioButtons[next].requestFocus();</span>
+<span class="nc" id="L576">                        radioButtons[next].setSelected(true);</span>
+<span class="nc bnc" id="L577" title="All 4 branches missed.">                    } else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_LEFT) {</span>
+<span class="nc" id="L578">                        int prev = (index - 1 + radioButtons.length) % radioButtons.length;</span>
+<span class="nc" id="L579">                        radioButtons[prev].requestFocus();</span>
+<span class="nc" id="L580">                        radioButtons[prev].setSelected(true);</span>
+                    }
+<span class="nc" id="L582">                }</span>
+            });
+        }
+<span class="nc" id="L585">    }</span>
+
+    /**
+     * Configura navegació per fletxes per a un grup de checkboxes.
+     *
+     * @param checkboxes Array de checkboxes
+     */
+    public static void setupCheckboxNavigation(JCheckBox[] checkboxes) {
+<span class="nc bnc" id="L593" title="All 2 branches missed.">        for (int i = 0; i &lt; checkboxes.length; i++) {</span>
+<span class="nc" id="L594">            final int index = i;</span>
+<span class="nc" id="L595">            checkboxes[i].addKeyListener(new KeyAdapter() {</span>
+                @Override
+                public void keyPressed(KeyEvent e) {
+<span class="nc bnc" id="L598" title="All 4 branches missed.">                    if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_RIGHT) {</span>
+<span class="nc" id="L599">                        int next = (index + 1) % checkboxes.length;</span>
+<span class="nc" id="L600">                        checkboxes[next].requestFocus();</span>
+<span class="nc bnc" id="L601" title="All 4 branches missed.">                    } else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_LEFT) {</span>
+<span class="nc" id="L602">                        int prev = (index - 1 + checkboxes.length) % checkboxes.length;</span>
+<span class="nc" id="L603">                        checkboxes[prev].requestFocus();</span>
+<span class="nc bnc" id="L604" title="All 4 branches missed.">                    } else if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {</span>
+<span class="nc bnc" id="L605" title="All 2 branches missed.">                        checkboxes[index].setSelected(!checkboxes[index].isSelected());</span>
+                    }
+<span class="nc" id="L607">                }</span>
+            });
+        }
+<span class="nc" id="L610">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

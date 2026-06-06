@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RespostesIO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Data.Persistance</a> &gt; <span class="el_source">RespostesIO.java</span></div><h1>RespostesIO.java</h1><pre class="source lang-java linenums">package Data.Persistance;
+
+import Domain.Adapters.IRespostesIO;
+import Domain.Model.*;
+import com.google.gson.*;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+
+<span class="fc" id="L13">public class RespostesIO implements IRespostesIO {</span>
+
+    /**
+     * Exports a RespostaEnquesta to a JSON file.
+     * @param resposta the RespostaEnquesta object to export.
+     * @param rutaFitxer the path to the JSON file.
+     */
+    @Override
+    public void exportResposta(RespostaEnquesta resposta, String rutaFitxer) {
+<span class="fc" id="L22">        ensureDirExists(rutaFitxer);</span>
+
+<span class="fc" id="L24">        Gson gson = new GsonBuilder()</span>
+<span class="fc" id="L25">                .setPrettyPrinting()</span>
+<span class="fc" id="L26">                .create();</span>
+<span class="fc" id="L27">        String jsonString = gson.toJson(resposta);</span>
+
+<span class="fc" id="L29">        try (FileWriter fileWriter = new FileWriter(rutaFitxer)) {</span>
+<span class="fc" id="L30">            fileWriter.write(jsonString);</span>
+<span class="fc" id="L31">        } catch (IOException e) {</span>
+<span class="fc" id="L32">            throw new RuntimeException(e);</span>
+<span class="fc" id="L33">        }</span>
+<span class="fc" id="L34">    }</span>
+
+    /**
+     * Imports a RespostaEnquesta from a JSON file.
+     * @param rutaFitxer the path to the JSON file.
+     * @return the imported RespostaEnquesta object.
+     */
+    @Override
+    public Domain.Model.RespostaEnquesta importResposta(String rutaFitxer) {
+<span class="fc" id="L43">        JsonDeserializer&lt;RespostaAPregunta&lt;?&gt;&gt; respostaAPreguntaDeser = (json, typeOfT, context) -&gt; {</span>
+<span class="fc" id="L44">            JsonObject obj = json.getAsJsonObject();</span>
+            // We expect a 'code' discriminator that identifies the concrete type
+<span class="fc" id="L46">            JsonElement codeElem = obj.get(&quot;code&quot;);</span>
+<span class="pc bpc" id="L47" title="1 of 4 branches missed.">            if (codeElem == null || codeElem.isJsonNull()) {</span>
+                // Fallback: return null or throw; here we choose null to avoid breaking deserialization
+<span class="fc" id="L49">                return null;</span>
+            }
+<span class="fc" id="L51">            String code = codeElem.getAsString();</span>
+
+            // Get common fields
+<span class="fc" id="L54">            JsonElement ordreElem = obj.get(&quot;ordrePregunta&quot;);</span>
+<span class="pc bpc" id="L55" title="1 of 4 branches missed.">            if (ordreElem == null || ordreElem.isJsonNull()) {</span>
+<span class="fc" id="L56">                return null;</span>
+            }
+<span class="fc" id="L58">            int ordrePregunta = ordreElem.getAsInt();</span>
+
+            // Get the response value based on type
+<span class="fc" id="L61">            JsonElement respostaElem = obj.get(&quot;resposta&quot;);</span>
+
+<span class="fc bfc" id="L63" title="All 6 branches covered.">            switch (code) {</span>
+                case &quot;NUMERICA&quot;:
+<span class="fc bfc" id="L65" title="All 4 branches covered.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull()) {</span>
+<span class="fc" id="L66">                        double valorNumeric = respostaElem.getAsDouble();</span>
+<span class="fc" id="L67">                        return new RespostaAPreguntaNumerica(valorNumeric, ordrePregunta);</span>
+                    }
+<span class="fc" id="L69">                    return new RespostaAPreguntaNumerica(ordrePregunta);</span>
+
+                case &quot;OBERTA&quot;:
+<span class="pc bpc" id="L72" title="1 of 4 branches missed.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull()) {</span>
+<span class="fc" id="L73">                        String valorOberta = respostaElem.getAsString();</span>
+<span class="fc" id="L74">                        return new RespostaAPreguntaOberta(valorOberta, ordrePregunta);</span>
+                    }
+<span class="fc" id="L76">                    return new RespostaAPreguntaOberta(ordrePregunta);</span>
+
+                case &quot;MULTIPLE&quot;:
+<span class="pc bpc" id="L79" title="2 of 6 branches missed.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull() &amp;&amp; respostaElem.isJsonArray()) {</span>
+<span class="fc" id="L80">                        java.util.ArrayList&lt;Integer&gt; opcionsMultiples = new java.util.ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">                        for (JsonElement elem : respostaElem.getAsJsonArray()) {</span>
+<span class="fc" id="L82">                            opcionsMultiples.add(elem.getAsInt());</span>
+<span class="fc" id="L83">                        }</span>
+<span class="fc" id="L84">                        return new RespostaAPreguntaMultiple(opcionsMultiples, ordrePregunta);</span>
+                    }
+<span class="fc" id="L86">                    return new RespostaAPreguntaMultiple(ordrePregunta);</span>
+
+                case &quot;UNICA_ORDENADA&quot;:
+<span class="pc bpc" id="L89" title="1 of 4 branches missed.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull()) {</span>
+<span class="fc" id="L90">                        int valorOrdenada = respostaElem.getAsInt();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                        if(valorOrdenada != -1)</span>
+<span class="fc" id="L92">                            return new RespostaAPreguntaOrdenada(valorOrdenada, ordrePregunta);</span>
+                        else
+<span class="fc" id="L94">                            return new RespostaAPreguntaOrdenada(ordrePregunta);</span>
+                    }
+<span class="fc" id="L96">                    return new RespostaAPreguntaOrdenada(ordrePregunta);</span>
+
+                case &quot;UNICA_NO_ORDENADA&quot;:
+<span class="pc bpc" id="L99" title="1 of 4 branches missed.">                    if (respostaElem != null &amp;&amp; !respostaElem.isJsonNull()) {</span>
+<span class="fc" id="L100">                        int valorNoOrdenada = respostaElem.getAsInt();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">                        if(valorNoOrdenada != -1)</span>
+<span class="fc" id="L102">                            return new RespostaAPreguntaNoOrdenada(valorNoOrdenada, ordrePregunta);</span>
+                        else
+<span class="fc" id="L104">                            return new RespostaAPreguntaNoOrdenada(ordrePregunta);</span>
+                    }
+<span class="fc" id="L106">                    return new RespostaAPreguntaNoOrdenada(ordrePregunta);</span>
+
+                default:
+<span class="fc" id="L109">                    return null;</span>
+            }
+        };
+
+<span class="fc" id="L113">        Gson gson = new GsonBuilder()</span>
+<span class="fc" id="L114">                .registerTypeAdapter(RespostaAPregunta.class, respostaAPreguntaDeser)</span>
+<span class="fc" id="L115">                .create();</span>
+
+<span class="fc" id="L117">        try (FileReader reader = new FileReader(rutaFitxer)) {</span>
+<span class="fc" id="L118">            return gson.fromJson(reader, RespostaEnquesta.class);</span>
+<span class="fc" id="L119">        } catch (IOException e) {</span>
+<span class="fc" id="L120">            throw new RuntimeException(e.getMessage());</span>
+        }
+    }
+
+    /*
+        * Ensures that the directory for the given file path exists.
+     */
+    private void ensureDirExists(String dirPath) {
+<span class="fc" id="L128">        File dir = new File(dirPath).getParentFile();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (!dir.exists()) {</span>
+<span class="fc" id="L130">            throw new RuntimeException(&quot;the specified path does not exist: &quot; + dirPath);</span>
+        }
+<span class="fc" id="L132">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

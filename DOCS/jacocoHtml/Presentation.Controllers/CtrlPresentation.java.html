@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CtrlPresentation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Controllers</a> &gt; <span class="el_source">CtrlPresentation.java</span></div><h1>CtrlPresentation.java</h1><pre class="source lang-java linenums">package Presentation.Controllers;
+
+import Domain.Transactions.DomainController;
+import Presentation.Views.VistaPrincipal;
+import Presentation.Views.VistaRespostes;
+import Presentation.Views.VistaRespondre;
+import Presentation.Views.VistaAnalitzar;
+
+/**
+ * Controlador de presentació que gestiona la interacció entre la vista i el controlador de domini.
+ */
+public class CtrlPresentation {
+    /** Controlador de domini */
+    private final DomainController dc;
+    /** Vista principal de l'aplicació */
+    private final VistaPrincipal vistaPrincipal;
+    /** Nom de l'usuari actual que ha iniciat sessió */
+    private String usuariActual;
+
+    /**
+     * Constructor de la classe CtrlPresentation.
+     * Inicialitza el controlador de domini i la vista principal.
+     */
+<span class="nc" id="L24">    public CtrlPresentation() {</span>
+<span class="nc" id="L25">        dc = new DomainController();</span>
+<span class="nc" id="L26">        vistaPrincipal = new VistaPrincipal(this);</span>
+<span class="nc" id="L27">        usuariActual = null;</span>
+<span class="nc" id="L28">    }</span>
+
+    /**
+     * Inicialitza la presentació fent visible la vista principal.
+     */
+    public void inicializarPresentacion() {
+<span class="nc" id="L34">        vistaPrincipal.hacerVisible();</span>
+<span class="nc" id="L35">    }</span>
+
+    /**
+     * Registra un nou administrador amb el nom d'usuari i contrasenya proporcionats.
+     *
+     * @param nomAdmin Nom de l'administrador
+     * @param contrasenya Contrasenya de l'administrador
+     * @return true si el registre és exitós, false en cas contrari
+     */
+    public boolean registrarAdmin(String nomAdmin, String contrasenya) {
+        try {
+<span class="nc" id="L46">            dc.registrarAdmin(nomAdmin, contrasenya);</span>
+<span class="nc" id="L47">            usuariActual = nomAdmin;</span>
+<span class="nc" id="L48">            vistaPrincipal.actualitzarEstatSessio();</span>
+<span class="nc" id="L49">            return true;</span>
+<span class="nc" id="L50">        } catch (Exception e) {</span>
+<span class="nc" id="L51">            return false;</span>
+        }
+    }
+
+    /**
+     * Inicia sessió per a un usuari amb el nom d'usuari i contrasenya proporcionats.
+     *
+     * @param nomUsuari Nom de l'usuari
+     * @param contrasenya Contrasenya de l'usuari
+     * @return true si la sessió s'inicia correctament, false en cas contrari
+     */
+    public boolean iniciarSessio(String nomUsuari, String contrasenya) {
+<span class="nc" id="L63">        boolean success = dc.iniciarSessio(nomUsuari, contrasenya);</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (success) {</span>
+<span class="nc" id="L65">            usuariActual = nomUsuari;</span>
+<span class="nc" id="L66">            vistaPrincipal.actualitzarEstatSessio();</span>
+        }
+<span class="nc" id="L68">        return success;</span>
+    }
+
+    /**
+     * Crea una nova enquesta amb el nom proporcionat.
+     *
+     * @param nomEnquesta Nom de l'enquesta a crear
+     * @return Identificador de l'enquesta creada
+     */
+    public int crearEnquesta(String nomEnquesta) {
+<span class="nc" id="L78">        return dc.crearEnquesta(nomEnquesta);</span>
+    }
+
+    /**
+     * Retorna un mapa d'identificadors i noms d'enquestes per a l'usuari actual.
+     *
+     * @return Mapa amb ID d'enquesta com a clau i nom d'enquesta com a valor
+     */
+    public java.util.Map&lt;Integer, String&gt; getEnquestes() {
+<span class="nc" id="L87">        String llistat = dc.getLlistatEnquestes(usuariActual);</span>
+<span class="nc" id="L88">        java.util.Map&lt;Integer, String&gt; enquestes = new java.util.HashMap&lt;&gt;();</span>
+
+<span class="nc bnc" id="L90" title="All 4 branches missed.">        if (llistat == null || llistat.isEmpty()) {</span>
+<span class="nc" id="L91">            return enquestes;</span>
+        }
+
+<span class="nc" id="L94">        String[] lines = llistat.split(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        for (String line : lines) {</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            if (line.trim().isEmpty()) continue;</span>
+<span class="nc" id="L97">            String[] parts = line.split(&quot;, Nom: &quot;);</span>
+<span class="nc" id="L98">            String idPart = parts[0].replace(&quot;ID: &quot;, &quot;&quot;).trim();</span>
+<span class="nc" id="L99">            String namePart = parts[1].trim();</span>
+<span class="nc" id="L100">            int id = Integer.parseInt(idPart);</span>
+<span class="nc" id="L101">            enquestes.put(id, namePart);</span>
+        }
+<span class="nc" id="L103">        return enquestes;</span>
+    }
+
+    /**
+     * Obre la vista per editar una enquesta donat el seu identificador.
+     *
+     * @param idEnquesta Identificador de l'enquesta a editar
+     */
+    public void editarEnquesta(int idEnquesta) {
+<span class="nc" id="L112">        vistaPrincipal.openEditSurvey(idEnquesta);</span>
+<span class="nc" id="L113">    }</span>
+
+    /**
+     * Esborra una enquesta donat el seu identificador.
+     *
+     * @param idEnquesta Identificador de l'enquesta a esborrar
+     */
+    public void esborrarEnquesta(int idEnquesta) {
+<span class="nc" id="L121">        dc.eiminarEnquesta(usuariActual, idEnquesta);</span>
+<span class="nc" id="L122">    }</span>
+
+    /**
+     * Obre la vista per veure les respostes d'una enquesta donat el seu identificador.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     */
+    public void veureRespostesEnquesta(int idEnquesta) {
+        // Get the survey name
+<span class="nc" id="L131">        java.util.Map&lt;Integer, String&gt; enquestes = getEnquestes();</span>
+<span class="nc" id="L132">        String nomEnquesta = enquestes.getOrDefault(idEnquesta, &quot;Encuesta #&quot; + idEnquesta);</span>
+
+        // Open the responses view
+<span class="nc" id="L135">        VistaRespostes vistaRespostes = new VistaRespostes(this, idEnquesta, nomEnquesta);</span>
+<span class="nc" id="L136">        vistaRespostes.hacerVisible();</span>
+<span class="nc" id="L137">    }</span>
+
+    /**
+     * Obre la vista per respondre una enquesta donat el seu identificador.
+     *
+     * @param idEnquesta Identificador de l'enquesta a respondre
+     */
+    public void respondreEnquesta(int idEnquesta) {
+<span class="nc" id="L145">        java.util.Map&lt;Integer, String&gt; enquestes = getEnquestes();</span>
+<span class="nc" id="L146">        String nomEnquesta = enquestes.getOrDefault(idEnquesta, &quot;Encuesta #&quot; + idEnquesta);</span>
+<span class="nc" id="L147">        VistaRespondre vistaRespondre = new VistaRespondre(this, idEnquesta, nomEnquesta);</span>
+<span class="nc" id="L148">        vistaRespondre.hacerVisible();</span>
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Retorna les preguntes d'una enquesta donat el seu identificador.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @return Array de preguntes
+     */
+    public String[] getPreguntesEnquesta(int idEnquesta) {
+<span class="nc" id="L158">        return dc.getPreguntesEnquesta(idEnquesta);</span>
+    }
+
+    /**
+     * Guarda les respostes d'una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param respostes Array de respostes a guardar
+     */
+    public void guardarRespostes(int idEnquesta, String[] respostes) {
+<span class="nc" id="L168">        dc.guardarRespostes(idEnquesta, respostes);</span>
+<span class="nc" id="L169">    }</span>
+
+    /**
+     * Analitza les respostes d'una enquesta donat el seu identificador.
+     *
+     * @param idEnquesta Identificador de l'enquesta a analitzar
+     */
+    public void analitzarEnquesta(int idEnquesta) {
+<span class="nc" id="L177">        java.util.Map&lt;Integer, String&gt; enquestes = getEnquestes();</span>
+<span class="nc" id="L178">        String nomEnquesta = enquestes.getOrDefault(idEnquesta, &quot;Encuesta #&quot; + idEnquesta);</span>
+<span class="nc" id="L179">        VistaAnalitzar vistaAnalitzar = new VistaAnalitzar(this, idEnquesta, nomEnquesta);</span>
+<span class="nc" id="L180">        vistaAnalitzar.hacerVisible();</span>
+<span class="nc" id="L181">    }</span>
+
+    /**
+     * Clona una enquesta donat el seu identificador.
+     *
+     * @param idEnquesta Identificador de l'enquesta a clonar
+     */
+    public void clonarEnquesta(int idEnquesta) {
+<span class="nc" id="L189">        dc.clonarEnquesta(idEnquesta, usuariActual);</span>
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Elimina l'usuari actual i tanca la sessió.
+     */
+    public void eliminarUsuariActual() {
+<span class="nc" id="L196">        dc.eliminarAdmin(usuariActual);</span>
+<span class="nc" id="L197">        usuariActual = null;</span>
+<span class="nc" id="L198">        vistaPrincipal.actualitzarEstatSessio();</span>
+<span class="nc" id="L199">    }</span>
+
+    /**
+     * Retorna els identificadors de les respostes d'una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @return Array d'identificadors de respostes
+     */
+    public int[] getIdsRespostes(int idEnquesta) {
+<span class="nc" id="L208">        return dc.getIdsRespostes(idEnquesta);</span>
+    }
+
+    /**
+     * Consulta la resposta d'una enquesta donat el seu identificador i el de la resposta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param idResposta Identificador de la resposta
+     * @return Resposta com a cadena
+     */
+    public String consultarResposta(int idEnquesta, int idResposta) {
+<span class="nc" id="L219">        return dc.consultarResposta(idEnquesta, idResposta);</span>
+    }
+
+    /**
+     * Tanca la sessió de l'usuari actual.
+     */
+    public void tancarSessio() {
+<span class="nc" id="L226">        usuariActual = null;</span>
+<span class="nc" id="L227">        vistaPrincipal.actualitzarEstatSessio();</span>
+<span class="nc" id="L228">    }</span>
+
+    /**
+     * Retorna l'usuari actual que ha iniciat sessió.
+     *
+     * @return Nom de l'usuari actual
+     */
+    public String getUsuariActual() {
+<span class="nc" id="L236">        return usuariActual;</span>
+    }
+
+    /**
+     * Comprova si hi ha una sessió iniciada.
+     *
+     * @return true si hi ha una sessió iniciada, false en cas contrari
+     */
+    public boolean sessioIniciada() {
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        return usuariActual != null;</span>
+    }
+
+    /**
+     * Retorna el nombre de preguntes d'una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @return Nombre de preguntes
+     */
+    public int getNumPreguntesEnquesta(int idEnquesta) {
+<span class="nc" id="L255">        return dc.getNumPreguntesEnquesta(idEnquesta);</span>
+    }
+
+    /**
+     * Elimina una pregunta d'una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param i Ordre de la pregunta dins l'enquesta
+     */
+    public void eliminarPregunta(int idEnquesta, int i) {
+<span class="nc" id="L265">        dc.eliminarPregunta(idEnquesta, i);</span>
+<span class="nc" id="L266">    }</span>
+
+    /**
+     * Afegeix una nova pregunta a una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     */
+    public void afegirPregunta(int idEnquesta) {
+<span class="nc" id="L274">        dc.afegirPregunta(idEnquesta);</span>
+<span class="nc" id="L275">    }</span>
+
+    /**
+     * Canvia el tipus d'una pregunta dins una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param ordre Ordre de la pregunta dins l'enquesta
+     * @param tipusStr Nou tipus de la pregunta com a cadena
+     */
+    public void canviarTipusPregunta(int idEnquesta, int ordre, String tipusStr) {
+<span class="nc" id="L285">        dc.canviarTipusPregunta(idEnquesta, ordre, tipusStr);</span>
+<span class="nc" id="L286">    }</span>
+
+    /**
+     * Retorna el codi del tipus de pregunta per a una pregunta específica dins una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param i Ordre de la pregunta dins l'enquesta
+     * @return Codi del tipus de pregunta
+     */
+    public String getCodiTipusPregunta(int idEnquesta, int i) {
+<span class="nc" id="L296">        return dc.getCodiTipusPregunta(idEnquesta, i);</span>
+    }
+
+    /**
+     * Cancela l'edició d'una enquesta, descartant els canvis realitzats.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     */
+    public void cancelarEdicioEnquesta(int idEnquesta) {
+<span class="nc" id="L305">        dc.cancelarEdicioEnquesta(idEnquesta);</span>
+<span class="nc" id="L306">    }</span>
+
+    /**
+     * Guarda els canvis realitzats en l'edició d'una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     */
+    public void guardarEdicioEnquesta(int idEnquesta) {
+<span class="nc" id="L314">        dc.guardarEdicioEnquesta(idEnquesta, usuariActual);</span>
+<span class="nc" id="L315">    }</span>
+
+    /**
+     * Retorna el nom d'una enquesta donat el seu identificador.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @return Nom de l'enquesta
+     */
+    public String getNomEnquesta(int idEnquesta) {
+<span class="nc" id="L324">        return dc.getNomEnquesta(idEnquesta);</span>
+    }
+
+    /**
+     * Retorna el títol d'una pregunta dins una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param i Ordre de la pregunta dins l'enquesta
+     * @return Títol de la pregunta
+     */
+    public String getTitolPregunta(int idEnquesta, int i) {
+<span class="nc" id="L335">        return dc.getTitolPregunta(idEnquesta, i);</span>
+    }
+
+    /**
+     * Canvia el títol d'una pregunta dins una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param ordre Ordre de la pregunta dins l'enquesta
+     * @param text Nou títol de la pregunta
+     */
+    public void canviarTitolPregunta(int idEnquesta, int ordre, String text) {
+<span class="nc" id="L346">        dc.modificarPregunta(idEnquesta, ordre, text);</span>
+<span class="nc" id="L347">    }</span>
+
+    /**
+     * Afegeix una nova opció de resposta a una pregunta dins una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param ordre Ordre de la pregunta dins l'enquesta
+     * @param optText Text de l'opció de resposta a afegir
+     */
+    public void afegirOpcioResposta(int idEnquesta, int ordre, String optText) {
+<span class="nc" id="L357">        dc.afegirOpcioResposta(idEnquesta, ordre, optText);</span>
+<span class="nc" id="L358">    }</span>
+
+    /**
+     * Modifica el text d'una opció de resposta d'una pregunta dins una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param ordrePregunta Ordre de la pregunta dins l'enquesta
+     * @param ordreOpcio Ordre de l'opció de resposta dins la pregunta
+     * @param optText Nou text de l'opció de resposta
+     */
+    public void modificarOpcioResposta(int idEnquesta, int ordrePregunta, int ordreOpcio, String optText) {
+<span class="nc" id="L369">        dc.modificarOpcioResposta(idEnquesta, ordrePregunta, ordreOpcio, optText);</span>
+<span class="nc" id="L370">    }</span>
+
+    /**
+     * Retorna les opcions de resposta d'una pregunta dins una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param i Ordre de la pregunta dins l'enquesta
+     * @return Array de cadenes amb les opcions de resposta
+     */
+    public String[] getTextOpcionsPregunta(int idEnquesta, int i) {
+<span class="nc" id="L380">        return dc.getTextOpcionsPregunta(idEnquesta, i);</span>
+    }
+
+    /**
+     * Esborra una opció de resposta d'una pregunta dins una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param ordre Ordre de la pregunta dins l'enquesta
+     * @param ordreOpcio Ordre de l'opció de resposta dins la pregunta
+     */
+    public void esborrarOpcioResposta(int idEnquesta, int ordre, int ordreOpcio) {
+<span class="nc" id="L391">        dc.eliminarOpcioResposta(idEnquesta, ordre, ordreOpcio);</span>
+<span class="nc" id="L392">    }</span>
+
+    /**
+     * Calcula els clusters d'una enquesta utilitzant un algoritme de clustering específic i un valor k donat.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param algorithmName Nom de l'algoritme de clustering
+     * @param k Nombre de clusters
+     * @return Matriu amb els resultats del clustering
+     */
+    public int[][] computeClusterAlgorithm(int idEnquesta, String algorithmName, int k) {
+<span class="nc" id="L403">        return dc.computeClusterAlgorithm(idEnquesta, algorithmName, k);</span>
+    }
+
+    /**
+     * Calcula el valor òptim de k per a un algoritme de clustering donat una enquesta i un llindar.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param algorithmName Nom de l'algoritme de clustering
+     * @param thresholdRatio Ratio de llindar per determinar k òptim
+     * @return Matriu amb els resultats del clustering per al k òptim
+     */
+    public int[][] computeClusterAlgorithmOptimalK(int idEnquesta, String algorithmName, double thresholdRatio) {
+<span class="nc" id="L415">        return dc.computeClusterAlgorithmOptimalK(idEnquesta, algorithmName, thresholdRatio);</span>
+    }
+
+    /**
+     * Canvia l'obligatorietat d'una pregunta dins una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param ordre Ordre de la pregunta dins l'enquesta
+     * @param isObligatoria true si la pregunta ha de ser obligatòria, false en cas contrari
+     */
+    public void canviarObligatorietatPregunta(int idEnquesta, int ordre, boolean isObligatoria) {
+<span class="nc" id="L426">        dc.canviarObligatorietatPregunta(idEnquesta, ordre, isObligatoria);</span>
+<span class="nc" id="L427">    }</span>
+
+    /**
+     * Retorna si una pregunta és obligatòria.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param ordre Ordre de la pregunta dins l'enquesta
+     * @return true si la pregunta és obligatòria, false en cas contrari
+     */
+    public boolean getObligatorietatPregunta(int idEnquesta, int ordre) {
+<span class="nc" id="L437">        return dc.getObligatorietatPregunta(idEnquesta, ordre);</span>
+    }
+
+    /**
+     * Exporta una enquesta a un fitxer.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param path Ruta del fitxer on s'exportarà l'enquesta
+     */
+    public void exportarEnquesta(int idEnquesta, String path) {
+<span class="nc" id="L447">       dc.exportarEnquesta(idEnquesta, path);</span>
+<span class="nc" id="L448">    }</span>
+
+    /**
+     * Importa una enquesta des d'un fitxer.
+     *
+     * @param path Ruta del fitxer des d'on s'importarà l'enquesta
+     */
+    public void importarEnquesta(String path) {
+<span class="nc" id="L456">        dc.importarEnquesta(path, usuariActual);</span>
+<span class="nc" id="L457">    }</span>
+
+    /**
+     * Importa una resposta d'una enquesta des d'un fitxer.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param path Ruta del fitxer des d'on s'importarà la resposta
+     */
+    public void importarResposta(int idEnquesta, String path) {
+<span class="nc" id="L466">        dc.importarRespostaEnquesta(idEnquesta, path);</span>
+<span class="nc" id="L467">    }</span>
+
+    /**
+     * Exporta una resposta d'una enquesta a un fitxer.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param idResposta Identificador de la resposta
+     * @param path Ruta del fitxer on s'exportarà la resposta
+     */
+    public void exportarResposta(int idEnquesta, int idResposta, String path) {
+<span class="nc" id="L477">        dc.exportarRespostaEnquesta(idEnquesta, idResposta, path);</span>
+<span class="nc" id="L478">    }</span>
+
+    /**
+     * Canvia el nom d'una enquesta.
+     *
+     * @param idEnquesta Identificador de l'enquesta
+     * @param nomEnquesta Nou nom de l'enquesta
+     */
+    public void canviarNomEnquesta(int idEnquesta, String nomEnquesta) {
+<span class="nc" id="L487">        dc.setEnquestaNom(idEnquesta, nomEnquesta);</span>
+<span class="nc" id="L488">    }</span>
+
+    /**
+     * Calcula el plot 2D per una enquesta donada, un algoritme específic i un valor k.
+     * @param idEnquesta    ID de l'enquesta.
+     * @param algorithmName Nom de l'algoritme de clustering.
+     * @param k             Nombre de clústers (k).
+     * @param distanceStrategyName Nom de l'estratègia de distància.
+     * @param coefficientStrategyName Nom de l'estratègia de càlcul del
+     */
+    public void calcPlot2DGivenK(int idEnquesta, String algorithmName, int k, String distanceStrategyName, String coefficientStrategyName) {
+<span class="nc" id="L499">        dc.calcPlot2DGivenK(idEnquesta, algorithmName, k, distanceStrategyName, coefficientStrategyName);</span>
+<span class="nc" id="L500">    }</span>
+
+    /**
+     * Calcula el plot 2D per una enquesta donada, un algoritme específic i un llindar de ràtio.
+     * @param idEnquesta    ID de l'enquesta.
+     * @param algorithmName Nom de l'algoritme de clustering.
+     * @param thresholdRatio Ràtio de llindar per determinar el nombre òptim de clústers.
+     * @param distanceStrategyName Nom de l'estratègia de distància.
+     * @param coefficientStrategyName Nom de l'estratègia de càlcul del
+     */
+    public void calcPlot2DOptimalK(int idEnquesta, String algorithmName, double thresholdRatio, String distanceStrategyName, String coefficientStrategyName) {
+<span class="nc" id="L511">        dc.calcPlot2DOptimalK(idEnquesta, algorithmName, thresholdRatio, distanceStrategyName, coefficientStrategyName);</span>
+<span class="nc" id="L512">    }</span>
+
+    /**
+     * Retorna el coeficient del plot calculat.
+     * @return Coeficient del plot.
+     */
+    public double getPlotCoefficient() {
+<span class="nc" id="L519">        return dc.getPlotCoefficient();</span>
+    }
+
+    /**
+     * Retorna els punts del plot calculat.
+     * @return Matriu de punts del plot.
+     */
+    public double[][] getPlotPoints(){
+<span class="nc" id="L527">        return dc.getPlotPoints();</span>
+    }
+
+    /**
+     * Retorna el nombre òptim de clústers (k) del plot calculat.
+     * @return Nombre òptim de clústers (k).
+     */
+    public int getKOptimal() {
+<span class="nc" id="L535">        return dc.getKOptimal();</span>
+    }
+
+    /**
+     * Retorna els centroids del plot calculat.
+     * @return Matriu de cadenes amb els centroids del plot.
+     */
+    public String[] getCentroidsPlot2D() {
+<span class="nc" id="L543">        return dc.getCentroidsPlot2D();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

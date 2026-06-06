@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConsoleDriver.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">ConsoleDriver.java</span></div><h1>ConsoleDriver.java</h1><pre class="source lang-java linenums">import Domain.Transactions.DomainController;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="nc" id="L6">public class ConsoleDriver {</span>
+    public static void main(String[] args) {
+<span class="nc" id="L8">        Scanner scanner = new Scanner(System.in);</span>
+<span class="nc" id="L9">        DomainController dc = new DomainController();</span>
+<span class="nc" id="L10">        boolean exit = false;</span>
+<span class="nc" id="L11">        Integer enquestaEnEdicio = null;</span>
+<span class="nc" id="L12">        boolean sessioIniciada = false;</span>
+<span class="nc" id="L13">        String usuariActual = null;</span>
+
+<span class="nc bnc" id="L15" title="All 2 branches missed.">        while (!exit) {</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">            if (!sessioIniciada) {</span>
+                // Menú d'autenticació
+<span class="nc" id="L18">                System.out.println(&quot;\n--- AUTENTICACIÓ ---&quot;);</span>
+<span class="nc" id="L19">                System.out.println(&quot;1. Registrar administrador&quot;);</span>
+<span class="nc" id="L20">                System.out.println(&quot;2. Iniciar sessió&quot;);</span>
+<span class="nc" id="L21">                System.out.println(&quot;0. Sortir&quot;);</span>
+<span class="nc" id="L22">                System.out.print(&quot;Escull una opció: &quot;);</span>
+<span class="nc" id="L23">                String input = scanner.nextLine();</span>
+                int opcio;
+                try {
+<span class="nc" id="L26">                    opcio = Integer.parseInt(input);</span>
+<span class="nc" id="L27">                } catch (NumberFormatException e) {</span>
+<span class="nc" id="L28">                    System.out.println(&quot;Opció no vàlida.&quot;);</span>
+<span class="nc" id="L29">                    continue;</span>
+<span class="nc" id="L30">                }</span>
+<span class="nc bnc" id="L31" title="All 4 branches missed.">                switch (opcio) {</span>
+                    case 1:
+<span class="nc" id="L33">                        System.out.print(&quot;Nom de l'administrador: &quot;);</span>
+<span class="nc" id="L34">                        String nomAdm = scanner.nextLine();</span>
+<span class="nc" id="L35">                        System.out.print(&quot;Contrasenya: &quot;);</span>
+<span class="nc" id="L36">                        String contrasenya = scanner.nextLine();</span>
+                        try {
+<span class="nc" id="L38">                            dc.registrarAdmin(nomAdm, contrasenya);</span>
+<span class="nc" id="L39">                            sessioIniciada = true;</span>
+<span class="nc" id="L40">                            usuariActual = nomAdm;</span>
+<span class="nc" id="L41">                            System.out.println(&quot;Administrador registrat correctament.&quot;);</span>
+<span class="nc" id="L42">                        } catch (Exception e) {</span>
+<span class="nc" id="L43">                            System.out.println(&quot;Error: &quot; + e.getMessage());</span>
+<span class="nc" id="L44">                        }</span>
+<span class="nc" id="L45">                        break;</span>
+                    case 2:
+<span class="nc" id="L47">                        System.out.print(&quot;Nom d'usuari: &quot;);</span>
+<span class="nc" id="L48">                        String nomUsuari = scanner.nextLine();</span>
+<span class="nc" id="L49">                        System.out.print(&quot;Contrasenya: &quot;);</span>
+<span class="nc" id="L50">                        String pass = scanner.nextLine();</span>
+                        try {
+<span class="nc" id="L52">                            boolean ok = dc.iniciarSessio(nomUsuari, pass);</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                            if (ok) {</span>
+<span class="nc" id="L54">                                sessioIniciada = true;</span>
+<span class="nc" id="L55">                                usuariActual = nomUsuari;</span>
+<span class="nc" id="L56">                                System.out.println(&quot;Sessió iniciada correctament.&quot;);</span>
+                            } else {
+<span class="nc" id="L58">                                System.out.println(&quot;Usuari o contrasenya incorrectes.&quot;);</span>
+                            }
+<span class="nc" id="L60">                        } catch (Exception e) {</span>
+<span class="nc" id="L61">                            System.out.println(&quot;Error: &quot; + e.getMessage());</span>
+<span class="nc" id="L62">                        }</span>
+<span class="nc" id="L63">                        break;</span>
+                    case 0:
+<span class="nc" id="L65">                        exit = true;</span>
+<span class="nc" id="L66">                        System.out.println(&quot;Sortint...&quot;);</span>
+<span class="nc" id="L67">                        break;</span>
+                    default:
+<span class="nc" id="L69">                        System.out.println(&quot;Opció no vàlida.&quot;);</span>
+                }
+<span class="nc" id="L71">                continue;</span>
+            }
+
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            if (enquestaEnEdicio == null) {</span>
+                // Estat principal: sessió iniciada i sense enquesta seleccionada
+<span class="nc" id="L76">                System.out.println(&quot;\n--- MENÚ PRINCIPAL --- (Usuari: &quot; + usuariActual + &quot;)&quot;);</span>
+<span class="nc" id="L77">                System.out.println(&quot;1. Crear enquesta&quot;);</span>
+<span class="nc" id="L78">                System.out.println(&quot;2. Eliminar enquesta&quot;);</span>
+<span class="nc" id="L79">                System.out.println(&quot;3. Mostrar llistat d'enquestes&quot;);</span>
+<span class="nc" id="L80">                System.out.println(&quot;4. Iniciar Enquesta (Respondre)&quot;);</span>
+<span class="nc" id="L81">                System.out.println(&quot;5. Editar enquesta&quot;);</span>
+<span class="nc" id="L82">                System.out.println(&quot;6. Clonar enquesta&quot;);</span>
+<span class="nc" id="L83">                System.out.println(&quot;7. Mostrar llistat de respostes&quot;);</span>
+<span class="nc" id="L84">                System.out.println(&quot;8. Mostrar resposta&quot;);</span>
+<span class="nc" id="L85">                System.out.println(&quot;9. Executar clustering&quot;);</span>
+<span class="nc" id="L86">                System.out.println(&quot;10. Executar clustering amb k òptim&quot;);</span>
+<span class="nc" id="L87">                System.out.println(&quot;11. Tancar sessió&quot;);</span>
+<span class="nc" id="L88">                System.out.println(&quot;0. Sortir&quot;);</span>
+<span class="nc" id="L89">                System.out.print(&quot;Escull una opció: &quot;);</span>
+
+<span class="nc" id="L91">                String input = scanner.nextLine();</span>
+                int opcio;
+                try {
+<span class="nc" id="L94">                    opcio = Integer.parseInt(input);</span>
+<span class="nc" id="L95">                } catch (NumberFormatException e) {</span>
+<span class="nc" id="L96">                    System.out.println(&quot;Opció no vàlida.&quot;);</span>
+<span class="nc" id="L97">                    continue;</span>
+<span class="nc" id="L98">                }</span>
+
+                try {
+<span class="nc bnc" id="L101" title="All 13 branches missed.">                    switch (opcio) {</span>
+                        case 1:
+<span class="nc" id="L103">                            System.out.print(&quot;Nom de l'enquesta: &quot;);</span>
+<span class="nc" id="L104">                            String nomEnquesta = scanner.nextLine();</span>
+<span class="nc" id="L105">                            int id = dc.crearEnquesta(nomEnquesta);</span>
+<span class="nc" id="L106">                            System.out.println(&quot;Enquesta creada amb ID: &quot; + id);</span>
+<span class="nc" id="L107">                            enquestaEnEdicio = id;</span>
+<span class="nc" id="L108">                            break;</span>
+                        case 2:
+<span class="nc" id="L110">                            System.out.print(&quot;ID de l'enquesta a eliminar: &quot;);</span>
+<span class="nc" id="L111">                            int idElim = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc" id="L112">                            dc.eiminarEnquesta(usuariActual,idElim);</span>
+<span class="nc" id="L113">                            System.out.println(&quot;Enquesta eliminada.&quot;);</span>
+<span class="nc" id="L114">                            break;</span>
+                        case 3:
+<span class="nc" id="L116">                            String llistat = dc.getLlistatEnquestes(usuariActual);</span>
+<span class="nc" id="L117">                            System.out.println(&quot;\n--- LLISTAT D'ENQUESTES ---&quot;);</span>
+<span class="nc" id="L118">                            System.out.println(llistat);</span>
+<span class="nc" id="L119">                            break;</span>
+                        case 4:
+                            // Nova opció: Iniciar Enquesta (Respondre)
+<span class="nc" id="L122">                            System.out.print(&quot;ID de l'enquesta a respondre: &quot;);</span>
+<span class="nc" id="L123">                            int idEnquestaRespondre = Integer.parseInt(scanner.nextLine());</span>
+
+<span class="nc" id="L125">                            boolean continuarResponent = true;</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                            while (continuarResponent) {</span>
+                                // Obtenir les preguntes de l'enquesta
+<span class="nc" id="L128">                                String[] preguntes = dc.getPreguntesEnquesta(idEnquestaRespondre);</span>
+<span class="nc" id="L129">                                List&lt;String&gt; respostes = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L131">                                System.out.println(&quot;\n--- RESPONDRE ENQUESTA ---&quot;);</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                                for (int i = 0; i &lt; preguntes.length; i++) {</span>
+<span class="nc" id="L133">                                    System.out.println(preguntes[i]);</span>
+<span class="nc" id="L134">                                    System.out.print(&quot;Resposta: &quot;);</span>
+<span class="nc" id="L135">                                    String resposta = scanner.nextLine();</span>
+<span class="nc" id="L136">                                    respostes.add(resposta);</span>
+                                }
+
+                                // Guardar totes les respostes de cop
+
+                                try{
+<span class="nc" id="L142">                                    dc.guardarRespostes(idEnquestaRespondre, respostes.toArray(new String[0]));</span>
+<span class="nc" id="L143">                                    System.out.println(&quot;\nRespostes guardades correctament!&quot;);</span>
+                                }
+<span class="nc" id="L145">                                catch (Exception e) {</span>
+<span class="nc" id="L146">                                    System.out.println(&quot;Error guardant respostes: &quot; + e.getMessage());</span>
+                                }
+                                finally {
+<span class="nc" id="L149">                                    System.out.print(&quot;\nVols tornar a respondre aquesta enquesta? (s/n): &quot;);</span>
+<span class="nc" id="L150">                                    String continuar = scanner.nextLine();</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">                                    if (!continuar.equalsIgnoreCase(&quot;s&quot;)) {</span>
+<span class="nc" id="L152">                                        continuarResponent = false;</span>
+                                    }
+                                }
+<span class="nc" id="L155">                            }</span>
+                            break;
+                        case 5:
+<span class="nc" id="L158">                            System.out.print(&quot;ID de l'enquesta a editar: &quot;);</span>
+<span class="nc" id="L159">                            int idEdit = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc" id="L160">                            enquestaEnEdicio = idEdit;</span>
+<span class="nc" id="L161">                            System.out.println(&quot;Editant enquesta amb ID: &quot; + idEdit);</span>
+<span class="nc" id="L162">                            break;</span>
+                        case 6:
+<span class="nc" id="L164">                            System.out.print(&quot;ID de l'enquesta a clonar: &quot;);</span>
+<span class="nc" id="L165">                            int idClonar = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc" id="L166">                            dc.clonarEnquesta(idClonar, usuariActual);</span>
+<span class="nc" id="L167">                            System.out.println(&quot;Enquesta clonada.&quot;);</span>
+<span class="nc" id="L168">                            break;</span>
+                        case 7:
+<span class="nc" id="L170">                            System.out.print(&quot;ID de l'enquesta: &quot;);</span>
+<span class="nc" id="L171">                            int idEnquestaRespostes = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc" id="L172">                            int[] idsRespostes = dc.getIdsRespostes(idEnquestaRespostes);</span>
+<span class="nc" id="L173">                            System.out.println(&quot;\n--- LLISTAT DE RESPOSTES ---&quot;);</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">                            if (idsRespostes.length == 0) {</span>
+<span class="nc" id="L175">                                System.out.println(&quot;No hi ha respostes per aquesta enquesta.&quot;);</span>
+                            } else {
+<span class="nc" id="L177">                                System.out.println(&quot;IDs de respostes: &quot;);</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                                for (int idResp : idsRespostes) {</span>
+<span class="nc" id="L179">                                    System.out.println(&quot;- &quot; + idResp);</span>
+                                }
+                            }
+<span class="nc" id="L182">                            break;</span>
+                        case 8:
+<span class="nc" id="L184">                            System.out.print(&quot;ID de l'enquesta: &quot;);</span>
+<span class="nc" id="L185">                            int idEnq = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc" id="L186">                            System.out.print(&quot;ID de la resposta: &quot;);</span>
+<span class="nc" id="L187">                            int idResp = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc" id="L188">                            String respostaText = dc.consultarResposta(idEnq, idResp);</span>
+<span class="nc" id="L189">                            System.out.println(&quot;\n--- RESPOSTA ---&quot;);</span>
+<span class="nc" id="L190">                            System.out.println(respostaText);</span>
+<span class="nc" id="L191">                            break;</span>
+                        case 9:
+<span class="nc" id="L193">                            System.out.print(&quot;ID de l'enquesta: &quot;);</span>
+<span class="nc" id="L194">                            int idEnqClustering = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc" id="L195">                            System.out.print(&quot;Nombre de clusters (k): &quot;);</span>
+<span class="nc" id="L196">                            int k = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc" id="L197">                            System.out.print(&quot;Algoritme (K_MEANS_RANDOM, K_MEANS_PLUS_PLUS, K_MEDOIDS): &quot;);</span>
+<span class="nc" id="L198">                            String algoritme = scanner.nextLine();</span>
+
+<span class="nc" id="L200">                            int[][] clusters = dc.computeClusterAlgorithm(idEnqClustering, algoritme, k);</span>
+
+<span class="nc" id="L202">                            System.out.println(&quot;\n&quot; + formatClusterSizesBarPlot(clusters));</span>
+<span class="nc" id="L203">                            System.out.println(&quot;\n&quot; + formatClustersAsTable(clusters));</span>
+<span class="nc" id="L204">                            break;</span>
+                        case 10:
+<span class="nc" id="L206">                            System.out.print(&quot;ID de l'enquesta: &quot;);</span>
+<span class="nc" id="L207">                            int idEnqClusteringOptimal = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc" id="L208">                            System.out.print(&quot;Threshold ratio (recomanat 0.9): &quot;);</span>
+<span class="nc" id="L209">                            double threshold = Double.parseDouble(scanner.nextLine());</span>
+<span class="nc" id="L210">                            System.out.print(&quot;Algoritme (K_MEANS_RANDOM, K_MEANS_PLUS_PLUS, K_MEDOIDS): &quot;);</span>
+<span class="nc" id="L211">                            String algoritmeOptimal = scanner.nextLine();</span>
+
+<span class="nc" id="L213">                            int[][] clustersOptimal = dc.computeClusterAlgorithmOptimalK(idEnqClusteringOptimal, algoritmeOptimal, threshold);</span>
+
+<span class="nc" id="L215">                            System.out.println(&quot;\nK òptim trobat: &quot; + clustersOptimal.length);</span>
+<span class="nc" id="L216">                            System.out.println(&quot;\n&quot; + formatClusterSizesBarPlot(clustersOptimal));</span>
+<span class="nc" id="L217">                            System.out.println(&quot;\n&quot; + formatClustersAsTable(clustersOptimal));</span>
+<span class="nc" id="L218">                            break;</span>
+                        case 11:
+<span class="nc" id="L220">                            sessioIniciada = false;</span>
+<span class="nc" id="L221">                            usuariActual = null;</span>
+<span class="nc" id="L222">                            System.out.println(&quot;Sessió tancada.&quot;);</span>
+<span class="nc" id="L223">                            break;</span>
+                        case 0:
+<span class="nc" id="L225">                            exit = true;</span>
+<span class="nc" id="L226">                            System.out.println(&quot;Sortint...&quot;);</span>
+<span class="nc" id="L227">                            break;</span>
+                        default:
+<span class="nc" id="L229">                            System.out.println(&quot;Opció no vàlida.&quot;);</span>
+                    }
+<span class="nc" id="L231">                } catch (Exception e) {</span>
+<span class="nc" id="L232">                    System.out.println(&quot;Error: &quot; + e.getMessage());</span>
+<span class="nc" id="L233">                }</span>
+<span class="nc" id="L234">            } else {</span>
+                // Estat d'edició d'enquesta
+                // Mostra l'enquesta abans del menú d'edició
+                try {
+<span class="nc" id="L238">                    String enquestaText = dc.mostrarEnquesta(enquestaEnEdicio);</span>
+<span class="nc" id="L239">                    System.out.println(&quot;\n--- ENQUESTA ACTUAL ---&quot;);</span>
+<span class="nc" id="L240">                    System.out.println(enquestaText);</span>
+<span class="nc" id="L241">                } catch (Exception e) {</span>
+<span class="nc" id="L242">                    System.out.println(&quot;\n(No s'ha pogut mostrar l'enquesta: &quot; + e.getMessage() + &quot;)&quot;);</span>
+<span class="nc" id="L243">                    enquestaEnEdicio = null;</span>
+<span class="nc" id="L244">                    continue;</span>
+<span class="nc" id="L245">                }</span>
+<span class="nc" id="L246">                System.out.println(&quot;\n--- EDICIÓ ENQUESTA (ID: &quot; + enquestaEnEdicio + &quot;) ---&quot;);</span>
+<span class="nc" id="L247">                System.out.println(&quot;1. Afegir pregunta&quot;);</span>
+<span class="nc" id="L248">                System.out.println(&quot;2. Eliminar pregunta&quot;);</span>
+<span class="nc" id="L249">                System.out.println(&quot;3. Canviar tipus de pregunta&quot;);</span>
+<span class="nc" id="L250">                System.out.println(&quot;4. Modificar text de pregunta&quot;);</span>
+<span class="nc" id="L251">                System.out.println(&quot;5. Afegir opció de resposta a una pregunta&quot;);</span>
+<span class="nc" id="L252">                System.out.println(&quot;6. Modificar opció de resposta&quot;);</span>
+<span class="nc" id="L253">                System.out.println(&quot;7. Eliminar opció de resposta&quot;);</span>
+<span class="nc" id="L254">                System.out.println(&quot;8. Canviar obligatorietat de pregunta&quot;);</span>
+<span class="nc" id="L255">                System.out.println(&quot;9. Guardar canvis i sortir de l'edició&quot;);</span>
+<span class="nc" id="L256">                System.out.println(&quot;0. Cancelar canvis i sortir de l'edició&quot;);</span>
+<span class="nc" id="L257">                System.out.print(&quot;Escull una opció: &quot;);</span>
+
+<span class="nc" id="L259">                String input = scanner.nextLine();</span>
+                int opcio;
+                try {
+<span class="nc" id="L262">                    opcio = Integer.parseInt(input);</span>
+<span class="nc" id="L263">                } catch (NumberFormatException e) {</span>
+<span class="nc" id="L264">                    System.out.println(&quot;Opció no vàlida.&quot;);</span>
+<span class="nc" id="L265">                    continue;</span>
+<span class="nc" id="L266">                }</span>
+
+                try {
+<span class="nc bnc" id="L269" title="All 11 branches missed.">                    switch (opcio) {</span>
+                        case 1:
+<span class="nc" id="L271">                            dc.afegirPregunta(enquestaEnEdicio);</span>
+<span class="nc" id="L272">                            System.out.println(&quot;Pregunta afegida.&quot;);</span>
+<span class="nc" id="L273">                            break;</span>
+                        case 2:
+<span class="nc" id="L275">                            System.out.print(&quot;Ordre de la pregunta a eliminar: &quot;);</span>
+<span class="nc" id="L276">                            int ordrePreg = Integer.parseInt(scanner.nextLine()) - 1;</span>
+<span class="nc" id="L277">                            dc.eliminarPregunta(enquestaEnEdicio, ordrePreg);</span>
+<span class="nc" id="L278">                            System.out.println(&quot;Pregunta eliminada.&quot;);</span>
+<span class="nc" id="L279">                            break;</span>
+                        case 3:
+<span class="nc" id="L281">                            System.out.print(&quot;Ordre de la pregunta: &quot;);</span>
+<span class="nc" id="L282">                            int ordreTipus = Integer.parseInt(scanner.nextLine()) - 1;</span>
+<span class="nc" id="L283">                            System.out.println(&quot;Tipus disponibles: NUMERICA, OBERTA, MULTI, UNICA_NO_ORDENADA, UNICA_ORDENADA&quot;);</span>
+<span class="nc" id="L284">                            System.out.print(&quot;Nou tipus: &quot;);</span>
+<span class="nc" id="L285">                            String nouTipus = scanner.nextLine();</span>
+<span class="nc" id="L286">                            dc.canviarTipusPregunta(enquestaEnEdicio, ordreTipus, nouTipus);</span>
+<span class="nc" id="L287">                            System.out.println(&quot;Tipus de pregunta canviat.&quot;);</span>
+<span class="nc" id="L288">                            break;</span>
+                        case 4:
+<span class="nc" id="L290">                            System.out.print(&quot;Ordre de la pregunta: &quot;);</span>
+<span class="nc" id="L291">                            int ordreMod = Integer.parseInt(scanner.nextLine()) - 1;</span>
+<span class="nc" id="L292">                            System.out.print(&quot;Nou text: &quot;);</span>
+<span class="nc" id="L293">                            String nouText = scanner.nextLine();</span>
+<span class="nc" id="L294">                            dc.modificarPregunta(enquestaEnEdicio, ordreMod, nouText);</span>
+<span class="nc" id="L295">                            System.out.println(&quot;Text de la pregunta modificat.&quot;);</span>
+<span class="nc" id="L296">                            break;</span>
+                        case 5:
+<span class="nc" id="L298">                            System.out.print(&quot;Ordre de la pregunta: &quot;);</span>
+<span class="nc" id="L299">                            int ordreOpcio = Integer.parseInt(scanner.nextLine()) - 1;</span>
+<span class="nc" id="L300">                            System.out.print(&quot;Text de la nova opció: &quot;);</span>
+<span class="nc" id="L301">                            String textOpcio = scanner.nextLine();</span>
+<span class="nc" id="L302">                            dc.afegirOpcioResposta(enquestaEnEdicio, ordreOpcio, textOpcio);</span>
+<span class="nc" id="L303">                            System.out.println(&quot;Opció de resposta afegida.&quot;);</span>
+<span class="nc" id="L304">                            break;</span>
+                        case 6:
+<span class="nc" id="L306">                            System.out.print(&quot;Ordre de la pregunta: &quot;);</span>
+<span class="nc" id="L307">                            int ordrePregMod = Integer.parseInt(scanner.nextLine()) - 1;</span>
+<span class="nc" id="L308">                            System.out.print(&quot;Ordre de l'opció: &quot;);</span>
+<span class="nc" id="L309">                            int ordreOpcioMod = Integer.parseInt(scanner.nextLine()) - 1;</span>
+<span class="nc" id="L310">                            System.out.print(&quot;Nou text de l'opció: &quot;);</span>
+<span class="nc" id="L311">                            String nouTextOpcio = scanner.nextLine();</span>
+<span class="nc" id="L312">                            dc.modificarOpcioResposta(enquestaEnEdicio, ordrePregMod, ordreOpcioMod, nouTextOpcio);</span>
+<span class="nc" id="L313">                            System.out.println(&quot;Opció de resposta modificada.&quot;);</span>
+<span class="nc" id="L314">                            break;</span>
+                        case 7:
+<span class="nc" id="L316">                            System.out.print(&quot;Ordre de la pregunta: &quot;) ;</span>
+<span class="nc" id="L317">                            int ordrePregElim = Integer.parseInt(scanner.nextLine()) - 1;</span>
+<span class="nc" id="L318">                            System.out.print(&quot;Ordre de l'opció a eliminar: &quot;);</span>
+<span class="nc" id="L319">                            int ordreOpcioElim = Integer.parseInt(scanner.nextLine()) - 1;</span>
+<span class="nc" id="L320">                            dc.eliminarOpcioResposta(enquestaEnEdicio, ordrePregElim, ordreOpcioElim);</span>
+<span class="nc" id="L321">                            System.out.println(&quot;Opció de resposta eliminada.&quot;);</span>
+<span class="nc" id="L322">                            break;</span>
+                        case 8:
+<span class="nc" id="L324">                            System.out.print(&quot;Ordre de la pregunta: &quot;);</span>
+<span class="nc" id="L325">                            int ordreObl = Integer.parseInt(scanner.nextLine()) - 1;</span>
+<span class="nc" id="L326">                            System.out.print(&quot;Obligatòria? (true/false): &quot;);</span>
+<span class="nc" id="L327">                            boolean obligatoria = Boolean.parseBoolean(scanner.nextLine());</span>
+<span class="nc" id="L328">                            dc.canviarObligatorietatPregunta(enquestaEnEdicio, ordreObl, obligatoria);</span>
+<span class="nc" id="L329">                            System.out.println(&quot;Obligatorietat de la pregunta canviada.&quot;);</span>
+<span class="nc" id="L330">                            break;</span>
+                        case 9:
+<span class="nc" id="L332">                            dc.guardarEdicioEnquesta(enquestaEnEdicio, usuariActual);</span>
+<span class="nc" id="L333">                            System.out.println(&quot;Canvis guardats. Sortint de l'edició d'enquesta.&quot;);</span>
+<span class="nc" id="L334">                            enquestaEnEdicio = null;</span>
+<span class="nc" id="L335">                            break;</span>
+                        case 0:
+<span class="nc" id="L337">                            dc.cancelarEdicioEnquesta(enquestaEnEdicio);</span>
+<span class="nc" id="L338">                            enquestaEnEdicio = null;</span>
+<span class="nc" id="L339">                            System.out.println(&quot;Sortint de l'edició d'enquesta.&quot;);</span>
+<span class="nc" id="L340">                            break;</span>
+                        default:
+<span class="nc" id="L342">                            System.out.println(&quot;Opció no vàlida.&quot;);</span>
+                    }
+<span class="nc" id="L344">                } catch (Exception e) {</span>
+<span class="nc" id="L345">                    System.out.println(&quot;Error: &quot; + e.getMessage());</span>
+<span class="nc" id="L346">                }</span>
+<span class="nc" id="L347">            }</span>
+        }
+<span class="nc" id="L349">        scanner.close();</span>
+<span class="nc" id="L350">    }</span>
+
+    /**
+     * Formats a bar plot showing the number of responses in each cluster
+     * @param clusters array of clusters, each containing response IDs
+     * @return formatted bar plot string
+     */
+    private static String formatClusterSizesBarPlot(int[][] clusters) {
+<span class="nc" id="L358">        StringBuilder barPlot = new StringBuilder();</span>
+
+        // Find the maximum cluster size for scaling
+<span class="nc" id="L361">        int maxSize = 0;</span>
+<span class="nc bnc" id="L362" title="All 2 branches missed.">        for (int[] cluster : clusters) {</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">            if (cluster.length &gt; maxSize) {</span>
+<span class="nc" id="L364">                maxSize = cluster.length;</span>
+            }
+        }
+
+        // Determine the scale for the bar (max 50 characters)
+<span class="nc" id="L369">        int maxBarLength = 50;</span>
+<span class="nc bnc" id="L370" title="All 2 branches missed.">        double scale = maxSize &gt; 0 ? (double) maxBarLength / maxSize : 1.0;</span>
+
+<span class="nc" id="L372">        barPlot.append(&quot;Cluster Sizes:\n&quot;);</span>
+<span class="nc" id="L373">        barPlot.append(&quot;═&quot;.repeat(60)).append(&quot;\n&quot;);</span>
+
+<span class="nc bnc" id="L375" title="All 2 branches missed.">        for (int i = 0; i &lt; clusters.length; i++) {</span>
+<span class="nc" id="L376">            int size = clusters[i].length;</span>
+<span class="nc" id="L377">            int barLength = (int) (size * scale);</span>
+
+            // Format: &quot;Cluster 0 (5): ████████ &quot;
+<span class="nc" id="L380">            barPlot.append(String.format(&quot;Cluster %-2d (%3d): &quot;, i, size));</span>
+<span class="nc" id="L381">            barPlot.append(&quot;█&quot;.repeat(barLength));</span>
+<span class="nc" id="L382">            barPlot.append(&quot;\n&quot;);</span>
+        }
+
+<span class="nc" id="L385">        barPlot.append(&quot;═&quot;.repeat(60)).append(&quot;\n&quot;);</span>
+
+<span class="nc" id="L387">        return barPlot.toString();</span>
+    }
+
+    /**
+     * Formats the clustering result as a table string where each column represents a cluster
+     * @param clusters array of clusters, each containing response IDs
+     * @return formatted table string
+     */
+    private static String formatClustersAsTable(int[][] clusters) {
+<span class="nc" id="L396">        StringBuilder table = new StringBuilder();</span>
+
+        // Find the maximum cluster size to determine number of rows
+<span class="nc" id="L399">        int maxSize = 0;</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">        for (int[] cluster : clusters) {</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">            if (cluster.length &gt; maxSize) {</span>
+<span class="nc" id="L402">                maxSize = cluster.length;</span>
+            }
+        }
+
+        // Determine column width (enough for &quot;Cluster X&quot; and IDs)
+<span class="nc" id="L407">        int colWidth = 12;</span>
+
+        // Create header row
+<span class="nc bnc" id="L410" title="All 2 branches missed.">        for (int i = 0; i &lt; clusters.length; i++) {</span>
+<span class="nc" id="L411">            table.append(String.format(&quot;%-&quot; + colWidth + &quot;s&quot;, &quot;Cluster &quot; + i));</span>
+<span class="nc bnc" id="L412" title="All 2 branches missed.">            if (i &lt; clusters.length - 1) table.append(&quot;| &quot;);</span>
+        }
+<span class="nc" id="L414">        table.append(&quot;\n&quot;);</span>
+
+        // Create separator row
+<span class="nc bnc" id="L417" title="All 2 branches missed.">        for (int i = 0; i &lt; clusters.length; i++) {</span>
+<span class="nc" id="L418">            table.append(&quot;-&quot;.repeat(colWidth));</span>
+<span class="nc bnc" id="L419" title="All 2 branches missed.">            if (i &lt; clusters.length - 1) table.append(&quot;+-&quot;);</span>
+        }
+<span class="nc" id="L421">        table.append(&quot;\n&quot;);</span>
+
+        // Create data rows
+<span class="nc bnc" id="L424" title="All 2 branches missed.">        for (int row = 0; row &lt; maxSize; row++) {</span>
+<span class="nc bnc" id="L425" title="All 2 branches missed.">            for (int col = 0; col &lt; clusters.length; col++) {</span>
+<span class="nc" id="L426">                String cellValue = &quot;&quot;;</span>
+<span class="nc bnc" id="L427" title="All 2 branches missed.">                if (row &lt; clusters[col].length) {</span>
+<span class="nc" id="L428">                    cellValue = &quot;ID: &quot; + clusters[col][row];</span>
+                }
+<span class="nc" id="L430">                table.append(String.format(&quot;%-&quot; + colWidth + &quot;s&quot;, cellValue));</span>
+<span class="nc bnc" id="L431" title="All 2 branches missed.">                if (col &lt; clusters.length - 1) table.append(&quot;| &quot;);</span>
+            }
+<span class="nc" id="L433">            table.append(&quot;\n&quot;);</span>
+        }
+
+<span class="nc" id="L436">        return table.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ViewHelpers.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">ViewHelpers.java</span></div><h1>ViewHelpers.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+<span class="nc" id="L8">public class ViewHelpers {</span>
+
+    public static void styleButton(JButton button, Color baseColor, Color foregroundColor) {
+<span class="nc" id="L11">        button.setBackground(baseColor);</span>
+<span class="nc" id="L12">        button.setForeground(foregroundColor);</span>
+<span class="nc" id="L13">        button.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 13));</span>
+<span class="nc" id="L14">        button.setFocusPainted(false);</span>
+<span class="nc" id="L15">        button.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));</span>
+<span class="nc" id="L16">        button.setCursor(new Cursor(Cursor.HAND_CURSOR));</span>
+
+<span class="nc" id="L18">        button.addMouseListener(new MouseAdapter() {</span>
+            @Override
+            public void mouseEntered(MouseEvent e) {
+<span class="nc bnc" id="L21" title="All 2 branches missed.">                if (button.isEnabled()) {</span>
+<span class="nc" id="L22">                    button.setBackground(baseColor.brighter());</span>
+                }
+<span class="nc" id="L24">            }</span>
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+<span class="nc bnc" id="L28" title="All 2 branches missed.">                if (button.isEnabled()) {</span>
+<span class="nc" id="L29">                    button.setBackground(baseColor);</span>
+                }
+<span class="nc" id="L31">            }</span>
+        });
+<span class="nc" id="L33">    }</span>
+
+    public static void styleButton(JButton button, Color baseColor) {
+<span class="nc" id="L36">        styleButton(button, baseColor, Color.WHITE);</span>
+<span class="nc" id="L37">    }</span>
+
+    public static JPanel createTitlePanel(String titleText) {
+<span class="nc" id="L40">        JPanel titlePanel = new JPanel();</span>
+<span class="nc" id="L41">        titlePanel.setBackground(new Color(245, 245, 250));</span>
+<span class="nc" id="L42">        JLabel titleLabel = new JLabel(titleText);</span>
+<span class="nc" id="L43">        titleLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L44">        titleLabel.setForeground(new Color(60, 60, 120));</span>
+<span class="nc" id="L45">        titlePanel.add(titleLabel);</span>
+<span class="nc" id="L46">        return titlePanel;</span>
+    }
+
+    public static JPanel createMainPanel() {
+<span class="nc" id="L50">        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));</span>
+<span class="nc" id="L51">        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));</span>
+<span class="nc" id="L52">        mainPanel.setBackground(new Color(245, 245, 250));</span>
+<span class="nc" id="L53">        return mainPanel;</span>
+    }
+
+    public static JPanel createFormPanel() {
+<span class="nc" id="L57">        JPanel formPanel = new JPanel(new GridBagLayout());</span>
+<span class="nc" id="L58">        formPanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L59">        formPanel.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L60">                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),</span>
+<span class="nc" id="L61">                BorderFactory.createEmptyBorder(20, 20, 20, 20)</span>
+        ));
+<span class="nc" id="L63">        return formPanel;</span>
+    }
+
+    public static JTextField createTextField() {
+<span class="nc" id="L67">        JTextField textField = new JTextField(20);</span>
+<span class="nc" id="L68">        textField.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L69">        textField.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L70">                BorderFactory.createLineBorder(new Color(180, 180, 180)),</span>
+<span class="nc" id="L71">                BorderFactory.createEmptyBorder(5, 5, 5, 5)</span>
+        ));
+<span class="nc" id="L73">        return textField;</span>
+    }
+
+    public static JPasswordField createPasswordField() {
+<span class="nc" id="L77">        JPasswordField passwordField = new JPasswordField(20);</span>
+<span class="nc" id="L78">        passwordField.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L79">        passwordField.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L80">                BorderFactory.createLineBorder(new Color(180, 180, 180)),</span>
+<span class="nc" id="L81">                BorderFactory.createEmptyBorder(5, 5, 5, 5)</span>
+        ));
+<span class="nc" id="L83">        return passwordField;</span>
+    }
+
+    public static void addFormField(JPanel panel, JLabel label, JComponent component, GridBagConstraints gbc, int y) {
+<span class="nc" id="L87">        label.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));</span>
+<span class="nc" id="L88">        gbc.gridx = 0;</span>
+<span class="nc" id="L89">        gbc.gridy = y;</span>
+<span class="nc" id="L90">        gbc.weightx = 0.3;</span>
+<span class="nc" id="L91">        panel.add(label, gbc);</span>
+
+<span class="nc" id="L93">        gbc.gridx = 1;</span>
+<span class="nc" id="L94">        gbc.weightx = 0.7;</span>
+<span class="nc" id="L95">        panel.add(component, gbc);</span>
+<span class="nc" id="L96">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

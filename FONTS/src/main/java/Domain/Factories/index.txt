@@ -1,0 +1,8 @@
+Directori: Domain.Factories
+
+Aquest directori conte les factories per a la creacio de controladors.
+
+Fitxers:
+- CtrlFactory.java: Factory per a la creacio de controladors.
+- NoDBCtrlFactory.java: Factory per a la creacio de controladors que no interactuen amb la base de dades.
+

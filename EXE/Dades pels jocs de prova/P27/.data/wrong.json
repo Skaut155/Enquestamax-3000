@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "respostes": [
+    {
+      "code": "OBERTA",
+      "resposta": "sad",
+      "ordrePregunta": 0,
+      "centroideStrategy": {}
+    },
+    {
+      "code": "UNICA_NO_ORDENADA",
+      "resposta": 1,
+      "ordrePregunta": 1,
+      "centroideStrategy": {}
+    },
+    {
+      "code": "NUMERICA",
+      "ordrePregunta": 2,
+      "centroideStrategy": {}
+    }
+  ]
+}

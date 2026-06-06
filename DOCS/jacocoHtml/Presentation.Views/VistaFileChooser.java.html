@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VistaFileChooser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">VistaFileChooser.java</span></div><h1>VistaFileChooser.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.io.File;
+import java.util.function.Consumer;
+
+/**
+ * Vista reutilizable para seleccionar archivos (importación/exportación).
+ * Puede configurarse para modo de apertura (importar) o guardado (exportar).
+ */
+public class VistaFileChooser extends VistaBase {
+
+    /**
+     * Mode d'operació de la vista.
+     */
+<span class="nc" id="L18">    public enum Mode {</span>
+<span class="nc" id="L19">        IMPORT,</span>
+<span class="nc" id="L20">        EXPORT</span>
+    }
+
+    private final Mode mode;
+    private final Consumer&lt;String&gt; onAccept;
+    private JTextField pathField;
+<span class="nc" id="L26">    private String selectedPath = &quot;&quot;;</span>
+
+    /**
+     * Constructor de la vista de selecció de fitxers.
+     *
+     * @param mode Mode d'operació (IMPORT o EXPORT)
+     * @param entityName Nom de l'entitat (ex: &quot;Enquesta&quot;, &quot;Resposta&quot;) per personalitzar títols
+     * @param onAccept Callback que s'executarà en acceptar amb el path seleccionat
+     */
+    public VistaFileChooser(Mode mode, String entityName, Consumer&lt;String&gt; onAccept) {
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        super(mode == Mode.IMPORT ? &quot;Importar &quot; + entityName : &quot;Exportar &quot; + entityName);</span>
+<span class="nc" id="L37">        this.mode = mode;</span>
+<span class="nc" id="L38">        this.onAccept = onAccept;</span>
+<span class="nc" id="L39">        configurarVista(entityName);</span>
+<span class="nc" id="L40">    }</span>
+
+    /**
+     * Configura els components de la vista segons el mode i el nom de l'enquesta.
+     *
+     * @param entityName Nom de l'enquesta
+     */
+    private void configurarVista(String entityName) {
+<span class="nc" id="L48">        frame.setSize(500, 250);</span>
+<span class="nc" id="L49">        frame.setResizable(false);</span>
+
+<span class="nc" id="L51">        JPanel mainPanel = VistaHelpers.createMainPanel();</span>
+<span class="nc" id="L52">        mainPanel.setLayout(new BorderLayout());</span>
+
+<span class="nc" id="L54">        JPanel titlePanel = VistaHelpers.createTitlePanel(getModeText(entityName));</span>
+<span class="nc" id="L55">        JPanel formPanel = createFormPanel();</span>
+<span class="nc" id="L56">        JPanel buttonPanel = createButtonPanel();</span>
+
+<span class="nc" id="L58">        mainPanel.add(titlePanel, BorderLayout.NORTH);</span>
+<span class="nc" id="L59">        mainPanel.add(formPanel, BorderLayout.CENTER);</span>
+<span class="nc" id="L60">        mainPanel.add(buttonPanel, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L62">        frame.add(mainPanel);</span>
+<span class="nc" id="L63">        frame.setLocationRelativeTo(null);</span>
+<span class="nc" id="L64">    }</span>
+
+    /**
+     * Obté el text segons el mode d'operació.
+     *
+     * @param entityName Nom de l'entitat
+     * @return Text per al mode actual
+     */
+    private String getModeText(String entityName) {
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        return mode == Mode.IMPORT ? &quot;Importar &quot; + entityName : &quot;Exportar &quot; + entityName;</span>
+    }
+
+    /**
+     * Crea el panell de formulari amb la selecció de ruta.
+     *
+     * @return Panel del formulari
+     */
+    private JPanel createFormPanel() {
+<span class="nc" id="L82">        JPanel formPanel = new JPanel(new BorderLayout(10, 10));</span>
+<span class="nc" id="L83">        formPanel.setBackground(VistaHelpers.BACKGROUND_COLOR);</span>
+<span class="nc" id="L84">        formPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));</span>
+
+<span class="nc" id="L86">        JLabel pathLabel = new JLabel(getPathLabelText());</span>
+<span class="nc" id="L87">        pathLabel.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 12));</span>
+
+<span class="nc" id="L89">        JPanel pathPanel = createPathPanel();</span>
+
+<span class="nc" id="L91">        formPanel.add(pathLabel, BorderLayout.NORTH);</span>
+<span class="nc" id="L92">        formPanel.add(pathPanel, BorderLayout.CENTER);</span>
+
+<span class="nc" id="L94">        return formPanel;</span>
+    }
+
+    /**
+     * Obté el text de l'etiqueta de ruta segons el mode.
+     *
+     * @return Text de l'etiqueta
+     */
+    private String getPathLabelText() {
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        return mode == Mode.IMPORT ? &quot;Fitxer a importar:&quot; : &quot;Desar com:&quot;;</span>
+    }
+
+    /**
+     * Crea el panell amb el camp de ruta i botó d'examinar.
+     *
+     * @return Panel de ruta
+     */
+    private JPanel createPathPanel() {
+<span class="nc" id="L112">        JPanel pathPanel = new JPanel(new BorderLayout(5, 0));</span>
+<span class="nc" id="L113">        pathPanel.setBackground(VistaHelpers.BACKGROUND_COLOR);</span>
+
+<span class="nc" id="L115">        pathField = VistaHelpers.createTextField();</span>
+<span class="nc" id="L116">        pathField.setEditable(false);</span>
+<span class="nc" id="L117">        pathField.setBackground(Color.WHITE);</span>
+
+<span class="nc" id="L119">        JButton browseButton = VistaHelpers.createCancelButton(&quot;Examinar...&quot;);</span>
+<span class="nc" id="L120">        browseButton.setPreferredSize(new Dimension(125, 30));</span>
+<span class="nc" id="L121">        browseButton.addActionListener(e -&gt; openFileChooser());</span>
+
+<span class="nc" id="L123">        pathPanel.add(pathField, BorderLayout.CENTER);</span>
+<span class="nc" id="L124">        pathPanel.add(browseButton, BorderLayout.EAST);</span>
+
+<span class="nc" id="L126">        return pathPanel;</span>
+    }
+
+    /**
+     * Crea el panell de botons d'acceptar i cancel·lar.
+     *
+     * @return Panel de botons
+     */
+    private JPanel createButtonPanel() {
+<span class="nc" id="L135">        JPanel buttonPanel = VistaHelpers.createButtonPanel();</span>
+
+<span class="nc" id="L137">        JButton acceptButton = VistaHelpers.createPrimaryButton(getAcceptButtonText());</span>
+<span class="nc" id="L138">        acceptButton.addActionListener(e -&gt; handleAccept());</span>
+<span class="nc" id="L139">        VistaHelpers.makeButtonRespondToEnter(acceptButton);</span>
+
+<span class="nc" id="L141">        JButton cancelButton = VistaHelpers.createCancelButton(&quot;Cancel·lar&quot;);</span>
+<span class="nc" id="L142">        cancelButton.addActionListener(e -&gt; frame.dispose());</span>
+<span class="nc" id="L143">        VistaHelpers.makeButtonRespondToEnter(cancelButton);</span>
+
+<span class="nc" id="L145">        buttonPanel.add(acceptButton);</span>
+<span class="nc" id="L146">        buttonPanel.add(cancelButton);</span>
+
+        // Setup keyboard navigation
+<span class="nc" id="L149">        VistaHelpers.setupKeyboardNavigation(frame, acceptButton);</span>
+
+<span class="nc" id="L151">        return buttonPanel;</span>
+    }
+
+    /**
+     * Obté el text del botó d'acceptar segons el mode.
+     *
+     * @return Text del botó
+     */
+    private String getAcceptButtonText() {
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        return mode == Mode.IMPORT ? &quot;Importar&quot; : &quot;Exportar&quot;;</span>
+    }
+
+    /**
+     * Obre el diàleg de selecció de fitxers segons el mode actual.
+     */
+    private void openFileChooser() {
+<span class="nc" id="L167">        JFileChooser fileChooser = new JFileChooser();</span>
+<span class="nc" id="L168">        fileChooser.setFileFilter(new FileNameExtensionFilter(&quot;Fitxers JSON (*.json)&quot;, &quot;json&quot;));</span>
+
+        int result;
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (mode == Mode.IMPORT) {</span>
+<span class="nc" id="L172">            fileChooser.setDialogTitle(&quot;Seleccionar fitxer a importar&quot;);</span>
+<span class="nc" id="L173">            result = fileChooser.showOpenDialog(frame);</span>
+        } else {
+<span class="nc" id="L175">            fileChooser.setDialogTitle(&quot;Seleccionar ubicació per desar&quot;);</span>
+<span class="nc" id="L176">            result = fileChooser.showSaveDialog(frame);</span>
+        }
+
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (result == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L180">            File selectedFile = fileChooser.getSelectedFile();</span>
+<span class="nc" id="L181">            selectedPath = selectedFile.getAbsolutePath();</span>
+
+            // Add .json extension if exporting and not already present
+<span class="nc bnc" id="L184" title="All 4 branches missed.">            if (mode == Mode.EXPORT &amp;&amp; !selectedPath.toLowerCase().endsWith(&quot;.json&quot;)) {</span>
+<span class="nc" id="L185">                selectedPath += &quot;.json&quot;;</span>
+            }
+
+<span class="nc" id="L188">            pathField.setText(selectedPath);</span>
+        }
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Gestiona l'acció d'acceptar la selecció de fitxer.
+     * Valida la selecció i crida el callback si és vàlida.
+     */
+    private void handleAccept() {
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (selectedPath.isEmpty()) {</span>
+<span class="nc" id="L198">            showError(getEmptyPathErrorMessage());</span>
+<span class="nc" id="L199">            return;</span>
+        }
+
+<span class="nc bnc" id="L202" title="All 4 branches missed.">        if (mode == Mode.IMPORT &amp;&amp; !validateFileExists()) {</span>
+<span class="nc" id="L203">            showError(&quot;El fitxer seleccionat no existeix.&quot;);</span>
+<span class="nc" id="L204">            return;</span>
+        }
+
+        // Call the callback and close
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        if (onAccept != null) {</span>
+<span class="nc" id="L209">            onAccept.accept(selectedPath);</span>
+        }
+<span class="nc" id="L211">        frame.dispose();</span>
+<span class="nc" id="L212">    }</span>
+
+    /**
+     * Obté el missatge d'error quan no s'ha seleccionat cap ruta.
+     *
+     * @return Missatge d'error
+     */
+    private String getEmptyPathErrorMessage() {
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        return mode == Mode.IMPORT</span>
+<span class="nc" id="L221">            ? &quot;Si us plau, selecciona un fitxer per importar.&quot;</span>
+<span class="nc" id="L222">            : &quot;Si us plau, selecciona una ubicació per desar.&quot;;</span>
+    }
+
+    /**
+     * Valida que el fitxer existeix (només per mode IMPORT).
+     *
+     * @return true si el fitxer existeix, false altrament
+     */
+    private boolean validateFileExists() {
+<span class="nc" id="L231">        File file = new File(selectedPath);</span>
+<span class="nc" id="L232">        return file.exists();</span>
+    }
+
+    /**
+     * Mostra un missatge d'error a l'usuari.
+     *
+     * @param message Missatge a mostrar
+     */
+    private void showError(String message) {
+<span class="nc" id="L241">        JOptionPane.showMessageDialog(frame, message, &quot;Error&quot;, JOptionPane.ERROR_MESSAGE);</span>
+<span class="nc" id="L242">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

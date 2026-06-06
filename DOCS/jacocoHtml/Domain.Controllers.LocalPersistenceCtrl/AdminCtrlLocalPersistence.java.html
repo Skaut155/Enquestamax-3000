@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminCtrlLocalPersistence.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Controllers.LocalPersistenceCtrl</a> &gt; <span class="el_source">AdminCtrlLocalPersistence.java</span></div><h1>AdminCtrlLocalPersistence.java</h1><pre class="source lang-java linenums">package Domain.Controllers.LocalPersistenceCtrl;
+
+import Domain.Adapters.IAdminPersistance;
+import Domain.Controllers.IAdminCtrl;
+import Domain.Exceptions.AdminJaExisteix;
+import Domain.Exceptions.AdminNoExisteix;
+import Domain.Factories.AdapterFactory;
+import Domain.Model.Admin;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+/**
+ * In-memory implementation of the Admin controller without database persistence.
+ * Manages Admin instances using a Dictionary data structure.
+ */
+<span class="fc" id="L17">public class AdminCtrlLocalPersistence implements IAdminCtrl {</span>
+
+    /**
+     * Dictionary storing Admin instances indexed by their name.
+     */
+<span class="fc" id="L22">    private Dictionary&lt;String, Admin&gt; admins = new Hashtable&lt;String, Admin&gt;();</span>
+
+    /**
+     * Retrieves an Admin instance by name.
+     *
+     * @param nom the name of the Admin to retrieve
+     * @return the Admin instance with the specified name
+     * @throws AdminNoExisteix if no Admin with the given name exists
+     */
+    public Admin GetAdmin(String nom) throws AdminNoExisteix{
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (nom == null) {</span>
+<span class="nc" id="L33">            throw new AdminNoExisteix(&quot;El nom de l'admin no pot ser null&quot;);</span>
+        }
+
+        Admin a;
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if ((a = admins.get(nom)) != null) {</span>
+<span class="fc" id="L38">            return a;</span>
+        }
+        else{
+<span class="fc" id="L41">            IAdminPersistance ap = AdapterFactory.getInstance().getAdminPersistance();</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">            if (ap.existsAdmin(nom)) {</span>
+<span class="nc" id="L43">                Admin adminFromPersistence = ap.loadAdmin(nom);</span>
+<span class="nc" id="L44">                admins.put(nom, adminFromPersistence);</span>
+<span class="nc" id="L45">                return adminFromPersistence;</span>
+            }
+        }
+
+<span class="fc" id="L49">        throw new AdminNoExisteix(&quot;No existeix una instància de admin amb nom &quot; + nom);</span>
+    }
+
+    /**
+     * Adds a new Admin instance to the system.
+     *
+     * @param new_admin the Admin instance to add
+     * @throws AdminJaExisteix if an Admin with the same name already exists
+     */
+    public void AddAdmin(Admin new_admin) throws AdminJaExisteix{
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (admins.get(new_admin.getNom()) != null) {</span>
+<span class="nc" id="L60">            throw new AdminJaExisteix(&quot;Ja existeix una instància de admin amb nom &quot; + new_admin.getNom());</span>
+        }
+<span class="fc" id="L62">        IAdminPersistance ap = AdapterFactory.getInstance().getAdminPersistance();</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (ap.existsAdmin(new_admin.getNom())) {</span>
+<span class="nc" id="L64">            throw new AdminJaExisteix(&quot;Ja existeix una instància de admin amb nom &quot; + new_admin.getNom());</span>
+        }
+
+<span class="fc" id="L67">        admins.put(new_admin.getNom(), new_admin);</span>
+<span class="fc" id="L68">        ap.saveAdmin(new_admin);</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Updates an existing Admin instance in the system.
+     *
+     * @param admin the Admin instance to update
+     * @throws AdminNoExisteix if no Admin with the given name exists
+     */
+    public void updateAdmin(Admin admin) throws AdminNoExisteix {
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if (admins.get(admin.getNom()) == null) {</span>
+<span class="nc" id="L79">            throw new AdminNoExisteix(&quot;Aquesta instància de admin no és present al controlador&quot;);</span>
+        }
+
+<span class="fc" id="L82">        IAdminPersistance ap = AdapterFactory.getInstance().getAdminPersistance();</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (!ap.existsAdmin(admin.getNom()))</span>
+<span class="nc" id="L84">            throw new AdminNoExisteix(&quot;No existeix una instància de admin amb nom &quot; + admin.getNom());</span>
+
+<span class="fc" id="L86">        ap.saveAdmin(admin);</span>
+<span class="fc" id="L87">    }</span>
+
+    /**
+     * Deletes an Admin instance from the system.
+     *
+     * @param nom the name of the Admin to delete
+     * @throws AdminNoExisteix if no Admin with the given name exists
+     */
+    public void deleteAdmin(String nom) throws AdminNoExisteix {
+<span class="fc" id="L96">        IAdminPersistance ap = AdapterFactory.getInstance().getAdminPersistance();</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if (!ap.existsAdmin(nom))</span>
+<span class="nc" id="L98">            throw new AdminNoExisteix(&quot;No existeix una instància de admin amb nom &quot; + nom);</span>
+
+<span class="fc" id="L100">        admins.remove(nom);</span>
+<span class="fc" id="L101">        ap.deleteAdmin(nom);</span>
+<span class="fc" id="L102">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

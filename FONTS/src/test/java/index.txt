@@ -1,0 +1,4 @@
+Directori: src/test/java
+
+Aquest directori conte els tests unitaris de l'aplicacio en Java.
+

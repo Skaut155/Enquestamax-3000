@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>K_means.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">K_means.java</span></div><h1>K_means.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ * K_means clustering algorithm for survey responses (&quot;RespostaEnquesta&quot;).
+ */
+<span class="fc" id="L9">public abstract class K_means extends AlgoritmeClustering {</span>
+    private static final double maxDist = 1e-3;
+    private static final int maxIter = 1000;
+    private ArrayList&lt;RespostaEnquesta&gt; centroidsResult;
+
+    /**
+     * Initialize firsts centroids for k_means
+     * @param k number of clusters
+     * @param respostes set of minimum k RespostaEnquesta and all of the same Enquesta
+     * @return array of k different centroids
+     */
+    public abstract ArrayList&lt;RespostaEnquesta&gt; initialize(int k, ArrayList&lt;RespostaEnquesta&gt; respostes);
+   
+    /**
+     * Compute the clustering with k_means algorithm
+     * @param k number of clusters
+     * @param respostes set of minimum k RespostaEnquesta and all of the same Enquesta
+     * @return set of k clusters of RespostaEnquesta
+     */
+    @Override
+    protected ArrayList&lt;RespostaEnquesta&gt;[] computeClustering(int k, ArrayList&lt;RespostaEnquesta&gt; respostes) {
+<span class="fc" id="L30">        ArrayList&lt;RespostaEnquesta&gt; centroids = initialize(k, respostes);</span>
+        
+<span class="fc" id="L32">        return calcularRec(k, respostes, centroids, 0);</span>
+    }
+
+    @Override
+    public ArrayList&lt;RespostaEnquesta&gt; getCentroids() {
+<span class="fc" id="L37">        return centroidsResult;</span>
+    }
+
+    /**
+     * Compute the clustering recursively with k_means algorithm
+     * @param k number of clusters
+     * @param respostes set of minimum k RespostaEnquesta and all of the same Enquesta
+     * @param centroids precalculated k centroids
+     * @return set of k clusters of RespostaEnquesta
+     */
+    private ArrayList&lt;RespostaEnquesta&gt;[] calcularRec(int k, ArrayList&lt;RespostaEnquesta&gt; respostes, ArrayList&lt;RespostaEnquesta&gt; centroids, int iter) {
+        // Create k clusters
+<span class="fc" id="L49">        ArrayList&lt;RespostaEnquesta&gt;[] clusters = new ArrayList[k];</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        for (int i = 0; i &lt; k; i++) clusters[i] = new ArrayList&lt;RespostaEnquesta&gt;();</span>
+
+        // Assign each RespostaAPregunta at the nearest cluster
+<span class="fc" id="L53">        assignClusters(respostes, centroids, clusters);</span>
+        
+        // Handle empty clusters before checking convergence
+<span class="fc" id="L56">        boolean hadEmptyClusters = handleEmptyClusters(clusters, respostes, centroids);</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if(iter &gt;= maxIter) return clusters;</span>
+
+        // Recompute centroids
+<span class="fc" id="L61">        ArrayList&lt;RespostaEnquesta&gt; newCentroids = computeCentroids(clusters, centroids, respostes);</span>
+<span class="fc" id="L62">        this.centroidsResult = newCentroids;</span>
+
+
+        // Check if the algorithm has converged (only if no empty clusters were handled)
+<span class="fc bfc" id="L66" title="All 4 branches covered.">        if(!hadEmptyClusters &amp;&amp; sameCentroids(centroids, newCentroids)) { // Convergence point</span>
+<span class="fc" id="L67">            return clusters;</span>
+        } else {
+<span class="fc" id="L69">            return calcularRec(k, respostes, newCentroids, iter+1); // Continue computing with new centroids</span>
+        }
+    }
+
+    /**
+     * Checks if the two Centrois have all the same RespostaEnquesta's
+     * @param c1 first centroid
+     * @param c2 second centroid
+     * @return true if all the RespostaEnquesta have the same content in c1 and c2, false otherwise 
+     */
+    private boolean sameCentroids(ArrayList&lt;RespostaEnquesta&gt; oldC, ArrayList&lt;RespostaEnquesta&gt; newC) {
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        for (int i = 0; i &lt; oldC.size(); i++) {</span>
+<span class="fc" id="L81">            double dist = distRespostesEnquesta(oldC.get(i), newC.get(i));</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if (dist &gt; maxDist) return false;</span>
+        }
+<span class="fc" id="L84">        return true;</span>
+    }
+
+    /**
+     * Find the nearest centroid
+     * @param r a particular answer
+     * @param centroids centroid of all the answers
+     * @return position of the nearest centroid to r
+     */
+    private Integer nearestCentroid(RespostaEnquesta r, ArrayList&lt;RespostaEnquesta&gt; centroids) {
+<span class="fc" id="L94">        Double minDist = Double.MAX_VALUE; // Has to be a value bigger than any possible distance (1.0)</span>
+<span class="fc" id="L95">        int nearest = -1;</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for(int i = 0; i &lt; centroids.size(); i++) {</span>
+<span class="fc" id="L97">            double dist = distRespostesEnquesta(r, centroids.get(i));</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            if(dist &lt; minDist) {</span>
+<span class="fc" id="L99">                minDist = dist;</span>
+<span class="fc" id="L100">                nearest = i;</span>
+            }
+        }
+<span class="fc" id="L103">        return nearest;</span>
+    }
+
+    /**
+     * Assign each answer at the cluster at the same position of the nearest centroid  
+     * @param respostes set of RespostaEnquesta of the same Enquesta
+     * @param centroids set of RespostaEnquesta of the same Enquesta from respostes
+     * @param clusters empty set
+     */
+    private void assignClusters(ArrayList&lt;RespostaEnquesta&gt; respostes, ArrayList&lt;RespostaEnquesta&gt; centroids, ArrayList&lt;RespostaEnquesta&gt;[] clusters) {
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        for(RespostaEnquesta r : respostes) {</span>
+<span class="fc" id="L114">            int c = nearestCentroid(r, centroids);</span>
+<span class="fc" id="L115">            clusters[c].add(r);            </span>
+<span class="fc" id="L116">        }</span>
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Compute the centroids of a clustering
+     * @param clusters set of all the clusters of RespostaEnquesta of the same Enquesta
+     * @return array of centroids of each cluster
+     */
+        private ArrayList&lt;RespostaEnquesta&gt; computeCentroids(ArrayList&lt;RespostaEnquesta&gt;[] clusters,
+          ArrayList&lt;RespostaEnquesta&gt; oldCentroids, ArrayList&lt;RespostaEnquesta&gt; allRespostes) {
+        
+<span class="fc" id="L127">        ArrayList&lt;RespostaEnquesta&gt; newCentroids = new ArrayList&lt;RespostaEnquesta&gt;();</span>
+
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        for(int i = 0; i &lt; clusters.length; i++) {</span>
+<span class="fc" id="L130">            ArrayList&lt;RespostaEnquesta&gt; cluster = clusters[i];</span>
+<span class="fc" id="L131">            RespostaEnquesta centroid = computeCentroid(cluster);</span>
+<span class="fc" id="L132">            newCentroids.add(centroid);</span>
+        }
+<span class="fc" id="L134">        return newCentroids;</span>
+    }
+
+    /**
+     * Handle empty clusters by reassigning points from the largest cluster
+     * @param clusters all current clusters
+     * @param allRespostes all survey responses
+     * @param centroids current centroids
+     * @return true if any empty clusters were handled, false otherwise
+     */
+    private boolean handleEmptyClusters(ArrayList&lt;RespostaEnquesta&gt;[] clusters, 
+         ArrayList&lt;RespostaEnquesta&gt; allRespostes, ArrayList&lt;RespostaEnquesta&gt; centroids) {
+        
+<span class="fc" id="L147">        boolean hadEmpty = false;</span>
+        
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        for(int i = 0; i &lt; clusters.length; i++) {</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if(clusters[i].size() == 0) {</span>
+<span class="fc" id="L151">                hadEmpty = true;</span>
+                
+                // Find the largest cluster
+<span class="fc" id="L154">                int largestClusterId = 0;</span>
+<span class="fc" id="L155">                int maxSize = 0;</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">                for(int j = 0; j &lt; clusters.length; j++) {</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">                    if(clusters[j].size() &gt; maxSize) {</span>
+<span class="fc" id="L158">                        maxSize = clusters[j].size();</span>
+<span class="fc" id="L159">                        largestClusterId = j;</span>
+                    }
+                }
+                
+                // Find the point in the largest cluster that is farthest from its centroid
+<span class="fc" id="L164">                ArrayList&lt;RespostaEnquesta&gt; largestCluster = clusters[largestClusterId];</span>
+<span class="fc" id="L165">                RespostaEnquesta largestCentroid = centroids.get(largestClusterId);</span>
+                
+<span class="fc" id="L167">                double maxDist = -1;</span>
+<span class="fc" id="L168">                int farthestPointId = 0;</span>
+                
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                for(int j = 0; j &lt; largestCluster.size(); j++) {</span>
+<span class="fc" id="L171">                    RespostaEnquesta r = largestCluster.get(j);</span>
+<span class="fc" id="L172">                    double dist = distRespostesEnquesta(r, largestCentroid);</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">                    if(dist &gt; maxDist) {</span>
+<span class="fc" id="L174">                        maxDist = dist;</span>
+<span class="fc" id="L175">                        farthestPointId = j;</span>
+                    }
+                }
+                
+                // Move the farthest point to the empty cluster
+<span class="fc" id="L180">                RespostaEnquesta resposta = largestCluster.remove(farthestPointId);</span>
+<span class="fc" id="L181">                clusters[i].add(resposta);</span>
+                
+                // Update the centroid for the empty cluster
+<span class="fc" id="L184">                centroids.set(i, resposta);</span>
+            }
+        }
+        
+<span class="fc" id="L188">        return hadEmpty;</span>
+    }
+
+    /**
+     * Compute the centroids of a single cluster
+     * @param cluster cluster of RespostaEnquesta of the same Enquesta
+     * @return centroid (median) of the cluster
+     */
+    private RespostaEnquesta computeCentroid(ArrayList&lt;RespostaEnquesta&gt; cluster) {        
+<span class="fc" id="L197">        ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt;[] respostes = groupByPregunta(cluster);</span>
+<span class="fc" id="L198">        RespostaEnquesta centroid = new RespostaEnquesta();</span>
+<span class="fc" id="L199">        centroid.associaContainer(cluster.get(0).getContainer());</span>
+
+        // Compute the centroid for each question
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        for(int j = 0; j &lt; respostes.length; ++j) {</span>
+<span class="fc" id="L203">            RespostaAPregunta r = respostes[j].get(0).calcularCentroide(respostes[j]);</span>
+<span class="fc" id="L204">            centroid.addRespostaAPregunta(r);</span>
+        }
+
+<span class="fc" id="L207">        return centroid;</span>
+    }
+
+    /**
+     * Group the answers according to the questions
+     * @param cluster cluster of RespostaEnquesta of the same Enquesta
+     * @return matrix of RespostaAPregunta transposed of the cluster
+     */
+    private ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt;[] groupByPregunta(ArrayList&lt;RespostaEnquesta&gt; cluster){
+
+<span class="fc" id="L217">        int numRespostes = cluster.size();</span>
+
+<span class="fc" id="L219">        ArrayList&lt;RespostaAPregunta&gt; firstRespostes = cluster.get(0).getRespostes();</span>
+
+<span class="fc" id="L221">        int numPreguntes = firstRespostes.size();</span>
+
+<span class="fc" id="L223">        ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt;[] respostes = (ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt;[]) new ArrayList&lt;?&gt;[numPreguntes];</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        for (int j = 0; j &lt; numPreguntes; ++j) respostes[j] = new ArrayList&lt;&gt;();</span>
+
+        // Group the answer according to the questions
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        for(int i = 0; i &lt; numRespostes; ++i) {</span>
+<span class="fc" id="L228">            RespostaEnquesta resposta = cluster.get(i);</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">            for(int j = 0; j &lt; numPreguntes; ++j){</span>
+<span class="fc" id="L230">                respostes[j].add(resposta.getRespostaAPregunta(j));</span>
+            }
+        }
+
+<span class="fc" id="L234">        return respostes;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

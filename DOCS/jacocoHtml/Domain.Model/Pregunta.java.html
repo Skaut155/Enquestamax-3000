@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Pregunta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">Pregunta.java</span></div><h1>Pregunta.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import Domain.Exceptions.OpcioNoExisteix;
+import Domain.Exceptions.OrdreIncorrecte;
+import Domain.Exceptions.RespostaNoValida;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+
+/**
+ * Class Pregunta represents a question in a survey (Enquesta)
+ */
+public class Pregunta{
+    private String titol;
+    private boolean obligatoria;
+    private int ordre;
+    private TipusPregunta state;
+    private ArrayList&lt;Opcio&gt; opcions;
+
+    /**
+     * Constructor for Pregunta
+     */
+<span class="fc" id="L23">    public Pregunta() {</span>
+<span class="fc" id="L24">        this.titol = &quot;Introdueix una pregunta&quot;;</span>
+<span class="fc" id="L25">        this.obligatoria = false;</span>
+<span class="fc" id="L26">        this.ordre = -1;</span>
+<span class="fc" id="L27">        this.state = PreguntaSeleccioUnicaNoOrdenada.getInstance();</span>
+<span class="fc" id="L28">        this.opcions = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L29">    }</span>
+
+    /**
+     * Constructor for Pregunta with specified type
+     * @param state The type of the question
+     */
+    public Pregunta(TipusPregunta state) {
+<span class="fc" id="L36">        this();</span>
+<span class="fc" id="L37">        this.state = state;</span>
+<span class="fc" id="L38">    }</span>
+
+    /**
+     * Set if the question is mandatory
+     * @param ordre The order of the question inside the Enquesta
+     * @return true if successful
+     * @throws OrdreIncorrecte if the order is negative
+     */
+    public boolean setOrdre(int ordre) throws OrdreIncorrecte {
+<span class="fc" id="L47">        checkOrdre(ordre);</span>
+<span class="fc" id="L48">        this.ordre = ordre;</span>
+<span class="fc" id="L49">        return true;</span>
+    }
+
+    /**
+     * Get the order of the question
+     * @return order
+     */
+    public int getOrdre() {
+<span class="fc" id="L57">        return this.ordre;</span>
+    }
+
+    /**
+     * Get the value of titol
+     * @return titol
+     */
+    public String getTitol() {
+<span class="fc" id="L65">        return titol;</span>
+    }
+
+    /**
+     * Set the value of titol
+     * @param titol The new title
+     * @return true if successful
+     */
+    public boolean setTitol(String titol) {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (titol == null) {</span>
+<span class="fc" id="L75">            throw new IllegalArgumentException(&quot;El títol no pot ser nul&quot;);</span>
+        }
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (titol.isBlank()) {</span>
+<span class="fc" id="L78">            throw new IllegalArgumentException(&quot;El títol no pot estar en blanc&quot;);</span>
+        }
+<span class="fc" id="L80">        this.titol = titol;</span>
+<span class="fc" id="L81">        return true;</span>
+    }
+
+
+    /**
+     * Set if the question is mandatory
+     * @param obligatoria true if mandatory, false if optional
+     */
+    public void setObligatoria(boolean obligatoria) {
+<span class="fc" id="L90">        this.obligatoria = obligatoria;</span>
+<span class="fc" id="L91">    }</span>
+
+    /**
+     * Get if the question is optional
+     * @return optional (true) or mandatory (false)
+     */
+    public boolean isOptional() {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        return !obligatoria;</span>
+    }
+
+    /**
+     * Get the options of the question
+     * @return list of options
+     * @throws UnsupportedOperationException if the operation is not supported depending on the question type
+     */
+    public ArrayList&lt;Opcio&gt; getOpcions() throws UnsupportedOperationException {
+<span class="fc" id="L107">        state.checkOpcions();</span>
+        // sort opcions by order
+<span class="fc" id="L109">        opcions.sort(Comparator.comparingInt(Opcio::getOrdre));</span>
+<span class="fc" id="L110">        return new ArrayList&lt;&gt;(opcions);</span>
+    }
+
+    /**
+     * Remove an option from the question
+     * @param ordre order of the option to remove
+     * @return True if success
+     * @throws UnsupportedOperationException if the operation is not supported depending on the question type
+     * @throws OpcioNoExisteix if the option does not exist
+     */
+    public boolean eliminarOpcio(int ordre) throws UnsupportedOperationException, OpcioNoExisteix {
+<span class="fc" id="L121">        state.checkOpcions();</span>
+<span class="fc bfc" id="L122" title="All 4 branches covered.">        if (!opcions.removeIf(opcio -&gt; opcio.getOrdre() == ordre)) {</span>
+<span class="fc" id="L123">            throw new OpcioNoExisteix(&quot;La opció amb ordre &quot;+ ordre+&quot; no existeix&quot;);</span>
+        }
+        // reorder remaining options
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        for (int i = 0; i &lt; opcions.size(); i++) {</span>
+<span class="fc" id="L127">            opcions.get(i).setOrdre(i);</span>
+        }
+
+<span class="fc" id="L130">        return true;</span>
+    }
+
+    /**
+     * Get the number of options
+     * @return number of options
+     * @throws UnsupportedOperationException if the operation is not supported depending on the question type
+     */
+    public int numOpcions() throws UnsupportedOperationException {
+<span class="fc" id="L139">        state.checkOpcions();</span>
+<span class="fc" id="L140">        return opcions.size();</span>
+    }
+
+    /**
+     * Add a new option with the given text
+     * @param textOpcio text of the new option
+     * @return true if successful
+     * @throws UnsupportedOperationException if the operation is not supported depending on the question type
+     */
+    public boolean afegirOpcio(String textOpcio) throws  UnsupportedOperationException {
+<span class="fc" id="L150">        state.checkOpcions();</span>
+<span class="fc" id="L151">        int ordreNou = opcions.size();</span>
+<span class="fc" id="L152">        Opcio novaOpcio = new Opcio(ordreNou, textOpcio);</span>
+<span class="fc" id="L153">        return opcions.add(novaOpcio);</span>
+    }
+
+    /**
+     * Modify the text of an option, delete the option if the new text is empty
+     * @param ordrePregunta order of the option to modify
+     * @param textOpcio new text of the option
+     * @return true if successful
+     * @throws UnsupportedOperationException if the operation is not supported depending on the question type
+     * @throws OpcioNoExisteix if the option does not exist
+     */
+    public boolean modificarOpcio(int ordrePregunta, String textOpcio) throws UnsupportedOperationException, OpcioNoExisteix {
+<span class="fc" id="L165">        state.checkOpcions();</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if(textOpcio.trim().isEmpty()) {</span>
+<span class="fc" id="L167">            return eliminarOpcio(ordrePregunta);</span>
+        }
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        for (Opcio o : opcions) {</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">            if (o.getOrdre() == ordrePregunta) {</span>
+<span class="fc" id="L171">                return o.setText(textOpcio);</span>
+            }
+<span class="fc" id="L173">        }</span>
+<span class="fc" id="L174">        throw new OpcioNoExisteix(&quot;La opció amb ordre &quot;+ ordrePregunta+&quot; no existeix&quot;);</span>
+    }
+
+    /**
+     * Set the type of the question
+     * @param tipus type of the question
+     * @return true if successful
+     */
+    public boolean setTipusPregunta(TipusPregunta tipus) {
+<span class="fc" id="L183">        this.state = tipus;</span>
+<span class="fc" id="L184">        return true;</span>
+    }
+
+    /**
+     * Get the type of the question
+     * @return the type instance
+     */
+    public TipusPregunta getTipusPregunta() {
+<span class="fc" id="L192">        return this.state;</span>
+    }
+
+    /**
+     * Check if the order is valid
+     * @param ordre order to check
+     * @throws OrdreIncorrecte if the order is negative
+     */
+    private void checkOrdre(int ordre) throws OrdreIncorrecte {
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        if(ordre &lt; 0) {</span>
+<span class="fc" id="L202">            throw new OrdreIncorrecte(&quot;L'ordre de la pregunta ha de ser un enter no negatiu.&quot;);</span>
+        }
+<span class="fc" id="L204">    }</span>
+
+    /**
+     * String representation of the question
+     * @return string representation with title, type, mandatory status and its options
+     */
+    @Override
+    public String toString() {
+<span class="fc bfc" id="L212" title="All 2 branches covered.">        String result = &quot;[#&quot;+(ordre+1)+&quot;] &quot; + titol +  (obligatoria ? &quot;*&quot; : &quot; &quot;) +</span>
+<span class="fc" id="L213">                &quot; - tipus: &quot; + state.getCode() + &quot;\n&quot;;</span>
+
+<span class="fc bfc" id="L215" title="All 2 branches covered.">        for (Opcio o : opcions) {</span>
+<span class="fc" id="L216">            result += &quot;\t&quot; + o.toString() + &quot;\n&quot;;</span>
+<span class="fc" id="L217">        }</span>
+<span class="fc" id="L218">        return result;</span>
+    }
+
+    /**
+     * Generate a response for the question from a string response
+     * @param resposta The answer string (unparsed)
+     * @return the generated response of type RespostaAPregunta
+     * @throws RespostaNoValida If the answer is not valid for this question type, out of range, or duplicate selections
+     */
+    public RespostaAPregunta&lt;?&gt; generaResposta(String resposta) throws RespostaNoValida {
+<span class="fc" id="L228">        return state.generaResposta(resposta, this.ordre, this);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,28 @@
+1
+admin1
+contrasenya1
+1
+enquesta personalitat
+0
+1
+enquesta satisfaccio clients
+0
+1
+enquesta idiomes
+0
+3
+2
+1
+3
+11
+1
+admin2
+contrasenya2
+3
+2
+0
+1
+enquesta alimentacio
+0
+3
+0

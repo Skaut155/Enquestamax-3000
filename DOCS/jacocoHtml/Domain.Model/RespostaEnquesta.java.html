@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RespostaEnquesta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">RespostaEnquesta.java</span></div><h1>RespostaEnquesta.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+
+/**
+ * Represents a survey response (RespostaEnquesta) which groups answers
+ * to the individual questions of an associated survey container.
+ *
+ * &lt;p&gt;This class holds a list of {@code RespostaAPregunta} objects and
+ * delegates some aggregate computations (like min/max) to the
+ * associated {@code RespostesContainer}.&lt;/p&gt;
+ */
+public class RespostaEnquesta {
+    private transient RespostesContainer container;
+
+    private int id;
+    private ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt; respostes;
+
+    /**
+     * Creates an empty RespostaEnquesta with no associated container
+     * and an empty list of question responses.
+     */
+<span class="fc" id="L23">    public RespostaEnquesta() {</span>
+<span class="fc" id="L24">        this.respostes = new ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt;();</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Associates this RespostaEnquesta with a {@link RespostesContainer}.
+     * The container provides access to question metadata and aggregate
+     * calculations for a given question index.
+     *
+     * @param container the container that contains question definitions and helper methods
+     */
+    public void associaContainer(RespostesContainer container) {
+<span class="fc" id="L35">        this.container = container;</span>
+<span class="fc" id="L36">    }</span>
+
+    /**
+     * Returns the identifier of this survey response.
+     *
+     * @return the id of the RespostaEnquesta
+     */
+    public int getId() {
+<span class="fc" id="L44">        return id;</span>
+    }
+
+    /**
+     * Sets the identifier for this RespostaEnquesta.
+     *
+     * @param id the id to set
+     */
+    public void setId(int id) {
+<span class="fc" id="L53">        this.id = id;</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * Returns the associated {@code RespostesContainer}.
+     *
+     * @return the container linked to this RespostaEnquesta
+     */
+    public RespostesContainer getContainer() {
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (container == null) {</span>
+<span class="fc" id="L63">            throw new NullPointerException(&quot;No container associated with this RespostaEnquesta&quot;);</span>
+        }
+<span class="fc" id="L65">        return container;</span>
+    }
+
+    /**
+     * Delegates to the associated {@code RespostesContainer} to calculate
+     * the maximum value for the specified question order/index.
+     *
+     * @param ordrePregunta the zero-based order/index of the question
+     * @return the maximum value for the question as provided by the container
+     */
+    public double calcMax(int ordrePregunta) {
+<span class="fc" id="L76">        return container.calcMax(ordrePregunta);</span>
+    }
+
+    /**
+     * Delegates to the associated {@code RespostesContainer} to calculate
+     * the minimum value for the specified question order/index.
+     *
+     * @param ordrePregunta the zero-based order/index of the question
+     * @return the minimum value for the question as provided by the container
+     */
+    public double calcMin(int ordrePregunta) {
+<span class="fc" id="L87">        return container.calcMin(ordrePregunta);</span>
+    }
+
+    /**
+     * Finds and returns the response object for a given question order/index.
+     * If no response for the specified question is present, this method
+     * returns {@code null}.
+     *
+     * @param ordrePregunta the zero-based order/index of the question
+     * @return the {@code RespostaAPregunta} for the requested question, or {@code null}
+     *         if not found
+     */
+    public RespostaAPregunta getRespostaAPregunta(int ordrePregunta) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        for (RespostaAPregunta&lt;?&gt; rap : respostes) {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">           if (rap.getOrdrePregunta() == ordrePregunta) { // Todo: Marc: RespostaAPregunta.GetOrdrePregunta no existeix</span>
+<span class="fc" id="L102">                return rap;</span>
+           }
+<span class="fc" id="L104">        }</span>
+<span class="fc" id="L105">        return null; // or throw an exception if not found</span>
+    }
+
+    /**
+     * Returns a shallow copy of the internal list of responses. The returned
+     * list is a separate {@code ArrayList} instance, but the contained
+     * {@code RespostaAPregunta} objects are the same references as stored
+     * internally.
+     *
+     * @return a copy of the internal list of responses
+     */
+    public ArrayList&lt;RespostaAPregunta&gt; getRespostes(){
+<span class="fc" id="L117">        return new ArrayList&lt;&gt;(respostes);</span>
+    }
+
+    /**
+     * Retrieves the {@code Pregunta} metadata for the given question
+     * order/index from the associated container.
+     *
+     * @param ordrePregunta the zero-based order/index of the question
+     * @return the {@code Pregunta} object from the container
+     * @throws NullPointerException if no container has been associated
+     */
+    public Pregunta getPregunta(int ordrePregunta) {
+<span class="fc" id="L129">        return container.getPregunta(ordrePregunta);</span>
+    }
+
+    /**
+     * Adds a response for a single question to this {@code RespostaEnquesta}.
+     *
+     * @param rap the response to add (must not be {@code null})
+     */
+    public void addRespostaAPregunta(RespostaAPregunta&lt;?&gt; rap) {
+<span class="fc" id="L138">        rap.setRespostaEnquesta(this);</span>
+<span class="fc" id="L139">        respostes.add(rap);</span>
+<span class="fc" id="L140">    }</span>
+
+    /**
+     * Returns an array of string representations of the answers
+     * contained in this {@code RespostaEnquesta}.
+     *
+     * @return an array of strings representing each answer
+     */
+    public String[] getRespostesString() {
+<span class="fc" id="L149">        String[] respostesStr = new String[respostes.size()];</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        for (int i = 0; i &lt; respostes.size(); i++) {</span>
+<span class="fc" id="L151">            respostesStr[i] = respostes.get(i).getStringResposta();</span>
+        }
+<span class="fc" id="L153">        return respostesStr;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VistaRespondre.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">VistaRespondre.java</span></div><h1>VistaRespondre.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import Presentation.Controllers.CtrlPresentation;
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+
+/**
+ * Vista per respondre una enquesta.
+ * Mostra les preguntes una per una amb navegació entre elles,
+ * i permet introduir respostes segons el tipus de pregunta.
+ */
+public class VistaRespondre extends VistaBase {
+    /* Identificador de l'enquesta */
+    private final int idEnquesta;
+    /* Nom de l'enquesta */
+    private final String nomEnquesta;
+    /* Preguntes de l'enquesta */
+    private String[] preguntes;
+    /* Indica si cada pregunta és obligatòria */
+    private boolean[] preguntesObligatories;
+    /* Respostes de l'usuari */
+    private final ArrayList&lt;String&gt; respostes;
+    /* Índex de la pregunta actual */
+    private int preguntaActual;
+    /* Label de la pregunta */
+    private JLabel preguntaLabel;
+    /* Panell d'input per a la resposta */
+    private JPanel inputPanel;
+    /* Botons de navegació */
+    private JButton nextButton;
+    /* Botó de navegació anterior */
+    private JButton prevButton;
+    /* Botó d'enviament de respostes */
+    private JButton submitButton;
+    /* Label de progrés */
+    private JLabel progressLabel;
+
+    /**
+     * Constructor de la vista per respondre enquestes.
+     *
+     * @param ctrl Controlador de presentació
+     * @param idEnquesta Identificador de l'enquesta
+     * @param nomEnquesta Nom de l'enquesta
+     */
+    public VistaRespondre(CtrlPresentation ctrl, int idEnquesta, String nomEnquesta) {
+<span class="nc" id="L47">        super(&quot;Respondre - &quot; + nomEnquesta, ctrl);</span>
+<span class="nc" id="L48">        this.idEnquesta = idEnquesta;</span>
+<span class="nc" id="L49">        this.nomEnquesta = nomEnquesta;</span>
+<span class="nc" id="L50">        this.preguntaActual = 0;</span>
+<span class="nc" id="L51">        this.respostes = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L53">        cargarPreguntes();</span>
+<span class="nc" id="L54">        configurarVista();</span>
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * Fa visible la finestra i mostra la primera pregunta.
+     */
+    @Override
+    public void hacerVisible() {
+<span class="nc" id="L62">        super.hacerVisible();</span>
+<span class="nc" id="L63">        mostrarPregunta();</span>
+<span class="nc" id="L64">    }</span>
+
+
+    /**
+     * Carrega les preguntes de l'enquesta des del controlador.
+     */
+    private void cargarPreguntes() {
+<span class="nc" id="L71">        preguntes = iCtrlPresentation.getPreguntesEnquesta(idEnquesta);</span>
+<span class="nc" id="L72">        preguntesObligatories = new boolean[preguntes.length];</span>
+
+        // Initialize all responses and detect mandatory questions
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        for (int i = 0; i &lt; preguntes.length; i++) {</span>
+            // Check if question is mandatory (has asterisk *)
+<span class="nc" id="L77">            preguntesObligatories[i] = preguntes[i].contains(&quot;*&quot;);</span>
+
+            // Initialize numeric questions with &quot;0&quot; so they're not considered empty
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (preguntes[i].contains(&quot;NUMERICA&quot;)) {</span>
+<span class="nc" id="L81">                respostes.add(&quot;0&quot;);</span>
+            } else {
+<span class="nc" id="L83">                respostes.add(&quot;&quot;);</span>
+            }
+        }
+<span class="nc" id="L86">    }</span>
+
+    /**
+     * Configura la interfície gràfica de la vista.
+     */
+    private void configurarVista() {
+<span class="nc" id="L92">        frame.setSize(700, 500);</span>
+
+<span class="nc" id="L94">        JPanel mainPanel = VistaHelpers.createMainPanel();</span>
+
+        // Title panel
+<span class="nc" id="L97">        JPanel titlePanel = VistaHelpers.createTitlePanelWithSubtitle(&quot;Respondre: &quot; + nomEnquesta, null);</span>
+<span class="nc" id="L98">        progressLabel = new JLabel();</span>
+<span class="nc" id="L99">        progressLabel.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 12));</span>
+<span class="nc" id="L100">        titlePanel.add(progressLabel, BorderLayout.SOUTH);</span>
+
+        // Content panel
+<span class="nc" id="L103">        JPanel contentPanel = VistaHelpers.createContentPanel();</span>
+
+<span class="nc" id="L105">        preguntaLabel = new JLabel();</span>
+<span class="nc" id="L106">        preguntaLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));</span>
+<span class="nc" id="L107">        preguntaLabel.setForeground(VistaHelpers.TEXT_COLOR);</span>
+<span class="nc" id="L108">        contentPanel.add(preguntaLabel, BorderLayout.NORTH);</span>
+
+<span class="nc" id="L110">        inputPanel = new JPanel();</span>
+<span class="nc" id="L111">        inputPanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L112">        contentPanel.add(inputPanel, BorderLayout.CENTER);</span>
+
+        // Navigation buttons
+<span class="nc" id="L115">        JPanel buttonPanel = VistaHelpers.createButtonPanel();</span>
+
+<span class="nc" id="L117">        prevButton = VistaHelpers.createCancelButton(&quot;← Anterior&quot;);</span>
+<span class="nc" id="L118">        prevButton.addActionListener(e -&gt; anteriorPregunta());</span>
+<span class="nc" id="L119">        VistaHelpers.makeButtonRespondToEnter(prevButton);</span>
+
+<span class="nc" id="L121">        nextButton = VistaHelpers.createPrimaryButton(&quot;Següent →&quot;);</span>
+<span class="nc" id="L122">        nextButton.addActionListener(e -&gt; seguentPregunta());</span>
+<span class="nc" id="L123">        VistaHelpers.makeButtonRespondToEnter(nextButton);</span>
+
+<span class="nc" id="L125">        submitButton = VistaHelpers.createSuccessButton(&quot;Enviar respostes&quot;);</span>
+<span class="nc" id="L126">        submitButton.addActionListener(e -&gt; enviarRespuestas());</span>
+<span class="nc" id="L127">        submitButton.setVisible(false);</span>
+<span class="nc" id="L128">        VistaHelpers.makeButtonRespondToEnter(submitButton);</span>
+
+<span class="nc" id="L130">        JButton cancelButton = VistaHelpers.createDangerButton(&quot;Cancel·lar&quot;);</span>
+<span class="nc" id="L131">        cancelButton.addActionListener(e -&gt; {</span>
+<span class="nc" id="L132">            int confirm = JOptionPane.showConfirmDialog(frame,</span>
+                &quot;¿Segur que vols cancel·lar? Les respostes es perdran.&quot;,
+                &quot;Confirmar cancel·lació&quot;,
+                JOptionPane.YES_NO_OPTION);
+<span class="nc bnc" id="L136" title="All 2 branches missed.">            if (confirm == JOptionPane.YES_OPTION) {</span>
+<span class="nc" id="L137">                frame.dispose();</span>
+            }
+<span class="nc" id="L139">        });</span>
+<span class="nc" id="L140">        VistaHelpers.makeButtonRespondToEnter(cancelButton);</span>
+
+<span class="nc" id="L142">        buttonPanel.add(prevButton);</span>
+<span class="nc" id="L143">        buttonPanel.add(nextButton);</span>
+<span class="nc" id="L144">        buttonPanel.add(submitButton);</span>
+<span class="nc" id="L145">        buttonPanel.add(cancelButton);</span>
+
+<span class="nc" id="L147">        mainPanel.add(titlePanel, BorderLayout.NORTH);</span>
+<span class="nc" id="L148">        mainPanel.add(contentPanel, BorderLayout.CENTER);</span>
+<span class="nc" id="L149">        mainPanel.add(buttonPanel, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L151">        frame.add(mainPanel);</span>
+<span class="nc" id="L152">        frame.setLocationRelativeTo(null);</span>
+
+        // Setup keyboard navigation
+<span class="nc" id="L155">        VistaHelpers.setupKeyboardNavigation(frame, nextButton);</span>
+<span class="nc" id="L156">    }</span>
+
+    /**
+     * Mostra la pregunta actual amb el seu tipus d'input corresponent.
+     */
+    private void mostrarPregunta() {
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (preguntes.length == 0) {</span>
+<span class="nc" id="L163">            JOptionPane.showMessageDialog(frame,</span>
+                &quot;Aquesta enquesta no té preguntes&quot;,
+                &quot;Error&quot;,
+                JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L167">            frame.dispose();</span>
+<span class="nc" id="L168">            return;</span>
+        }
+
+<span class="nc" id="L171">        String preguntaInfo = preguntes[preguntaActual];</span>
+<span class="nc" id="L172">        String[] parts = parsePregunta(preguntaInfo);</span>
+<span class="nc" id="L173">        String tipus = parts[0];</span>
+<span class="nc" id="L174">        String textPregunta = parts[1];</span>
+
+        // Mostrar indicador de pregunta obligatòria
+<span class="nc" id="L177">        String labelText = &quot;Pregunta &quot; + (preguntaActual + 1) + &quot;: &quot; + textPregunta;</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">        if (preguntesObligatories[preguntaActual]) {</span>
+<span class="nc" id="L179">            labelText += &quot; &lt;span style='color: red;'&gt;*&lt;/span&gt;&quot;;</span>
+<span class="nc" id="L180">            preguntaLabel.setText(&quot;&lt;html&gt;&quot; + labelText + &quot;&lt;/html&gt;&quot;);</span>
+        } else {
+<span class="nc" id="L182">            preguntaLabel.setText(labelText);</span>
+        }
+
+<span class="nc" id="L185">        progressLabel.setText(&quot;Pregunta &quot; + (preguntaActual + 1) + &quot; de &quot; + preguntes.length);</span>
+
+<span class="nc" id="L187">        inputPanel.removeAll();</span>
+<span class="nc" id="L188">        inputPanel.setLayout(new BorderLayout());</span>
+
+<span class="nc" id="L190">        JPanel formPanel = new JPanel();</span>
+<span class="nc" id="L191">        formPanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L192">        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));</span>
+
+<span class="nc bnc" id="L194" title="All 6 branches missed.">        switch (tipus) {</span>
+            case &quot;NUMERICA&quot;:
+<span class="nc" id="L196">                crearInputNumeric(formPanel);</span>
+<span class="nc" id="L197">                break;</span>
+            case &quot;MULTIPLE&quot;:
+<span class="nc" id="L199">                crearInputMulti(formPanel, parts);</span>
+<span class="nc" id="L200">                break;</span>
+                case &quot;UNICA_NO_ORDENADA&quot;:
+<span class="nc" id="L202">                crearInputUnicaNoOrdenada(formPanel, parts);</span>
+<span class="nc" id="L203">                break;</span>
+            case &quot;UNICA_ORDENADA&quot;:
+<span class="nc" id="L205">                crearInputUnicaOrdenada(formPanel, parts);</span>
+<span class="nc" id="L206">                break;</span>
+            case &quot;OBERTA&quot;:
+<span class="nc" id="L208">                crearInputOberta(formPanel);</span>
+<span class="nc" id="L209">                break;</span>
+            default:
+<span class="nc" id="L211">                JLabel errorLabel = new JLabel(&quot;Tipus de pregunta no reconegut: &quot; + tipus);</span>
+<span class="nc" id="L212">                formPanel.add(errorLabel);</span>
+        }
+
+<span class="nc" id="L215">        inputPanel.add(formPanel, BorderLayout.NORTH);</span>
+<span class="nc" id="L216">        inputPanel.revalidate();</span>
+<span class="nc" id="L217">        inputPanel.repaint();</span>
+
+        // Update navigation buttons
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        prevButton.setEnabled(preguntaActual &gt; 0);</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        nextButton.setVisible(preguntaActual &lt; preguntes.length - 1);</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        submitButton.setVisible(preguntaActual == preguntes.length - 1);</span>
+
+        // Update default button based on current state
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (preguntaActual == preguntes.length - 1) {</span>
+<span class="nc" id="L226">            frame.getRootPane().setDefaultButton(submitButton);</span>
+        } else {
+<span class="nc" id="L228">            frame.getRootPane().setDefaultButton(nextButton);</span>
+        }
+<span class="nc" id="L230">    }</span>
+
+    /**
+     * Parsea la informació d'una pregunta en les seves parts components.
+     *
+     * @param preguntaInfo String amb la informació completa de la pregunta
+     * @return Array amb [tipus, textPregunta, opcions...]
+     */
+    private String[] parsePregunta(String preguntaInfo) {
+        // Format real: &quot;[#1] Título* - tipus: TIPUS\n\tOpción 1\n\tOpción 2\n...&quot;
+<span class="nc" id="L240">        String[] lines = preguntaInfo.split(&quot;\n&quot;);</span>
+<span class="nc" id="L241">        String tipus = &quot;&quot;;</span>
+<span class="nc" id="L242">        String text = &quot;&quot;;</span>
+<span class="nc" id="L243">        ArrayList&lt;String&gt; opcions = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        if (lines.length &gt; 0) {</span>
+            // First line: &quot;[#1] Título* - tipus: TIPUS&quot;
+<span class="nc" id="L247">            String firstLine = lines[0];</span>
+
+            // Extract type
+<span class="nc" id="L250">            int tipusIndex = firstLine.indexOf(&quot;- tipus: &quot;);</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">            if (tipusIndex != -1) {</span>
+<span class="nc" id="L252">                tipus = firstLine.substring(tipusIndex + 9).trim();</span>
+            }
+
+            // Extract text (between &quot;] &quot; and &quot; - tipus:&quot;)
+<span class="nc" id="L256">            int startText = firstLine.indexOf(&quot;] &quot;) + 2;</span>
+<span class="nc" id="L257">            int endText = firstLine.indexOf(&quot; - tipus:&quot;);</span>
+<span class="nc bnc" id="L258" title="All 4 branches missed.">            if (startText &gt; 1 &amp;&amp; endText != -1) {</span>
+<span class="nc" id="L259">                text = firstLine.substring(startText, endText).trim();</span>
+                // Remove asterisk if present (mandatory indicator)
+<span class="nc bnc" id="L261" title="All 2 branches missed.">                if (text.endsWith(&quot;*&quot;)) {</span>
+<span class="nc" id="L262">                    text = text.substring(0, text.length() - 1).trim();</span>
+                }
+            }
+        }
+
+        // Remaining lines are options (start with tab)
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        for (int i = 1; i &lt; lines.length; i++) {</span>
+<span class="nc" id="L269">            String line = lines[i].trim();</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">            if (!line.isEmpty()) {</span>
+<span class="nc" id="L271">                opcions.add(line);</span>
+            }
+        }
+
+<span class="nc" id="L275">        String[] result = new String[2 + opcions.size()];</span>
+<span class="nc" id="L276">        result[0] = tipus;</span>
+<span class="nc" id="L277">        result[1] = text;</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        for (int i = 0; i &lt; opcions.size(); i++) {</span>
+<span class="nc" id="L279">            result[2 + i] = opcions.get(i);</span>
+        }
+
+<span class="nc" id="L282">        return result;</span>
+    }
+
+    /**
+     * Crea un input de tipus numèrica amb un JSpinner que accepta decimals.
+     *
+     * @param panel Panell on afegir el JSpinner
+     */
+    private void crearInputNumeric(JPanel panel) {
+        // Obtenir valor inicial si existeix
+<span class="nc" id="L292">        double valorInicial = 0.0;</span>
+<span class="nc" id="L293">        String respostaActual = respostes.get(preguntaActual);</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        if (!respostaActual.isEmpty()) {</span>
+            try {
+<span class="nc" id="L296">                valorInicial = Double.parseDouble(respostaActual);</span>
+<span class="nc" id="L297">            } catch (NumberFormatException ignored) {}</span>
+        }
+
+<span class="nc" id="L300">        SpinnerNumberModel model = new SpinnerNumberModel(valorInicial, -Double.MAX_VALUE, Double.MAX_VALUE, 0.1);</span>
+<span class="nc" id="L301">        JSpinner spinner = new JSpinner(model);</span>
+<span class="nc" id="L302">        spinner.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L303">        spinner.setPreferredSize(new Dimension(150, 30));</span>
+
+        // Configurar el editor per mostrar decimals correctament
+<span class="nc" id="L306">        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinner, &quot;#0.##&quot;);</span>
+<span class="nc" id="L307">        spinner.setEditor(editor);</span>
+
+<span class="nc" id="L309">        JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));</span>
+<span class="nc" id="L310">        fieldPanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L311">        fieldPanel.add(new JLabel(&quot;Resposta numèrica: &quot;));</span>
+<span class="nc" id="L312">        fieldPanel.add(spinner);</span>
+
+<span class="nc" id="L314">        panel.add(fieldPanel);</span>
+
+        // Guardar el valor inicial immediatament (per si l'usuari deixa 0 com a resposta)
+<span class="nc" id="L317">        guardarRespostaActual(String.valueOf(spinner.getValue()));</span>
+
+        // Save on change
+<span class="nc" id="L320">        spinner.addChangeListener(e -&gt; guardarRespostaActual(String.valueOf(spinner.getValue())));</span>
+
+        // Allow Enter key to go to next question
+<span class="nc" id="L323">        JTextField tf = editor.getTextField();</span>
+<span class="nc" id="L324">        tf.addActionListener(e -&gt; seguentPregunta());</span>
+<span class="nc" id="L325">    }</span>
+
+    /**
+     * Crea un input de tipus oberta amb un JTextArea.
+     *
+     * @param panel Panell on afegir el JTextArea
+     */
+    private void crearInputOberta(JPanel panel) {
+<span class="nc" id="L333">        JTextArea textArea = new JTextArea(5, 30);</span>
+<span class="nc" id="L334">        textArea.setText(respostes.get(preguntaActual));</span>
+<span class="nc" id="L335">        textArea.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L336">        textArea.setLineWrap(true);</span>
+<span class="nc" id="L337">        textArea.setWrapStyleWord(true);</span>
+<span class="nc" id="L338">        textArea.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L339">            BorderFactory.createLineBorder(new Color(180, 180, 180)),</span>
+<span class="nc" id="L340">            BorderFactory.createEmptyBorder(5, 5, 5, 5)</span>
+        ));
+
+<span class="nc" id="L343">        JScrollPane scrollPane = new JScrollPane(textArea);</span>
+<span class="nc" id="L344">        panel.add(scrollPane);</span>
+
+<span class="nc" id="L346">        textArea.addFocusListener(new java.awt.event.FocusAdapter() {</span>
+            public void focusLost(java.awt.event.FocusEvent e) {
+<span class="nc" id="L348">                guardarRespostaActual(textArea.getText());</span>
+<span class="nc" id="L349">            }</span>
+        });
+<span class="nc" id="L351">    }</span>
+
+    /**
+     * Crea un input de tipus única no ordenada amb radiobuttons.
+     *
+     * @param panel Panell on afegir els radiobuttons
+     * @param parts Parts de la pregunta (tipus, text, opcions)
+     */
+    private void crearInputUnicaNoOrdenada(JPanel panel, String[] parts) {
+<span class="nc" id="L360">        inputButtonCreation(panel, parts);</span>
+<span class="nc" id="L361">    }</span>
+
+    /**
+     * Crea els radiobuttons per a preguntes d'elecció única.
+     *
+     * @param panel Panell on afegir els radiobuttons
+     * @param parts Parts de la pregunta (tipus, text, opcions)
+     */
+    private void inputButtonCreation(JPanel panel, String[] parts) {
+<span class="nc" id="L370">        ButtonGroup group = new ButtonGroup();</span>
+<span class="nc" id="L371">        String respostaActual = respostes.get(preguntaActual);</span>
+<span class="nc" id="L372">        java.util.List&lt;JRadioButton&gt; radioList = new java.util.ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L374" title="All 2 branches missed.">        for (int i = 2; i &lt; parts.length; i++) {</span>
+<span class="nc" id="L375">            JRadioButton radio = new JRadioButton(parts[i]);</span>
+<span class="nc" id="L376">            radio.setBackground(Color.WHITE);</span>
+<span class="nc" id="L377">            radio.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 13));</span>
+
+<span class="nc bnc" id="L379" title="All 2 branches missed.">            if (respostaActual.equals(String.valueOf(i - 1))) {</span>
+<span class="nc" id="L380">                radio.setSelected(true);</span>
+            }
+
+<span class="nc" id="L383">            int opcio = i - 1;</span>
+<span class="nc" id="L384">            radio.addActionListener(e -&gt; guardarRespostaActual(String.valueOf(opcio)));</span>
+
+<span class="nc" id="L386">            group.add(radio);</span>
+<span class="nc" id="L387">            panel.add(radio);</span>
+<span class="nc" id="L388">            radioList.add(radio);</span>
+        }
+
+        // Setup arrow key navigation for radio buttons
+<span class="nc bnc" id="L392" title="All 2 branches missed.">        if (!radioList.isEmpty()) {</span>
+<span class="nc" id="L393">            JRadioButton[] radioArray = radioList.toArray(new JRadioButton[0]);</span>
+<span class="nc" id="L394">            VistaHelpers.setupRadioButtonNavigation(radioArray);</span>
+        }
+<span class="nc" id="L396">    }</span>
+
+    /**
+     * Crea un input de tipus única ordenada amb radiobuttons.
+     *
+     * @param panel Panell on afegir els radiobuttons
+     * @param parts Parts de la pregunta (tipus, text, opcions)
+     */
+    private void crearInputUnicaOrdenada(JPanel panel, String[] parts) {
+<span class="nc" id="L405">        inputButtonCreation(panel, parts);</span>
+<span class="nc" id="L406">    }</span>
+
+    /**
+     * Crea un input de tipus múltiple amb checkboxes.
+     *
+     * @param panel Panell on afegir els checkboxes
+     * @param parts Parts de la pregunta (tipus, text, opcions)
+     */
+    private void crearInputMulti(JPanel panel, String[] parts) {
+<span class="nc" id="L415">        ArrayList&lt;JCheckBox&gt; checkboxes = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L416">        String respostaActual = respostes.get(preguntaActual);</span>
+<span class="nc bnc" id="L417" title="All 2 branches missed.">        String[] seleccionades = respostaActual.isEmpty() ? new String[0] : respostaActual.split(&quot; &quot;);</span>
+
+<span class="nc bnc" id="L419" title="All 2 branches missed.">        for (int i = 2; i &lt; parts.length; i++) {</span>
+<span class="nc" id="L420">            JCheckBox checkbox = new JCheckBox(parts[i]);</span>
+<span class="nc" id="L421">            checkbox.setBackground(Color.WHITE);</span>
+<span class="nc" id="L422">            checkbox.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 13));</span>
+
+<span class="nc" id="L424">            String opcioStr = String.valueOf(i - 1);</span>
+<span class="nc bnc" id="L425" title="All 2 branches missed.">            for (String sel : seleccionades) {</span>
+<span class="nc bnc" id="L426" title="All 2 branches missed.">                if (sel.equals(opcioStr)) {</span>
+<span class="nc" id="L427">                    checkbox.setSelected(true);</span>
+<span class="nc" id="L428">                    break;</span>
+                }
+            }
+
+<span class="nc" id="L432">            checkbox.addActionListener(e -&gt; {</span>
+<span class="nc" id="L433">                StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L434" title="All 2 branches missed.">                for (int j = 0; j &lt; checkboxes.size(); j++) {</span>
+<span class="nc bnc" id="L435" title="All 2 branches missed.">                    if (checkboxes.get(j).isSelected()) {</span>
+<span class="nc bnc" id="L436" title="All 2 branches missed.">                        if (!sb.isEmpty()) sb.append(&quot; &quot;);</span>
+<span class="nc" id="L437">                        sb.append(j + 1);</span>
+                    }
+                }
+<span class="nc" id="L440">                guardarRespostaActual(sb.toString());</span>
+<span class="nc" id="L441">            });</span>
+
+<span class="nc" id="L443">            checkboxes.add(checkbox);</span>
+<span class="nc" id="L444">            panel.add(checkbox);</span>
+        }
+
+        // Setup arrow key navigation for checkboxes
+<span class="nc bnc" id="L448" title="All 2 branches missed.">        if (!checkboxes.isEmpty()) {</span>
+<span class="nc" id="L449">            JCheckBox[] checkboxArray = checkboxes.toArray(new JCheckBox[0]);</span>
+<span class="nc" id="L450">            VistaHelpers.setupCheckboxNavigation(checkboxArray);</span>
+        }
+<span class="nc" id="L452">    }</span>
+
+    /**
+     * Guarda la resposta actual a l'array de respostes.
+     *
+     * @param resposta Resposta a guardar
+     */
+    private void guardarRespostaActual(String resposta) {
+<span class="nc" id="L460">        respostes.set(preguntaActual, resposta);</span>
+<span class="nc" id="L461">    }</span>
+
+    /**
+     * Mostra la següent pregunta si existeix.
+     */
+    private void seguentPregunta() {
+<span class="nc bnc" id="L467" title="All 2 branches missed.">        if (preguntaActual &lt; preguntes.length - 1) {</span>
+<span class="nc" id="L468">            preguntaActual++;</span>
+<span class="nc" id="L469">            mostrarPregunta();</span>
+        }
+<span class="nc" id="L471">    }</span>
+
+    /**
+     * Mostra la pregunta anterior si existeix.
+     */
+    private void anteriorPregunta() {
+<span class="nc bnc" id="L477" title="All 2 branches missed.">        if (preguntaActual &gt; 0) {</span>
+<span class="nc" id="L478">            preguntaActual--;</span>
+<span class="nc" id="L479">            mostrarPregunta();</span>
+        }
+<span class="nc" id="L481">    }</span>
+
+    /**
+     * Envia les respostes al controlador després de validar-les.
+     */
+    private void enviarRespuestas() {
+        // Validate mandatory questions are answered
+<span class="nc bnc" id="L488" title="All 2 branches missed.">        for (int i = 0; i &lt; respostes.size(); i++) {</span>
+<span class="nc bnc" id="L489" title="All 4 branches missed.">            if (preguntesObligatories[i] &amp;&amp; respostes.get(i).trim().isEmpty()) {</span>
+<span class="nc" id="L490">                JOptionPane.showMessageDialog(frame,</span>
+                    &quot;La pregunta &quot; + (i + 1) + &quot; és obligatòria i no ha estat resposta.&quot;,
+                    &quot;Error: Pregunta obligatòria sense respondre&quot;,
+                    JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L494">                return;</span>
+            }
+        }
+
+        // Validate non-mandatory questions
+<span class="nc bnc" id="L499" title="All 2 branches missed.">        for (int i = 0; i &lt; respostes.size(); i++) {</span>
+<span class="nc bnc" id="L500" title="All 4 branches missed.">            if (!preguntesObligatories[i] &amp;&amp; respostes.get(i).trim().isEmpty()) {</span>
+<span class="nc" id="L501">                int confirm = JOptionPane.showConfirmDialog(frame,</span>
+                    &quot;La pregunta &quot; + (i + 1) + &quot; no ha estat resposta. Vols continuar igualment?&quot;,
+                    &quot;Pregunta sense respondre&quot;,
+                    JOptionPane.YES_NO_OPTION);
+<span class="nc bnc" id="L505" title="All 2 branches missed.">                if (confirm == JOptionPane.NO_OPTION) {</span>
+<span class="nc" id="L506">                    return;</span>
+                }
+            }
+        }
+
+        try {
+<span class="nc" id="L512">            String[] respostesArray = respostes.toArray(new String[0]);</span>
+<span class="nc" id="L513">            iCtrlPresentation.guardarRespostes(idEnquesta, respostesArray);</span>
+
+<span class="nc" id="L515">            JOptionPane.showMessageDialog(frame,</span>
+                &quot;Respostes enviades amb èxit!&quot;,
+                &quot;Èxit&quot;,
+                JOptionPane.INFORMATION_MESSAGE);
+
+<span class="nc" id="L520">            frame.dispose();</span>
+<span class="nc" id="L521">        } catch (Exception e) {</span>
+<span class="nc" id="L522">            JOptionPane.showMessageDialog(frame,</span>
+                &quot;Error: Les respostes numèriques només accepten números com a resposta.&quot;,
+                &quot;Error&quot;,
+                JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L526">        }</span>
+<span class="nc" id="L527">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

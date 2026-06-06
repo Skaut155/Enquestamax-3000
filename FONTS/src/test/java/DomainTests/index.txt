@@ -1,0 +1,37 @@
+Directori: DomainTests
+
+Aquest directori conte els tests unitaris per a les classes del domini.
+
+Fitxers:
+- TestAdmin.java: Tests per a la classe Admin.
+- TestAdminCtrlNoDB.java: Tests per a la classe AdminCtrlNoDB.
+- TestAlgoritmeClustering.java: Tests per a la interficie AlgoritmeClustering.
+- TestCentroidePreguntaMultipleStrategy.java: Tests per a la classe CentroidePreguntaMultipleStrategy.
+- TestCentroidePreguntaNoOrdenadaStrategy.java: Tests per a la classe CentroidePreguntaNoOrdenadaStrategy.
+- TestCentroidePreguntaNumericaStrategy.java: Tests per a la classe CentroidePreguntaNumericaStrategy.
+- TestCentroidePreguntaObertaStrategy.java: Tests per a la classe CentroidePreguntaObertaStrategy.
+- TestCentroidePreguntaOrdenadaStrategy.java: Tests per a la classe CentroidePreguntaOrdenadaStrategy.
+- TestCreacioInteractiva.java: Tests per a la creacio interactiva d'enquestes.
+- TestCtrlFactory.java: Tests per a la classe CtrlFactory.
+- TestEnquesta.java: Tests per a la classe Enquesta.
+- TestEnquestaCtrlNoDB.java: Tests per a la classe EnquestaCtrlNoDB.
+- TestGeneraRespostaAPregunta.java: Tests per a la generacio de respostes a preguntes.
+- TestK_means.java: Tests per a la classe K_means.
+- TestK_meansPlusPlus.java: Tests per a la classe K_meansPlusPlus.
+- TestK_meansRandom.java: Tests per a la classe K_meansRandom.
+- TestKmedoids.java: Tests per a la classe Kmedoids.
+- TestNoDBCtrlFactory.java: Tests per a la classe NoDBCtrlFactory.
+- TestOpcio.java: Tests per a la classe Opcio.
+- TestPregunta.java: Tests per a la classe Pregunta.
+- TestRespostaAPregunta.java: Tests per a la classe RespostaAPregunta.
+- TestRespostaAPreguntaMultiple.java: Tests per a la classe RespostaAPreguntaMultiple.
+- TestRespostaAPreguntaNoOrdenada.java: Tests per a la classe RespostaAPreguntaNoOrdenada.
+- TestRespostaAPreguntaNumerica.java: Tests per a la classe RespostaAPreguntaNumerica.
+- TestRespostaAPreguntaOberta.java: Tests per a la classe RespostaAPreguntaOberta.
+- TestRespostaAPreguntaOrdenada.java: Tests per a la classe RespostaAPreguntaOrdenada.
+- TestRespostaEnquesta.java: Tests per a la classe RespostaEnquesta.
+- TestRespostesContainer.java: Tests per a la classe RespostesContainer.
+- TestTipusPregunta.java: Tests per a la classe TipusPregunta.
+- TestTxExportarEnquesta.java: Tests per a la transaccio d'exportar enquesta.
+- TestTxImportarEnquesta.java: Tests per a la transaccio d'importar enquesta.
+

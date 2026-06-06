@@ -1,0 +1,11 @@
+Contingut del directori: ./build/jacocoHtml/Domain.Factories
+  Fitxer: AdapterFactory.html
+  Fitxer: AdapterFactory.java.html
+  Fitxer: CtrlFactory.html
+  Fitxer: CtrlFactory.java.html
+  Fitxer: index.html
+  Fitxer: index.source.html
+  Fitxer: LocalPersistenceCtrlFactory.html
+  Fitxer: LocalPersistenceCtrlFactory.java.html
+  Fitxer: NoDBCtrlFactory.html
+  Fitxer: NoDBCtrlFactory.java.html

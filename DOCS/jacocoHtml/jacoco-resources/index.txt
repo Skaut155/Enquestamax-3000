@@ -1,0 +1,21 @@
+Contingut del directori: ./build/jacocoHtml/jacoco-resources
+  Fitxer: branchfc.gif
+  Fitxer: branchnc.gif
+  Fitxer: branchpc.gif
+  Fitxer: bundle.gif
+  Fitxer: class.gif
+  Fitxer: down.gif
+  Fitxer: greenbar.gif
+  Fitxer: group.gif
+  Fitxer: method.gif
+  Fitxer: package.gif
+  Fitxer: prettify.css
+  Fitxer: prettify.js
+  Fitxer: redbar.gif
+  Fitxer: report.css
+  Fitxer: report.gif
+  Fitxer: session.gif
+  Fitxer: sort.gif
+  Fitxer: sort.js
+  Fitxer: source.gif
+  Fitxer: up.gif

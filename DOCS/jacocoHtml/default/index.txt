@@ -1,0 +1,5 @@
+Contingut del directori: ./build/jacocoHtml/default
+  Fitxer: ConsoleDriver.html
+  Fitxer: ConsoleDriver.java.html
+  Fitxer: index.html
+  Fitxer: index.source.html

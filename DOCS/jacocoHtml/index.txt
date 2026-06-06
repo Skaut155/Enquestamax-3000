@@ -1,0 +1,16 @@
+Contingut del directori: ./build/jacocoHtml
+  Directori: Data.Controllers.LocalPersistenceCtrl/
+  Directori: Data.Controllers.NoDBCtrl/
+  Directori: Data.Persistance/
+  Directori: default/
+  Directori: Domain.Controllers.LocalPersistenceCtrl/
+  Directori: Domain.Controllers.NoDBCtrl/
+  Directori: Domain.Exceptions/
+  Directori: Domain.Factories/
+  Directori: Domain.Model/
+  Directori: Domain.Transactions/
+  Fitxer: index.html
+  Directori: jacoco-resources/
+  Fitxer: jacoco-sessions.html
+  Directori: Presentation.Controllers/
+  Directori: Presentation.Views/

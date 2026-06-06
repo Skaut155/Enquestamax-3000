@@ -1,0 +1,129 @@
+{
+  "id": 262,
+  "nom": "enquesta-1",
+  "dataCreacio": "2025-12-22T22:34:05.533225300",
+  "preguntes": [
+    {
+      "titol": "Vols ser astronauta?",
+      "obligatoria": true,
+      "ordre": 0,
+      "state": {
+        "code": "UNICA_NO_ORDENADA"
+      },
+      "opcions": [
+        {
+          "ordre": 0,
+          "text": "Sí"
+        },
+        {
+          "ordre": 1,
+          "text": "No"
+        }
+      ]
+    },
+    {
+      "titol": "De quantes maneres saps rentar-te les dents?",
+      "obligatoria": false,
+      "ordre": 1,
+      "state": {
+        "code": "OBERTA"
+      },
+      "opcions": []
+    },
+    {
+      "titol": "Fins quin número saps comptar?",
+      "obligatoria": false,
+      "ordre": 2,
+      "state": {
+        "code": "NUMERICA"
+      },
+      "opcions": []
+    },
+    {
+      "titol": "T\u0027agrada Morbius?",
+      "obligatoria": false,
+      "ordre": 3,
+      "state": {
+        "code": "UNICA_ORDENADA"
+      },
+      "opcions": [
+        {
+          "ordre": 0,
+          "text": "Molt"
+        },
+        {
+          "ordre": 1,
+          "text": "Meh"
+        },
+        {
+          "ordre": 2,
+          "text": "Gens"
+        }
+      ]
+    },
+    {
+      "titol": "Quines coses has fet?",
+      "obligatoria": false,
+      "ordre": 4,
+      "state": {
+        "code": "MULTIPLE"
+      },
+      "opcions": [
+        {
+          "ordre": 0,
+          "text": "Menjar gespa"
+        },
+        {
+          "ordre": 1,
+          "text": "Conduir"
+        },
+        {
+          "ordre": 2,
+          "text": "Jugar a la play"
+        }
+      ]
+    }
+  ],
+  "respostesContainer": {
+    "lastId": 1,
+    "respostes": [
+      {
+        "id": 0,
+        "respostes": [
+          {
+            "code": "UNICA_NO_ORDENADA",
+            "resposta": 0,
+            "ordrePregunta": 0,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "OBERTA",
+            "resposta": "a",
+            "ordrePregunta": 1,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "NUMERICA",
+            "resposta": 0.0,
+            "ordrePregunta": 2,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "UNICA_ORDENADA",
+            "resposta": 1,
+            "ordrePregunta": 3,
+            "centroideStrategy": {}
+          },
+          {
+            "code": "MULTIPLE",
+            "resposta": [
+              0
+            ],
+            "ordrePregunta": 4,
+            "centroideStrategy": {}
+          }
+        ]
+      }
+    ]
+  }
+}

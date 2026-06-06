@@ -1,0 +1,26 @@
+Aquest document descriu el funcionament del joc de proves `joc_proves_respondre_enquestes.txt`.
+
+L'objectiu és simular l'enviament massiu de respostes a una enquesta, verificant el sistema de validació de dades. Aquest joc de proves és acumulatiu: primer crea l'entorn necessari (usuari i enquesta) i després el pobla amb respostes.
+
+Seqüència d'accions:
+1.  **Creació de l'Entorn**:
+    *   Primer, registra un nou administrador (`testAdmin`).
+    *   Segon, crea una nova enquesta (`Enquesta de prova`).
+    *   Tercer, edita l'enquesta per afegir 5 preguntes de diferents tipus i característiques (obligatòries i no obligatòries).
+
+2.  **Inici de la Resposta a l'Enquesta**:
+    *   `4`: Tria l'opció "Iniciar Enquesta (Respondre)".
+    *   `0`: Selecciona l'enquesta amb ID `0` (la que s'acaba de crear).
+
+3.  **Enviament de 30 Respostes (Bucle)**:
+    El joc de proves intenta enviar un total de 30 respostes. Després de cada intent, la `s` indica que es vol tornar a respondre. Al final, la `n` atura el bucle. Aquest procés està dissenyat per provar tres escenaris:
+
+    *   **Respostes Vàlides**: La majoria de les respostes són completes i correctes.
+    *   **Respostes Buides en Preguntes No Obligatòries**: En alguns casos, es deixa la resposta en blanc per a preguntes no obligatòries. El sistema hauria d'acceptar aquestes respostes.
+    *   **Respostes Buides en Preguntes Obligatòries**: Intencionadament, es deixen respostes en blanc per a preguntes marcades com a obligatòries. El sistema hauria de rebutjar aquestes respostes i mostrar un error, verificant així la validació.
+
+4.  **Finalització**:
+    *   `n`: Atura l'enviament de més respostes.
+    *   `11`: Tanca la sessió de l'administrador.
+    *   `0`: Surt del programa.
+

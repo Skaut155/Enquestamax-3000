@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EnquestaCtrlNoDB.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Controllers.NoDBCtrl</a> &gt; <span class="el_source">EnquestaCtrlNoDB.java</span></div><h1>EnquestaCtrlNoDB.java</h1><pre class="source lang-java linenums">package Domain.Controllers.NoDBCtrl;
+
+import Domain.Controllers.IEnquestaCtrl;
+
+import Domain.Exceptions.EnquestaJaExisteix;
+import Domain.Model.Enquesta;
+import Domain.Exceptions.EnquestaNoExisteix;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+/**
+ * In-memory implementation of the Enquesta controller without database persistence.
+ * Manages Enquesta instances using a Dictionary data structure.
+ */
+<span class="fc" id="L16">public class EnquestaCtrlNoDB implements IEnquestaCtrl {</span>
+
+    /**
+     * Dictionary storing Enquesta instances indexed by their ID.
+     */
+<span class="fc" id="L21">    private Dictionary&lt;Integer, Enquesta&gt; enquestesMemoria = new Hashtable&lt;Integer, Enquesta&gt;();</span>
+<span class="fc" id="L22">    private Dictionary&lt;Integer, Enquesta&gt; enquestesPersistencia = new Hashtable&lt;Integer, Enquesta&gt;();</span>
+
+<span class="fc" id="L24">    private int lastId = 0;</span>
+
+    /**
+     * Retrieves an Enquesta instance by its ID.
+     *
+     * @param id the ID of the Enquesta to retrieve
+     * @return the Enquesta instance with the specified ID
+     * @throws EnquestaNoExisteix if no Enquesta with the given ID exists
+     */
+    @Override
+    public Enquesta GetEnquesta(int id) {
+
+        Enquesta e;
+
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if ((e = enquestesMemoria.get(id)) != null) {</span>
+<span class="fc" id="L39">            return e;</span>
+        }
+        else
+        {
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            if ((e = enquestesPersistencia.get(id)) != null) {</span>
+<span class="nc" id="L44">                enquestesMemoria.put(id, e);</span>
+<span class="nc" id="L45">                return e;</span>
+            }
+        }
+
+<span class="fc" id="L49">        throw new EnquestaNoExisteix(&quot;No existeix una instància de Enquesta amb id &quot; + id);</span>
+    }
+
+    /**
+     * Adds a new Enquesta instance to the system.
+     *
+     * @param new_enquesta the Enquesta instance to add
+     * @throws EnquestaNoExisteix if an Enquesta with the same ID already exists
+     */
+    @Override
+    public void AddEnquesta(Enquesta new_enquesta) {
+
+<span class="fc" id="L61">        new_enquesta.setId(lastId++);</span>
+
+<span class="fc" id="L63">        enquestesMemoria.put(new_enquesta.getId(), new_enquesta);</span>
+<span class="fc" id="L64">        enquestesPersistencia.put(new_enquesta.getId(), new_enquesta);</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Deletes an Enquesta instance from the system.
+     *
+     * @param id the ID of the Enquesta to delete
+     * @throws EnquestaNoExisteix if no Enquesta with the given ID exists
+     */
+    @Override
+    public void DeleteEnquesta(int id) {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (enquestesPersistencia.get(id) == null) {</span>
+<span class="fc" id="L76">            throw new EnquestaNoExisteix(&quot;No existeix una instància de Enquesta amb id &quot; + id);</span>
+        }
+<span class="fc" id="L78">        enquestesPersistencia.remove(id);</span>
+
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (enquestesMemoria.get(id) != null) {</span>
+<span class="fc" id="L81">            enquestesMemoria.remove(id);</span>
+        }
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * Updates an existing Enquesta instance from the system to persistence.
+     *
+     * @param idEnquesta the ID of the Enquesta to update
+     * @throws EnquestaNoExisteix if no Enquesta with the given ID exists
+     */
+    @Override
+    public void updateEnquesta(int idEnquesta) {
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (enquestesMemoria.get(idEnquesta) == null) {</span>
+<span class="nc" id="L94">            throw new EnquestaNoExisteix(&quot;No existeix una instància de Enquesta amb id &quot; + idEnquesta + &quot; a la memòria&quot;);</span>
+        }
+
+<span class="nc" id="L97">        enquestesPersistencia.remove(idEnquesta);</span>
+<span class="nc" id="L98">        enquestesPersistencia.put(idEnquesta, enquestesMemoria.get(idEnquesta));</span>
+<span class="nc" id="L99">    }</span>
+
+    /**
+     * Reloads an existing Enquesta instance from persistence to the system.
+     *
+     * @param idEnquesta the ID of the Enquesta to reload
+     * @throws EnquestaNoExisteix if no Enquesta with the given ID exists
+     */
+    @Override
+    public void reloadEnquesta(int idEnquesta) {
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (enquestesMemoria.get(idEnquesta) == null) {</span>
+<span class="nc" id="L110">            throw new EnquestaNoExisteix(&quot;No existeix una instància de Enquesta amb id &quot; + idEnquesta + &quot; a la memòria&quot;);</span>
+        }
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (enquestesPersistencia.get(idEnquesta) == null) {</span>
+<span class="nc" id="L113">            throw new EnquestaNoExisteix(&quot;No existeix una instància de Enquesta amb id &quot; + idEnquesta + &quot; a la persistència&quot;);</span>
+        }
+
+<span class="nc" id="L116">        enquestesMemoria.remove(idEnquesta);</span>
+<span class="nc" id="L117">        enquestesMemoria.put(idEnquesta, enquestesPersistencia.get(idEnquesta));</span>
+<span class="nc" id="L118">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

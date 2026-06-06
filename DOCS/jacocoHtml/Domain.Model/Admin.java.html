@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Admin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">Admin.java</span></div><h1>Admin.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import Domain.Exceptions.AdminJaTeEnquesta;
+import Domain.Exceptions.AdminNoTeEnquesta;
+import Domain.Exceptions.EnquestaJaExisteix;
+import Domain.Exceptions.EnquestaNoExisteix;
+
+import java.util.ArrayList;
+
+/**
+ * Represents an administrator who manages a set of survey IDs (&quot;enquestes&quot;).
+ * The Admin holds its name, password and a list of managed survey ids.
+ */
+public class Admin {
+    /**
+     * Admin name / identifier.
+     */
+    private String nom;
+
+    /**
+     * Admin password used for simple authentication.
+     */
+    private String contrasenya;
+
+    /**
+     * List of IDs of surveys the admin manages.
+     * Note: this reference is returned directly by getEnquestesIds() (modifiable).
+     */
+    private ArrayList&lt;Integer&gt; enquestes_ids;
+
+    /**
+     * Create a new Admin with the given name and password.
+     *
+     * @param nom the admin's name
+     * @param contrasenya the admin's password
+     */
+<span class="fc" id="L37">    public Admin(String nom, String contrasenya) {</span>
+<span class="fc" id="L38">        this.nom = nom;</span>
+<span class="fc" id="L39">        this.contrasenya = contrasenya;</span>
+<span class="fc" id="L40">        this.enquestes_ids = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * Return the admin's name.
+     *
+     * @return the name of the admin
+     */
+    public String getNom() {
+<span class="fc" id="L49">        return nom;</span>
+    }
+
+    /**
+     * Simple authentication: check if the provided password matches the stored one.
+     *
+     * @param contrasenya the password to verify
+     * @return true if the password matches, false otherwise
+     */
+    public boolean iniciarSessio(String contrasenya)
+    {
+<span class="fc bfc" id="L60" title="All 4 branches covered.">        if (this.contrasenya == null || this.contrasenya.isEmpty()) {</span>
+<span class="fc bfc" id="L61" title="All 4 branches covered.">            return contrasenya == null || contrasenya.isEmpty();</span>
+        }
+
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (contrasenya == null) return false;</span>
+<span class="fc" id="L65">        else return this.contrasenya.equals(contrasenya);</span>
+    }
+
+    /**
+     * Add a survey id to this admin's managed list.
+     *
+     * @param id the survey id to add
+     * @throws EnquestaJaExisteix if the admin already has that survey id
+     */
+    public void addEnquesta(int id) throws EnquestaJaExisteix {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (enquestes_ids.contains(id)) {</span>
+<span class="fc" id="L76">            throw new AdminJaTeEnquesta(&quot;L'admin ja te una enquesta amb id &quot; + id);</span>
+        }
+<span class="fc" id="L78">        enquestes_ids.add(id);</span>
+<span class="fc" id="L79">    }</span>
+
+    /**
+     * Remove a survey id from this admin's managed list.
+     *
+     * @param id the survey id to remove
+     * @throws EnquestaNoExisteix if the admin does not have that survey id
+     */
+    public void removeEnquesta(int id) throws EnquestaNoExisteix {
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (!enquestes_ids.contains(id)) {</span>
+<span class="fc" id="L89">            throw new AdminNoTeEnquesta(&quot;L'admin no te cap enquesta amb id &quot; + id);</span>
+        }
+<span class="fc" id="L91">        enquestes_ids.remove(Integer.valueOf(id));</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Check whether this admin manages the survey with the given id.
+     *
+     * @param id the survey id to check
+     * @return true if the admin manages the survey, false otherwise
+     */
+    public boolean hasEnquesta(int id) {
+<span class="fc" id="L101">        return enquestes_ids.contains(id);</span>
+    }
+
+    /**
+     * Get the list of survey ids managed by this admin.
+     *
+     * Note: the returned list is the internal list and can be modified by callers.
+     * If immutable access is desired, callers should create an unmodifiable copy.
+     *
+     * @return the list of survey ids
+     */
+    public ArrayList&lt;Integer&gt; getEnquestesIds() {
+<span class="fc" id="L113">        return enquestes_ids;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

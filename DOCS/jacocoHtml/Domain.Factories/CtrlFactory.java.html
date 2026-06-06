@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CtrlFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Factories</a> &gt; <span class="el_source">CtrlFactory.java</span></div><h1>CtrlFactory.java</h1><pre class="source lang-java linenums">package Domain.Factories;
+
+import Domain.Controllers.IAdminCtrl;
+import Domain.Controllers.IEnquestaCtrl;
+
+import java.lang.Deprecated;
+
+/**
+ * Abstract factory for creating controller instances.
+ * Implements the Singleton pattern to ensure a single factory instance.
+ * By default, uses NoDBCtrlFactory for in-memory storage.
+ */
+<span class="fc" id="L13">public abstract class CtrlFactory {</span>
+    /**
+     * Singleton instance of the factory.
+     */
+    private static CtrlFactory instance;
+
+    /**
+     * Returns the singleton instance of the factory.
+     * If no instance exists, creates a new NoDBCtrlFactory.
+     *
+     * @return the singleton CtrlFactory instance
+     */
+    public static CtrlFactory getInstance(){
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        if(instance == null){</span>
+<span class="fc" id="L27">            instance = new LocalPersistenceCtrlFactory();</span>
+        }
+
+<span class="fc" id="L30">        return instance;</span>
+    }
+
+    /**
+     * Sets the factory instance.
+     * This method is deprecated and should not be used in production code.
+     *
+     * @param factory the CtrlFactory instance to set
+     * @deprecated Use getInstance() instead
+     */
+    @Deprecated
+    public static void setInstance(CtrlFactory factory){
+<span class="fc" id="L42">        instance = factory;</span>
+<span class="fc" id="L43">    }</span>
+
+    /**
+     * Creates and returns an Admin controller instance.
+     *
+     * @return an implementation of IAdminCtrl
+     */
+    public abstract IAdminCtrl GetAdminCtrl();
+
+    /**
+     * Creates and returns an Enquesta controller instance.
+     *
+     * @return an implementation of IEnquestaCtrl
+     */
+    public abstract IEnquestaCtrl GetEnquestaCtrl();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

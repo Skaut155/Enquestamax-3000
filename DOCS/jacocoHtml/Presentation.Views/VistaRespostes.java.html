@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VistaRespostes.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">VistaRespostes.java</span></div><h1>VistaRespostes.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import Presentation.Controllers.CtrlPresentation;
+import javax.swing.*;
+import java.awt.*;
+
+/**
+ * Vista per mostrar i gestionar les respostes d'una enquesta.
+ * Permet veure detalls de cada resposta i importar/exportar respostes.
+ */
+public class VistaRespostes extends VistaBase {
+    /* Identificador de l'enquesta */
+    private final int idEnquesta;
+    /* Nom de l'enquesta */
+    private final String nomEnquesta;
+
+    /**
+     * Constructor de la vista principal de les respostes.
+     *
+     * @param ctrl Controlador de presentació
+     * @param idEnquesta Identificador de l'enquesta
+     * @param nomEnquesta Nom de l'enquesta
+     */
+    public VistaRespostes(CtrlPresentation ctrl, int idEnquesta, String nomEnquesta) {
+<span class="nc" id="L25">        super(&quot;Respostes - &quot; + nomEnquesta, ctrl);</span>
+<span class="nc" id="L26">        this.idEnquesta = idEnquesta;</span>
+<span class="nc" id="L27">        this.nomEnquesta = nomEnquesta;</span>
+<span class="nc" id="L28">        configurarVista();</span>
+<span class="nc" id="L29">    }</span>
+
+    /**
+     * Configura la vista principal de les respostes.
+     */
+    private void configurarVista() {
+<span class="nc" id="L35">        frame.setSize(700, 500);</span>
+
+<span class="nc" id="L37">        JPanel mainPanel = VistaHelpers.createMainPanel();</span>
+
+        // Title panel
+<span class="nc" id="L40">        JPanel titlePanel = VistaHelpers.createTitlePanelWithSubtitle(&quot;Respostes de: &quot; + nomEnquesta, null);</span>
+
+        // Get response IDs
+<span class="nc" id="L43">        int[] idsRespostes = iCtrlPresentation.getIdsRespostes(idEnquesta);</span>
+
+        // Create responses panel
+<span class="nc" id="L46">        JPanel responsesPanel = createResponsesPanel(idsRespostes);</span>
+
+<span class="nc" id="L48">        JScrollPane scrollPane = VistaHelpers.createScrollPane(responsesPanel);</span>
+
+        // Button panel
+<span class="nc" id="L51">        JPanel buttonPanel = VistaHelpers.createButtonPanel();</span>
+
+<span class="nc" id="L53">        JButton importButton = VistaHelpers.createPrimaryButton(&quot;Importar resposta&quot;);</span>
+<span class="nc" id="L54">        importButton.addActionListener(e -&gt; openImportDialog());</span>
+<span class="nc" id="L55">        VistaHelpers.makeButtonRespondToEnter(importButton);</span>
+
+<span class="nc" id="L57">        JButton closeButton = VistaHelpers.createCancelButton(&quot;Tancar&quot;);</span>
+<span class="nc" id="L58">        closeButton.addActionListener(e -&gt; frame.dispose());</span>
+<span class="nc" id="L59">        VistaHelpers.makeButtonRespondToEnter(closeButton);</span>
+
+<span class="nc" id="L61">        buttonPanel.add(importButton);</span>
+<span class="nc" id="L62">        buttonPanel.add(closeButton);</span>
+
+<span class="nc" id="L64">        mainPanel.add(titlePanel, BorderLayout.NORTH);</span>
+<span class="nc" id="L65">        mainPanel.add(scrollPane, BorderLayout.CENTER);</span>
+<span class="nc" id="L66">        mainPanel.add(buttonPanel, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L68">        frame.add(mainPanel);</span>
+<span class="nc" id="L69">        frame.setLocationRelativeTo(null);</span>
+
+        // Setup keyboard navigation
+<span class="nc" id="L72">        VistaHelpers.setupKeyboardNavigation(frame, closeButton);</span>
+<span class="nc" id="L73">    }</span>
+
+    /**
+     * Crea el panell amb totes les respostes.
+     *
+     * @param idsRespostes Array amb els ID de les respostes
+     * @return Panell amb les respostes
+     */
+    private JPanel createResponsesPanel(int[] idsRespostes) {
+<span class="nc" id="L82">        JPanel responsesPanel = new JPanel();</span>
+<span class="nc" id="L83">        responsesPanel.setLayout(new BoxLayout(responsesPanel, BoxLayout.Y_AXIS));</span>
+<span class="nc" id="L84">        responsesPanel.setBackground(Color.WHITE);</span>
+
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (idsRespostes.length == 0) {</span>
+<span class="nc" id="L87">            JLabel noResponsesLabel = new JLabel(&quot;No hi ha respostes per aquesta enquesta.&quot;);</span>
+<span class="nc" id="L88">            noResponsesLabel.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L89">            noResponsesLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));</span>
+<span class="nc" id="L90">            responsesPanel.add(noResponsesLabel);</span>
+<span class="nc" id="L91">        } else {</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            for (int i = 0; i &lt; idsRespostes.length; i++) {</span>
+<span class="nc" id="L93">                responsesPanel.add(createResponsePanel(idsRespostes[i], i + 1));</span>
+            }
+        }
+
+<span class="nc" id="L97">        return responsesPanel;</span>
+    }
+
+    /**
+     * Crea un panell que representa una resposta individual.
+     *
+     * @param idResposta Identificador de la resposta
+     * @param numero Número de la resposta (per mostrar al títol)
+     * @return JPanel representant la resposta
+     */
+    private JPanel createResponsePanel(int idResposta, int numero) {
+<span class="nc" id="L108">        JPanel panel = new JPanel(new BorderLayout());</span>
+<span class="nc" id="L109">        panel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L110">        panel.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L111">            BorderFactory.createMatteBorder(0, 0, 1, 0, VistaHelpers.BORDER_COLOR),</span>
+<span class="nc" id="L112">            BorderFactory.createEmptyBorder(10, 10, 10, 10)</span>
+        ));
+
+        // Header with response number
+<span class="nc" id="L116">        JPanel headerPanel = new JPanel(new BorderLayout());</span>
+<span class="nc" id="L117">        headerPanel.setBackground(Color.WHITE);</span>
+
+<span class="nc" id="L119">        JLabel numberLabel = new JLabel(&quot;Resposta #&quot; + numero);</span>
+<span class="nc" id="L120">        numberLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));</span>
+<span class="nc" id="L121">        numberLabel.setForeground(VistaHelpers.TITLE_COLOR);</span>
+
+<span class="nc" id="L123">        JButton viewDetailsButton = VistaHelpers.createPrimaryButton(&quot;+&quot;);</span>
+<span class="nc" id="L124">        viewDetailsButton.setToolTipText(&quot;Veure detalls&quot;);</span>
+<span class="nc" id="L125">        viewDetailsButton.setPreferredSize(new Dimension(50, 30));</span>
+<span class="nc" id="L126">        viewDetailsButton.addActionListener(e -&gt; mostrarDetallsResposta(idResposta, numero));</span>
+<span class="nc" id="L127">        VistaHelpers.makeButtonRespondToEnter(viewDetailsButton);</span>
+
+<span class="nc" id="L129">        JButton exportButton = new JButton(&quot;⬇&quot;);</span>
+<span class="nc" id="L130">        exportButton.setToolTipText(&quot;Exportar resposta&quot;);</span>
+<span class="nc" id="L131">        VistaHelpers.styleActionButton(exportButton);</span>
+<span class="nc" id="L132">        exportButton.setPreferredSize(new Dimension(40, 30));</span>
+<span class="nc" id="L133">        exportButton.addActionListener(e -&gt; openExportDialog(idResposta, numero));</span>
+<span class="nc" id="L134">        VistaHelpers.makeButtonRespondToEnter(exportButton);</span>
+
+<span class="nc" id="L136">        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));</span>
+<span class="nc" id="L137">        buttonsPanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L138">        buttonsPanel.add(viewDetailsButton);</span>
+<span class="nc" id="L139">        buttonsPanel.add(exportButton);</span>
+
+<span class="nc" id="L141">        headerPanel.add(numberLabel, BorderLayout.WEST);</span>
+<span class="nc" id="L142">        headerPanel.add(buttonsPanel, BorderLayout.EAST);</span>
+
+<span class="nc" id="L144">        panel.add(headerPanel, BorderLayout.CENTER);</span>
+
+<span class="nc" id="L146">        return panel;</span>
+    }
+
+    /**
+     * Mostra un diàleg amb els detalls d'una resposta específica.
+     *
+     * @param idResposta Identificador de la resposta
+     * @param numero Número de la resposta (per mostrar al títol)
+     */
+    private void mostrarDetallsResposta(int idResposta, int numero) {
+<span class="nc" id="L156">        String detalles = iCtrlPresentation.consultarResposta(idEnquesta, idResposta);</span>
+
+<span class="nc" id="L158">        JDialog dialog = new JDialog(frame, &quot;Detalls Resposta #&quot; + numero, true);</span>
+<span class="nc" id="L159">        dialog.setSize(600, 400);</span>
+
+<span class="nc" id="L161">        JPanel mainPanel = VistaHelpers.createMainPanel();</span>
+
+        // Title
+<span class="nc" id="L164">        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));</span>
+<span class="nc" id="L165">        titlePanel.setBackground(VistaHelpers.BACKGROUND_COLOR);</span>
+<span class="nc" id="L166">        JLabel titleLabel = new JLabel(&quot;Resposta #&quot; + numero);</span>
+<span class="nc" id="L167">        titleLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 16));</span>
+<span class="nc" id="L168">        titleLabel.setForeground(VistaHelpers.TITLE_COLOR);</span>
+<span class="nc" id="L169">        titlePanel.add(titleLabel);</span>
+
+        // Text area with details
+<span class="nc" id="L172">        JTextArea textArea = new JTextArea(detalles);</span>
+<span class="nc" id="L173">        textArea.setEditable(false);</span>
+<span class="nc" id="L174">        textArea.setFont(new Font(&quot;Monospaced&quot;, Font.PLAIN, 12));</span>
+<span class="nc" id="L175">        textArea.setMargin(new Insets(10, 10, 10, 10));</span>
+<span class="nc" id="L176">        textArea.setLineWrap(true);</span>
+<span class="nc" id="L177">        textArea.setWrapStyleWord(true);</span>
+
+<span class="nc" id="L179">        JScrollPane scrollPane = new JScrollPane(textArea);</span>
+<span class="nc" id="L180">        scrollPane.setBorder(BorderFactory.createLineBorder(VistaHelpers.BORDER_COLOR));</span>
+
+        // Close button
+<span class="nc" id="L183">        JPanel buttonPanel = VistaHelpers.createButtonPanel();</span>
+<span class="nc" id="L184">        JButton closeButton = VistaHelpers.createCancelButton(&quot;Tancar&quot;);</span>
+<span class="nc" id="L185">        closeButton.addActionListener(e -&gt; dialog.dispose());</span>
+<span class="nc" id="L186">        VistaHelpers.makeButtonRespondToEnter(closeButton);</span>
+<span class="nc" id="L187">        buttonPanel.add(closeButton);</span>
+
+<span class="nc" id="L189">        mainPanel.add(titlePanel, BorderLayout.NORTH);</span>
+<span class="nc" id="L190">        mainPanel.add(scrollPane, BorderLayout.CENTER);</span>
+<span class="nc" id="L191">        mainPanel.add(buttonPanel, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L193">        dialog.add(mainPanel);</span>
+<span class="nc" id="L194">        dialog.setLocationRelativeTo(frame);</span>
+
+        // Setup keyboard navigation for dialog
+<span class="nc" id="L197">        VistaHelpers.setupKeyboardNavigation(dialog, closeButton);</span>
+
+<span class="nc" id="L199">        dialog.setVisible(true);</span>
+<span class="nc" id="L200">    }</span>
+
+    /**
+     * Obre un diàleg per importar una resposta des d'un fitxer.
+     * Després d'importar, refresca la vista amb les respostes actualitzades.
+     */
+    private void openImportDialog() {
+<span class="nc" id="L207">        SwingUtilities.invokeLater(() -&gt; {</span>
+<span class="nc" id="L208">            VistaFileChooser vistaImport = new VistaFileChooser(</span>
+                VistaFileChooser.Mode.IMPORT,
+                &quot;Resposta&quot;,
+                path -&gt; {
+                    try {
+<span class="nc" id="L213">                        iCtrlPresentation.importarResposta(idEnquesta, path);</span>
+                    }
+<span class="nc" id="L215">                    catch (Exception e) {</span>
+<span class="nc" id="L216">                        JOptionPane.showMessageDialog(frame,</span>
+<span class="nc" id="L217">                                &quot;Error en importar l'enquesta:\n&quot; + e.getMessage(),</span>
+                                &quot;Error&quot;,
+                                JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L220">                        return;</span>
+<span class="nc" id="L221">                    }</span>
+<span class="nc" id="L222">                    JOptionPane.showMessageDialog(frame,</span>
+                        &quot;Resposta importada correctament des de:\n&quot; + path,
+                        &quot;Èxit&quot;,
+                        JOptionPane.INFORMATION_MESSAGE);
+                    // Refresh the view
+<span class="nc" id="L227">                    frame.dispose();</span>
+<span class="nc" id="L228">                    new VistaRespostes(iCtrlPresentation, idEnquesta, nomEnquesta).hacerVisible();</span>
+<span class="nc" id="L229">                }</span>
+            );
+<span class="nc" id="L231">            vistaImport.hacerVisible();</span>
+<span class="nc" id="L232">        });</span>
+<span class="nc" id="L233">    }</span>
+
+    /**
+     * Obre un diàleg per exportar una resposta a un fitxer.
+     *
+     * @param idResposta Identificador de la resposta a exportar
+     * @param numero Número de la resposta (per mostrar als missatges)
+     */
+    private void openExportDialog(int idResposta, int numero) {
+<span class="nc" id="L242">        SwingUtilities.invokeLater(() -&gt; {</span>
+<span class="nc" id="L243">            VistaFileChooser vistaExport = new VistaFileChooser(</span>
+                VistaFileChooser.Mode.EXPORT,
+                &quot;Resposta&quot;,
+                path -&gt; {
+                    try{
+<span class="nc" id="L248">                        iCtrlPresentation.exportarResposta(idEnquesta, idResposta, path);</span>
+                    }
+<span class="nc" id="L250">                    catch (Exception e){</span>
+<span class="nc" id="L251">                        JOptionPane.showMessageDialog(frame,</span>
+<span class="nc" id="L252">                                &quot;Error en exportar la resposta:\n&quot; + e.getMessage(),</span>
+                                &quot;Error&quot;,
+                                JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L255">                        return;</span>
+<span class="nc" id="L256">                    }</span>
+<span class="nc" id="L257">                    JOptionPane.showMessageDialog(frame,</span>
+                        &quot;Resposta #&quot; + numero + &quot; exportada correctament a:\n&quot; + path,
+                        &quot;Èxit&quot;,
+                        JOptionPane.INFORMATION_MESSAGE);
+<span class="nc" id="L261">                }</span>
+            );
+<span class="nc" id="L263">            vistaExport.hacerVisible();</span>
+<span class="nc" id="L264">        });</span>
+<span class="nc" id="L265">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

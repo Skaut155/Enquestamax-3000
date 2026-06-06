@@ -1,0 +1,20 @@
+{
+  "id": 1,
+  "nom": "enquesta importada",
+  "dataCreacio": "2025-12-22T20:07:45.909472300",
+  "preguntes": [
+    {
+      "titol": "Pregunta 1",
+      "obligatoria": true,
+      "ordre": 0,
+      "state": {
+        "code": "OBERTA"
+      },
+      "opcions": []
+    }
+  ],
+  "respostesContainer": {
+    "lastId": 0,
+    "respostes": []
+  }
+}

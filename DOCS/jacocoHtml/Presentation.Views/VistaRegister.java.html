@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VistaRegister.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Presentation.Views</a> &gt; <span class="el_source">VistaRegister.java</span></div><h1>VistaRegister.java</h1><pre class="source lang-java linenums">package Presentation.Views;
+
+import Presentation.Controllers.CtrlPresentation;
+import javax.swing.*;
+import java.awt.*;
+
+/**
+ * Vista per al registre de nous usuaris.
+ * Permet crear un compte introduint nom d'usuari, contrasenya
+ * i confirmació de la contrasenya.
+ */
+public class VistaRegister extends VistaBase {
+    /* Camps de text per a l'entrada de l'usuari */
+    private JTextField usernameField;
+    /* Camps de contrasenya */
+    private JPasswordField passwordField;
+    /* Camps de confirmació de contrasenya */
+    private JPasswordField confirmPasswordField;
+
+    /**
+     * Constructor de la vista de registre.
+     *
+     * @param ctrl Controlador de presentació
+     */
+    public VistaRegister(CtrlPresentation ctrl) {
+<span class="nc" id="L26">        super(&quot;Registre d'Usuari&quot;, ctrl);</span>
+<span class="nc" id="L27">        configurarVista();</span>
+<span class="nc" id="L28">    }</span>
+
+    /**
+     * Configura la vista de registre amb els camps i botons necessaris.
+     */
+    private void configurarVista(){
+<span class="nc" id="L34">        frame.setSize(450, 400);</span>
+
+<span class="nc" id="L36">        JPanel mainPanel = VistaHelpers.createMainPanel();</span>
+<span class="nc" id="L37">        JPanel titlePanel = VistaHelpers.createTitlePanel(&quot;Crear nou compte&quot;);</span>
+<span class="nc" id="L38">        JPanel formPanel = VistaHelpers.createFormPanel();</span>
+
+<span class="nc" id="L40">        GridBagConstraints gbc = new GridBagConstraints();</span>
+<span class="nc" id="L41">        gbc.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="nc" id="L42">        gbc.insets = new Insets(10, 10, 10, 10);</span>
+
+<span class="nc" id="L44">        usernameField = VistaHelpers.createTextField();</span>
+<span class="nc" id="L45">        usernameField.addActionListener(e -&gt; passwordField.requestFocus());</span>
+<span class="nc" id="L46">        VistaHelpers.addFormField(formPanel, new JLabel(&quot;Usuari:&quot;), usernameField, gbc, 0);</span>
+
+<span class="nc" id="L48">        passwordField = VistaHelpers.createPasswordField();</span>
+<span class="nc" id="L49">        passwordField.addActionListener(e -&gt; confirmPasswordField.requestFocus());</span>
+<span class="nc" id="L50">        JPanel passwordPanel = VistaHelpers.createPasswordPanelWithToggle(passwordField);</span>
+<span class="nc" id="L51">        VistaHelpers.addFormField(formPanel, new JLabel(&quot;Contrasenya:&quot;), passwordPanel, gbc, 1);</span>
+
+<span class="nc" id="L53">        confirmPasswordField = VistaHelpers.createPasswordField();</span>
+<span class="nc" id="L54">        confirmPasswordField.addActionListener(e -&gt; handleRegister());</span>
+<span class="nc" id="L55">        JPanel confirmPasswordPanel = VistaHelpers.createPasswordPanelWithToggle(confirmPasswordField);</span>
+<span class="nc" id="L56">        VistaHelpers.addFormField(formPanel, new JLabel(&quot;Confirmar:&quot;), confirmPasswordPanel, gbc, 2);</span>
+
+<span class="nc" id="L58">        JPanel buttonPanel = VistaHelpers.createButtonPanel();</span>
+
+<span class="nc" id="L60">        JButton registerButton = VistaHelpers.createPrimaryButton(&quot;Registrar-se&quot;);</span>
+<span class="nc" id="L61">        registerButton.addActionListener(e -&gt; handleRegister());</span>
+<span class="nc" id="L62">        VistaHelpers.makeButtonRespondToEnter(registerButton);</span>
+
+<span class="nc" id="L64">        JButton cancelButton = VistaHelpers.createCancelButton(&quot;Cancel·lar&quot;);</span>
+<span class="nc" id="L65">        cancelButton.addActionListener(e -&gt; frame.dispose());</span>
+<span class="nc" id="L66">        VistaHelpers.makeButtonRespondToEnter(cancelButton);</span>
+
+<span class="nc" id="L68">        buttonPanel.add(registerButton);</span>
+<span class="nc" id="L69">        buttonPanel.add(cancelButton);</span>
+
+<span class="nc" id="L71">        mainPanel.add(titlePanel, BorderLayout.NORTH);</span>
+<span class="nc" id="L72">        mainPanel.add(formPanel, BorderLayout.CENTER);</span>
+<span class="nc" id="L73">        mainPanel.add(buttonPanel, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L75">        frame.add(mainPanel);</span>
+
+        // Setup keyboard navigation
+<span class="nc" id="L78">        VistaHelpers.setupKeyboardNavigation(frame, registerButton);</span>
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * Gestiona l'acció de registre quan l'usuari prem el botó de registrar-se.
+     * Verifica les entrades i mostra missatges d'error o èxit segons correspongui.
+     */
+    private void handleRegister() {
+<span class="nc" id="L86">        String username = usernameField.getText().trim();</span>
+<span class="nc" id="L87">        String password = new String(passwordField.getPassword());</span>
+<span class="nc" id="L88">        String confirmPassword = new String(confirmPasswordField.getPassword());</span>
+
+<span class="nc bnc" id="L90" title="All 6 branches missed.">        if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {</span>
+<span class="nc" id="L91">            JOptionPane.showMessageDialog(frame,</span>
+                &quot;Si us plau, emplena tots els camps.&quot;,
+                &quot;Error&quot;,
+                JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L95">            return;</span>
+        }
+
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (!username.chars().allMatch(Character::isLetterOrDigit)) {</span>
+<span class="nc" id="L99">            JOptionPane.showMessageDialog(frame,</span>
+                    &quot;L'usuari només pot contenir lletres i dígits.&quot;,
+                    &quot;Error&quot;,
+                    JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L103">            return;</span>
+        }
+
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (!password.equals(confirmPassword)) {</span>
+<span class="nc" id="L107">            JOptionPane.showMessageDialog(frame,</span>
+                &quot;Les contrasenyes no coincideixen.&quot;,
+                &quot;Error&quot;,
+                JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L111">            return;</span>
+        }
+
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if (!iCtrlPresentation.registrarAdmin(username.toLowerCase(), password)){</span>
+<span class="nc" id="L115">            JOptionPane.showMessageDialog(frame,</span>
+                    &quot;L'usuari ja existeix&quot;,
+                    &quot;Error&quot;,
+                    JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L119">            return;</span>
+        }
+
+<span class="nc" id="L122">        JOptionPane.showMessageDialog(frame,</span>
+            &quot;Registre amb èxit per a l'usuari: &quot; + username,
+            &quot;Èxit&quot;,
+            JOptionPane.INFORMATION_MESSAGE);
+
+<span class="nc" id="L127">        frame.dispose();</span>
+<span class="nc" id="L128">    }</span>
+}
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

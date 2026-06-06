@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EnquestaCtrlLocalPersistence.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Controllers.LocalPersistenceCtrl</a> &gt; <span class="el_source">EnquestaCtrlLocalPersistence.java</span></div><h1>EnquestaCtrlLocalPersistence.java</h1><pre class="source lang-java linenums">package Domain.Controllers.LocalPersistenceCtrl;
+
+import Domain.Adapters.IEnquestaPersistance;
+import Domain.Controllers.IEnquestaCtrl;
+import Domain.Exceptions.EnquestaJaExisteix;
+import Domain.Exceptions.EnquestaNoExisteix;
+import Domain.Factories.AdapterFactory;
+import Domain.Model.Enquesta;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+/**
+ * In-memory implementation of the Enquesta controller without database persistence.
+ * Manages Enquesta instances using a Dictionary data structure.
+ */
+public class EnquestaCtrlLocalPersistence implements IEnquestaCtrl {
+
+    /**
+     * Dictionary storing Enquesta instances indexed by their ID.
+     */
+<span class="fc" id="L22">    private Dictionary&lt;Integer, Enquesta&gt; enquestes = new Hashtable&lt;Integer, Enquesta&gt;();</span>
+
+<span class="fc" id="L24">    private int lastId = 0;</span>
+
+<span class="fc" id="L26">    public EnquestaCtrlLocalPersistence() {</span>
+<span class="fc" id="L27">        IEnquestaPersistance ep = AdapterFactory.getInstance().getEnquestaPersistance();</span>
+<span class="fc" id="L28">        lastId = ep.getLastId() + 1;</span>
+<span class="fc" id="L29">    }</span>
+
+    /**
+     * Retrieves an Enquesta instance by its ID.
+     *
+     * @param id the ID of the Enquesta to retrieve
+     * @return the Enquesta instance with the specified ID
+     * @throws EnquestaNoExisteix if no Enquesta with the given ID exists
+     */
+    @Override
+    public Enquesta GetEnquesta(int id) {
+
+        Enquesta e;
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if ((e = enquestes.get(id)) != null) {</span>
+<span class="fc" id="L43">            return e;</span>
+        }
+        else{
+<span class="nc" id="L46">            IEnquestaPersistance ep = AdapterFactory.getInstance().getEnquestaPersistance();</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">            if (ep.existsEnquesta(id)) {</span>
+<span class="nc" id="L48">                Enquesta enquestaFromPersistence = ep.loadEnquesta(id);</span>
+<span class="nc" id="L49">                enquestes.put(id, enquestaFromPersistence);</span>
+<span class="nc" id="L50">                return enquestaFromPersistence;</span>
+            }
+        }
+
+<span class="nc" id="L54">        throw new EnquestaNoExisteix(&quot;No existeix una instància de Enquesta amb id &quot; + id);</span>
+    }
+
+    /**
+     * Adds a new Enquesta instance to the system.
+     *
+     * @param new_enquesta the Enquesta instance to add
+     * @throws EnquestaNoExisteix if an Enquesta with the same ID already exists
+     */
+    @Override
+    public void AddEnquesta(Enquesta new_enquesta) {
+
+<span class="fc" id="L66">        new_enquesta.setId(lastId++);</span>
+
+<span class="fc" id="L68">        enquestes.put(new_enquesta.getId(), new_enquesta);</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Deletes an Enquesta instance from the system.
+     *
+     * @param id the ID of the Enquesta to delete
+     * @throws EnquestaNoExisteix if no Enquesta with the given ID exists
+     */
+    @Override
+    public void DeleteEnquesta(int id) {
+<span class="fc" id="L79">        IEnquestaPersistance ep = AdapterFactory.getInstance().getEnquestaPersistance();</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (!ep.existsEnquesta(id)) {</span>
+<span class="nc" id="L81">            throw new EnquestaNoExisteix(&quot;No existeix una instància de Enquesta amb id &quot; + id);</span>
+        }
+
+<span class="fc" id="L84">        ep.deleteEnquesta(id);</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (enquestes.get(id) != null) {</span>
+<span class="fc" id="L86">            enquestes.remove(id);</span>
+        }
+
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Updates an existing Enquesta instance from the system to persistence.
+     *
+     * @param idEnquesta the id of the Enquesta to update
+     * @throws EnquestaNoExisteix if no Enquesta with the given ID exists
+     */
+    @Override
+    public void updateEnquesta(int idEnquesta) {
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (enquestes.get(idEnquesta) == null) {</span>
+<span class="nc" id="L100">            throw new EnquestaNoExisteix(&quot;Aquesta instància de Enquesta no és present al controlador&quot;);</span>
+        }
+<span class="fc" id="L102">        IEnquestaPersistance ep = AdapterFactory.getInstance().getEnquestaPersistance();</span>
+
+<span class="fc" id="L104">        ep.saveEnquesta(enquestes.get(idEnquesta));</span>
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * Reloads an existing Enquesta instance from persistence to the system.
+     *
+     * @param idEnquesta the id of the Enquesta to reload
+     * @throws EnquestaNoExisteix if no Enquesta with the given ID exists
+     */
+    @Override
+    public void reloadEnquesta(int idEnquesta) {
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (enquestes.get(idEnquesta) == null) {</span>
+<span class="nc" id="L116">            throw new EnquestaNoExisteix(&quot;No existeix una instància de Enquesta amb id &quot; + idEnquesta);</span>
+        }
+
+<span class="fc" id="L119">        IEnquestaPersistance ep = AdapterFactory.getInstance().getEnquestaPersistance();</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (!ep.existsEnquesta(idEnquesta)) {</span>
+<span class="nc" id="L121">            throw new EnquestaNoExisteix(&quot;No existeix una instància de Enquesta amb id &quot; + idEnquesta);</span>
+        }
+<span class="fc" id="L123">        Enquesta enquestaFromPersistence = ep.loadEnquesta(idEnquesta);</span>
+<span class="fc" id="L124">        enquestes.remove(idEnquesta);</span>
+<span class="fc" id="L125">        enquestes.put(idEnquesta, enquestaFromPersistence);</span>
+<span class="fc" id="L126">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

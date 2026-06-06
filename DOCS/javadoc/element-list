@@ -1,0 +1,12 @@
+unnamed package
+Data.Controllers.LocalPersistenceCtrl
+Data.Controllers.NoDBCtrl
+Data.Persistance
+Domain.Adapters
+Domain.Controllers
+Domain.Exceptions
+Domain.Factories
+Domain.Model
+Domain.Transactions
+Presentation.Controllers
+Presentation.Views

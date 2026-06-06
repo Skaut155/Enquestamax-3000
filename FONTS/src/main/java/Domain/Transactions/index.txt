@@ -1,0 +1,31 @@
+Directori: Domain.Transactions
+
+Aquest directori conte les transaccions de l'aplicacio.
+
+Fitxers:
+- DomainController.java: Controlador de domini que gestiona les transaccions.
+- Transaction.java: Interficie per a les transaccions.
+- TxAfegirOpcioResposta.java: Transaccio per afegir una opcio de resposta a una pregunta.
+- TxAfegirPregunta.java: Transaccio per afegir una pregunta a una enquesta.
+- TxCanviarTipusPregunta.java: Transaccio per canviar el tipus d'una pregunta.
+- TxClonarEnquesta.java: Transaccio per clonar una enquesta.
+- TxComputeClusterAlgorithm.java: Transaccio per executar un algoritme de clustering.
+- TxComputeClusterAlgorithmOptimalK.java: Transaccio per executar un algoritme de clustering amb K optima.
+- TxConsultaRespostaAEnquesta.java: Transaccio per consultar una resposta a una enquesta.
+- TxCrearEnquesta.java: Transaccio per crear una enquesta.
+- TxEliminarEnquesta.java: Transaccio per eliminar una enquesta.
+- TxEliminarOpcioResposta.java: Transaccio per eliminar una opcio de resposta d'una pregunta.
+- TxEliminarPregunta.java: Transaccio per eliminar una pregunta d'una enquesta.
+- TxExportarEnquesta.java: Transaccio per exportar una enquesta.
+- TxGetLlistatEnquestes.java: Transaccio per obtenir el llistat d'enquestes.
+- TxGetPreguntesEnquesta.java: Transaccio per obtenir les preguntes d'una enquesta.
+- TxGetRespostesEnquesta.java: Transaccio per obtenir les respostes d'una enquesta.
+- TxImportarEnquesta.java: Transaccio per importar una enquesta.
+- TxIniciarSessio.java: Transaccio per iniciar sessio.
+- TxModificarOpcioResposta.java: Transaccio per modificar una opcio de resposta d'una pregunta.
+- TxModificarPregunta.java: Transaccio per modificar una pregunta d'una enquesta.
+- TxMostrarEnquesta.java: Transaccio per mostrar una enquesta.
+- TxNovaRespostaEnquesta.java: Transaccio per afegir una nova resposta a una enquesta.
+- TxObligatorietatPregunta.java: Transaccio per canviar l'obligatorietat d'una pregunta.
+- TxRegistrarAdmin.java: Transaccio per registrar un administrador.
+

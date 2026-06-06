@@ -1,0 +1,299 @@
+1
+testAdmin
+testPass
+1
+Enquesta de prova
+1
+1
+1
+1
+1
+3
+1
+NUMERICA
+4
+1
+Quants anys tens?
+8
+1
+true
+4
+2
+Quin es el teu gènere?
+5
+2
+Home
+5
+2
+Dona
+5
+2
+Altre
+6
+2
+3
+Prefereixo no dir-ho
+7
+2
+3
+8
+2
+false
+3
+3
+UNICA_ORDENADA
+4
+3
+Valora la teva satisfacció amb el servei.
+5
+3
+Molt insatisfet
+5
+3
+Insatisfet
+5
+3
+Neutral
+5
+3
+Satisfet
+5
+3
+Molt satisfet
+3
+4
+MULTI
+4
+4
+Quins mitjans de transport utilitzes?
+5
+4
+Cotxe
+5
+4
+Moto
+5
+4
+Bicicleta
+5
+4
+Transport públic
+5
+4
+A peu
+3
+5
+OBERTA
+4
+5
+Tens algun comentari o suggeriment?
+0
+
+4
+0
+4
+1
+2
+1 3
+Molt bon servei!
+s
+42
+2
+5
+2 4
+Tot correcte.
+s
+31
+1
+3
+1
+-
+s
+
+2
+2
+3 4
+Podria millorar.
+s
+55
+1
+5
+5
+Excel·lent!
+s
+28
+2
+4
+1 2 4
+Força bé.
+s
+63
+1
+3
+5
+Res a dir.
+s
+22
+2
+2
+3
+No m'ha agradat gaire.
+s
+38
+1
+4
+1 5
+Molt content.
+s
+45
+2
+5
+2 4
+Perfecte.
+s
+
+1
+3
+1 3 5
+Sense comentaris.
+s
+70
+1
+1
+5
+Molt malament.
+s
+24
+2
+4
+2 3
+Bé.
+s
+33
+1
+5
+1 2 3 4 5
+Tot genial.
+s
+48
+2
+3
+4
+Normal.
+s
+20
+1
+2
+1 3
+Regular.
+s
+51
+2
+5
+2 5
+M'ha encantat.
+s
+65
+1
+4
+1
+-
+s
+27
+2
+3
+3 4
+Correcte.
+s
+36
+1
+2
+1 2
+No està malament.
+s
+41
+2
+4
+4 5
+Bona experiència.
+s
+23
+1
+5
+1 3 5
+Molt recomanable.
+s
+58
+2
+1
+2
+No tornaré.
+s
+32
+1
+4
+1 4
+Satisfet.
+s
+49
+2
+3
+3
+Podria ser millor.
+s
+26
+1
+5
+1 2 3
+Genial.
+s
+61
+2
+2
+4 5
+No gaire content.
+s
+39
+1
+4
+1
+Molt bé.
+s
+46
+2
+5
+2 3 4
+Fantàstic.
+s
+30
+1
+3
+1 5
+Res a destacar.
+n
+9
+0
+4
+K_MEANS_RANDOM
+9
+0
+4
+K_MEANS_PLUS_PLUS
+9
+0
+4
+K_MEDOIDS
+10
+0
+0.8
+K_MEANS_RANDOM
+10
+0
+0.8
+K_MEANS_PLUS_PLUS
+10
+0
+0.8
+K_MEDOIDS
+11
+0

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CentroidePreguntaNumericaStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PROP</a> &gt; <a href="index.source.html" class="el_package">Domain.Model</a> &gt; <span class="el_source">CentroidePreguntaNumericaStrategy.java</span></div><h1>CentroidePreguntaNumericaStrategy.java</h1><pre class="source lang-java linenums">package Domain.Model;
+
+import java.util.ArrayList;
+
+/**
+ * Centroide strategy for quantitative question responses (RespostaAPreguntaNumerica).
+ */
+<span class="fc" id="L8">public class CentroidePreguntaNumericaStrategy implements CentroideStrategy {</span>
+   private static CentroidePreguntaNumericaStrategy instance;
+
+    /**
+     * Get the singleton instance of CentroidePreguntaNumericaStrategy
+     * @return singleton instance of CentroidePreguntaNumericaStrategy
+     */
+    public static CentroidePreguntaNumericaStrategy getInstance() {
+<span class="fc bfc" id="L16" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L17">            instance = new CentroidePreguntaNumericaStrategy();</span>
+        }
+<span class="fc" id="L19">        return instance;</span>
+    }
+
+    /**
+     * Centroide of a set of RespostaAPregunta of the class RespostaAPreguntaNumerica
+     * @param respostes set of RespostaAPregunta
+     * @return centroide of respostes
+     */
+    @Override
+    public RespostaAPregunta&lt;?&gt; calcularCentroide(ArrayList&lt;RespostaAPregunta&lt;?&gt;&gt; respostes) {
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if(respostes.size() == 0) throw new IllegalArgumentException(&quot;Ha d'haver-hi minim una resposta&quot;);</span>
+        
+<span class="fc" id="L31">        double sum = 0;</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        for(RespostaAPregunta&lt;?&gt; resposta : respostes){</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">            if(!(resposta instanceof RespostaAPreguntaNumerica))</span>
+<span class="fc" id="L34">                throw new IllegalArgumentException(&quot;Resposta no és de tipus numèrica&quot;);</span>
+
+<span class="fc" id="L36">            RespostaAPreguntaNumerica respostaNumerica = (RespostaAPreguntaNumerica) resposta;</span>
+<span class="fc" id="L37">            Double num = respostaNumerica.getResposta();  </span>
+
+<span class="fc" id="L39">            sum += num;</span>
+<span class="fc" id="L40">        }</span>
+
+<span class="fc" id="L42">        return new RespostaAPreguntaNumerica(sum/respostes.size(), respostes.get(0).getOrdrePregunta());</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

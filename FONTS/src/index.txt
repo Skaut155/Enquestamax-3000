@@ -1,0 +1,4 @@
+Directori: src
+
+Aquest es el directori arrel del codi font de l'aplicacio.
+
